@@ -1,4 +1,4 @@
-# Веб технології та веб дизайн
+# Дисципліна: Веб технології та веб дизайн
 
 ## Всього годин на предмет:
 
@@ -11,6 +11,28 @@
 
     4 кредити ECTS на 3 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
 
-## План вивчення: [plan.md](./web_technology/plan.md)
+## Короткий план вивчення: [plan.md](./web_technology/plan.md)
+
+## Програма: [programa.md](./web_technology/programa.md)
 
 ## Питання до іспиту: [questions.md](./web_technology/questions.md)
+
+# Скрипти для генерації PDF
+
+## Генерація всіх PDF
+
+```powershell
+.\build_pdfs.ps1
+```
+
+## Генерація одного файлу
+
+```powershell
+.\build_pdfs.ps1 -FilePath "web_technology/lecture_01.md"
+```
+
+або
+
+```powershell
+.\build_pdfs.ps1 "web_technology/practice_01.md"
+```
