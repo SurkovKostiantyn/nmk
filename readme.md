@@ -24,9 +24,9 @@
 
     4 кредити ECTS на 3 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
 
-**Короткий план вивчення:** [plan.md](./web_app_development/plan.md)
-**Програма:** [programa.md](./web_app_development/programa.md)
-**Питання до іспиту:** [questions.md](./web_app_development/questions.md)
+- **Короткий план вивчення:** [plan.md](./web_app_development/plan.md)
+- **Програма:** [programa.md](./web_app_development/programa.md)
+- **Питання до іспиту:** [questions.md](./web_app_development/questions.md)
 
 # Дисципліна: Програмування (PHP)
 
