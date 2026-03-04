@@ -1,6 +1,6 @@
 # Дисципліна: Веб технології та веб дизайн
 
-## Всього годин на предмет:
+### Всього годин на предмет:
 
     4 кредити ECTS на 2 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи, з яких:
 
@@ -14,33 +14,59 @@
     Загальна кількість годин на предмет:
     240 годин = 72 години лекцій - 72 години лабораторних - 96 годин самостійної роботи
 
-## Короткий план вивчення: [plan.md](./web_technology/plan.md)
-
-## Програма: [programa.md](./web_technology/programa.md)
-
-## Питання до іспиту: [questions.md](./web_technology/questions.md)
+- **Короткий план вивчення:** [plan.md](./web_technology/plan.md)
+- **Програма:** [programa.md](./web_technology/programa.md)
+- **Питання до іспиту:** [questions.md](./web_technology/questions.md)
 
 # Дисципліна: Програмування Web-додатків (React.JS)
 
-## Всього годин на предмет:
+### Всього годин на предмет:
 
     4 кредити ECTS на 3 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
 
-## Короткий план вивчення: [plan.md](./wev_app_development/plan.md)
+**Короткий план вивчення:** [plan.md](./web_app_development/plan.md)
+**Програма:** [programa.md](./web_app_development/programa.md)
+**Питання до іспиту:** [questions.md](./web_app_development/questions.md)
 
-## Програма: [programa.md](./wev_app_development/programa.md)
+# Дисципліна: Програмування (PHP)
 
-## Питання до іспиту: [questions.md](./wev_app_development/questions.md)
+### Всього годин на предмет:
+
+    4 кредити ECTS на 3 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
+
+- **Короткий план вивчення:** [plan.md](./programming/plan.md)
+- **Програма:** [programa.md](./programming/programa.md)
+- **Питання до іспиту:** [questions.md](./programming/questions.md)
+
+# Дисципліна: Управління ІТ-проєктами
+
+### Всього годин на предмет:
+
+    4 кредити ECTS на 7 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
+
+- **Короткий план вивчення:** [plan.md](./it_projects_management/plan.md)
+- **Програма:** [programa.md](./it_projects_management/programa.md)
+- **Питання до іспиту:** [questions.md](./it_projects_management/questions.md)
+
+# Дисципліна: Хмарні технології
+
+### Всього годин на предмет:
+
+    4 кредити ECTS на 7 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
+
+- **Короткий план вивчення:** [plan.md](./cloud_technologies/plan.md)
+- **Програма:** [programa.md](./cloud_technologies/programa.md)
+- **Питання до іспиту:** [questions.md](./cloud_technologies/questions.md)
 
 # Скрипти для генерації PDF
 
-## Генерація всіх PDF
+### Генерація всіх PDF
 
 ```powershell
 .\build_pdfs.ps1
 ```
 
-## Генерація одного файлу
+### Генерація одного файлу
 
 ```powershell
 .\build_pdfs.ps1 -FilePath "web_technology/lecture_01.md"
