@@ -1,14 +1,15 @@
 ﻿# 1. ОПИС НАВЧАЛЬНОЇ ДИСЦИПЛІНИ
 
 <style>
-  table{
-    width: 100%;
-    cellpadding: 5;
-    cellspacing: 0;
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
   }
-  table, th, td {
+
+  th, td {
     border: 1px solid black !important;
-    border-collapse: collapse;
+    padding: 5px;
   }
 </style>
 
