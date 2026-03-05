@@ -2,12 +2,13 @@
 
 <style>
   table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
   }
 
   th, td {
-    border: 1px solid black;
+    border: 1px solid black !important;
     padding: 5px;
   }
 </style>
