@@ -10,8 +10,6 @@
 
 ## Перелік умовних скорочень
 
-Списком
-
 - **VPC** — Virtual Private Cloud — віртуальна приватна хмара (AWS)
 - **VNet** — Virtual Network — віртуальна мережа (Azure)
 - **CIDR** — Classless Inter-Domain Routing — безкласова міждоменна маршрутизація

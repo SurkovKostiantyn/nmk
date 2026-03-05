@@ -6,7 +6,8 @@
 2. CI (Continuous Integration) та пайплайн автоматизації
 3. CD (Continuous Delivery та Continuous Deployment)
 4. Хмарні CI/CD-сервіси: AWS CodePipeline, Azure DevOps, Google Cloud Build
-5. Стратегії деплойменту: Rolling, Blue/Green, Canary
+5. Makefile як стандартизований інтерфейс DevOps
+6. Стратегії деплойменту: Rolling, Blue/Green, Canary
 
 ## Перелік умовних скорочень
 
@@ -27,6 +28,9 @@
 - **EKS** — Elastic Kubernetes Service
 - **MTTR** — Mean Time To Recovery — середній час відновлення
 - **DF** — Deployment Frequency — частота деплойментів
+- **Make** — утиліта автоматизації збірки (GNU Make)
+- **Makefile** — файл з правилами для утиліти make
+- **Phony target** — Make-ціль, що не є файлом (псевдоціль)
 
 ---
 
@@ -234,7 +238,237 @@ stages:
 
 ---
 
-## 4. Стратегії деплойменту
+## 5. Makefile як стандартизований інтерфейс DevOps
+
+### 5.1 Що таке Makefile і чому він актуальний у DevOps
+
+**Make** — утиліта автоматизації збірки, що існує з 1976 року. Попри вік, вона стала **де-факто стандартом DevOps-інтерфейсу** для проєктів будь-якого розміру. Причина проста: Makefile дозволяє будь-якому новому розробнику або CI-системі запустити складну послідовність команд одним словом — `make build`, `make deploy`, `make test` — без необхідності читати README.
+
+**Чому Makefile у CI/CD:**
+
+- Єдиний point of entry: CI-пайплайн викликає `make ci`, а не десятки окремих команд
+- Самодокументований: `make help` показує всі доступні цілі
+- Незалежний від CI-платформи: однакові команди у GitHub Actions, Jenkins, локально
+- Підтримує залежності між кроками: `make deploy` → спочатку `make build`
+
+### 5.2 Синтаксис Makefile
+
+```makefile
+# Базовий синтаксис:
+<ціль>: [залежності]
+[TAB]<команда 1>
+[TAB]<команда 2>
+```
+
+> ⚠️ **Критично важливо:** відступ перед командою — це **символ TAB** (не пробіли). Це найпоширеніша помилка при написанні Makefile.
+
+**Ключові конструкції:**
+
+```makefile
+# Змінні
+APP_NAME    := myapp
+IMAGE_NAME  := $(APP_NAME):$(shell git rev-parse --short HEAD)
+REGISTRY    := 123456789.dkr.ecr.us-east-1.amazonaws.com
+
+# .PHONY — оголошення псевдоцілей (не файлів)
+# Без .PHONY: якщо є файл з іменем 'build' — make не виконає ціль
+.PHONY: build test deploy clean help
+
+# Ціль з залежністю
+deploy: build test
+	$(MAKE) push
+	$(MAKE) rollout
+
+# Ціль з умовою
+check-env:
+	@test -n "$(AWS_REGION)" || (echo "ERROR: AWS_REGION не встановлено" && exit 1)
+
+# Автодокументування через коментарі ##
+help: ## Показати доступні команди
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	 awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+```
+
+### 5.3 Makefile для DevOps-проєкту
+
+**Повний Makefile для хмарного проєкту (Terraform + Docker + K8s):**
+
+```makefile
+# =============================================================================
+# Налаштування
+# =============================================================================
+APP_NAME    := myapp
+ENV         ?= dev                  # можна перевизначити: make deploy ENV=prod
+AWS_REGION  ?= us-east-1
+ACCOUNT_ID  := $(shell aws sts get-caller-identity --query Account --output text)
+REGISTRY    := $(ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+IMAGE_TAG   := $(shell git rev-parse --short HEAD)
+FULL_IMAGE  := $(REGISTRY)/$(APP_NAME):$(IMAGE_TAG)
+
+.PHONY: help build test lint push deploy destroy clean fmt validate plan apply
+
+# =============================================================================
+# Документація
+# =============================================================================
+help: ## Показати всі доступні команди
+	@echo "\nДоступні команди для проєкту $(APP_NAME):"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
+	 awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+
+# =============================================================================
+# Якість коду
+# =============================================================================
+lint: ## Запустити linting (eslint / flake8)
+	@echo "→ Linting..."
+	npx eslint src/
+
+test: ## Запустити unit-тести
+	@echo "→ Testing..."
+	npm test -- --coverage
+
+security-scan: ## Сканування вразливостей (Trivy)
+	trivy image $(FULL_IMAGE)
+
+# =============================================================================
+# Docker
+# =============================================================================
+build: ## Зібрати Docker-образ
+	@echo "→ Building $(FULL_IMAGE)..."
+	docker build \
+		--build-arg GIT_COMMIT=$(IMAGE_TAG) \
+		--build-arg BUILD_DATE=$(shell date -u +%Y-%m-%dT%H:%M:%SZ) \
+		-t $(FULL_IMAGE) \
+		-t $(REGISTRY)/$(APP_NAME):latest \
+		.
+
+push: build ## Завантажити образ в ECR
+	@echo "→ Logging into ECR..."
+	aws ecr get-login-password --region $(AWS_REGION) | \
+		docker login --username AWS --password-stdin $(REGISTRY)
+	@echo "→ Pushing $(FULL_IMAGE)..."
+	docker push $(FULL_IMAGE)
+	docker push $(REGISTRY)/$(APP_NAME):latest
+
+# =============================================================================
+# Terraform
+# =============================================================================
+TF_DIR := terraform/envs/$(ENV)
+
+fmt: ## Форматувати Terraform-файли
+	terraform -chdir=$(TF_DIR) fmt -recursive
+
+validate: fmt ## Перевірити коректність Terraform-конфігурації
+	terraform -chdir=$(TF_DIR) init -backend=false
+	terraform -chdir=$(TF_DIR) validate
+
+plan: ## Переглянути зміни (terraform plan)
+	terraform -chdir=$(TF_DIR) init
+	terraform -chdir=$(TF_DIR) plan -var="image_tag=$(IMAGE_TAG)" -out=tfplan
+
+apply: plan ## Застосувати зміни (terraform apply)
+	terraform -chdir=$(TF_DIR) apply tfplan
+
+destroy: ## Знищити інфраструктуру
+	@echo "⚠️  ПОПЕРЕДЖЕННЯ: видалення $(ENV) інфраструктури!"
+	@read -p "Введіть назву середовища для підтвердження: " confirm; \
+	 test "$$confirm" = "$(ENV)" || (echo "Скасовано" && exit 1)
+	terraform -chdir=$(TF_DIR) destroy -var="image_tag=$(IMAGE_TAG)"
+
+# =============================================================================
+# Kubernetes
+# =============================================================================
+rollout: ## Оновити K8s Deployment
+	kubectl set image deployment/$(APP_NAME) \
+		$(APP_NAME)=$(FULL_IMAGE) \
+		--namespace=$(ENV)
+	kubectl rollout status deployment/$(APP_NAME) --namespace=$(ENV)
+
+rollback: ## Відкотити попередню версію
+	kubectl rollout undo deployment/$(APP_NAME) --namespace=$(ENV)
+
+# =============================================================================
+# Повний CI pipeline (використовується у GitHub Actions)
+# =============================================================================
+ci: lint test build security-scan ## Повний CI pipeline
+	@echo "✓ CI pipeline завершено успішно"
+
+# =============================================================================
+# Очищення
+# =============================================================================
+clean: ## Видалити локальні артефакти
+	@echo "→ Cleaning..."
+	rm -rf node_modules dist coverage .terraform tfplan
+	docker image prune -f
+```
+
+### 5.4 Інтеграція Makefile з GitHub Actions
+
+Makefile і CI-пайплайн доповнюють одне одного: CI викликає Make-цілі, а не окремі команди. Це гарантує, що CI та локальне середовище поводяться **ідентично**:
+
+```yaml
+# .github/workflows/ci.yml
+name: CI/CD Pipeline
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Замість окремих команд — одна Make-ціль:
+      - name: Run CI pipeline
+        run: make ci # ← lint + test + build + security-scan
+
+      - name: Push to ECR
+        if: github.ref == 'refs/heads/main'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: make push # ← build + ecr-login + docker push
+
+      - name: Deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: make deploy ENV=prod # ← terraform apply + kubectl rollout
+```
+
+**Переваги такого підходу:**
+
+- Розробник може відтворити CI локально командою `make ci`
+- При зміні CI-платформи (GitHub Actions → GitLab CI → Jenkins) — змінюється тільки YAML-обгортка, а бізнес-логіка збірки залишається у Makefile
+- Onboarding нового розробника: `git clone` → `make help` → `make ci`
+
+### 5.5 Практичні поради
+
+**Найкращі практики написання Makefile:**
+
+| Практика                                 | Приклад                   | Чому важливо                         |
+| ---------------------------------------- | ------------------------- | ------------------------------------ |
+| Завжди оголошувати `.PHONY`              | `.PHONY: build test`      | Уникнути конфліктів з файлами        |
+| Використовувати `@` для тихих команд     | `@echo "→ Building..."`   | Чистий output без дублювання команди |
+| Параметризувати через змінні             | `ENV ?= dev`              | `make deploy ENV=prod`               |
+| `?=` для змінних за замовчуванням        | `AWS_REGION ?= us-east-1` | Можна перевизначити з оточення       |
+| Ціль `help` з `##`-коментарями           | Автодокументування        | Новий розробник одразу розуміє API   |
+| Перевіряти обов'язкові змінні            | `test -n "$(VAR)"`        | Fail fast з зрозумілим повідомленням |
+| Підтвердження для деструктивних операцій | `read -p "Підтвердіть: "` | Захист від `make destroy` у prod     |
+
+---
+
+## 6. Стратегії деплойменту
 
 ### 4.1 Rolling Deployment (Поступовий)
 
@@ -297,9 +531,11 @@ Canary: v2 (100% трафіку) → деплоймент завершено
 
 3. **CD Pipeline** автоматизує доставку верифікованих артефактів у середовища. Continuous Delivery (з ручним підтвердженням Production) та Continuous Deployment (повністю автоматично) — два рівні зрілості.
 
-4. **Стратегії деплойменту** (Rolling, Blue/Green, Canary) дозволяють знизити ризик під час оновлень. Canary є найбезпечнішим, але найскладнішим; Blue/Green — простим і передбачуваним.
+4. **Makefile** є стандартизованим DevOps-інтерфейсом, що забезпечує єдиний point of entry для CI-систем і розробників. Інтеграція Makefile з GitHub Actions гарантує ідентичне виконання пайплайну локально та в CI.
 
-5. **GitOps** (ArgoCD) робить Git єдиним джерелом істини для стану K8s-кластера — будь-яка «дрейф» конфігурації автоматично виправляється.
+5. **Стратегії деплойменту** (Rolling, Blue/Green, Canary) дозволяють знизити ризик під час оновлень. Canary є найбезпечнішим, але найскладнішим; Blue/Green — простим і передбачуваним.
+
+6. **GitOps** (ArgoCD) робить Git єдиним джерелом істини для стану K8s-кластера — будь-яка «дрейф» конфігурації автоматично виправляється.
 
 ---
 
@@ -311,6 +547,7 @@ Canary: v2 (100% трафіку) → деплоймент завершено
 4. AWS Documentation. (2024). _AWS CodePipeline User Guide_. https://docs.aws.amazon.com/codepipeline/
 5. Weaveworks. (2020). _Guide to GitOps_. https://www.weave.works/technologies/gitops/
 6. GitHub. (2024). _GitHub Actions Documentation_. https://docs.github.com/en/actions
+7. GNU Project. (2024). _GNU Make Manual_. https://www.gnu.org/software/make/manual/make.html
 
 ---
 
@@ -321,8 +558,10 @@ Canary: v2 (100% трафіку) → деплоймент завершено
 3. Що таке CI? Опишіть типовий CI Pipeline (5+ кроків) із прикладом.
 4. Чим Continuous Delivery відрізняється від Continuous Deployment?
 5. Що таке `buildspec.yml` в AWS CodeBuild та `azure-pipelines.yml`?
-6. Поясніть стратегію Blue/Green Deployment. Яку перевагу вона дає над Rolling?
-7. Що таке Canary Deployment? Як 5% трафіку на нову версію допомагає знизити ризик?
-8. Що таке GitOps? Яку роль виконує ArgoCD в GitOps-workflow?
-9. Як security scanning (SAST, Container Scanning) інтегрується в CI Pipeline?
-10. Що таке Feature Flags? Чим вони відрізняються від Canary Deployment?
+6. Що таке Makefile? Чому він є стандартизованим інтерфейсом DevOps-проєктів?
+7. Що означає директива `.PHONY` у Makefile? Що відбудеться, якщо її не вказати?
+8. Поясніть стратегію Blue/Green Deployment. Яку перевагу вона дає над Rolling?
+9. Що таке Canary Deployment? Як 5% трафіку на нову версію допомагає знизити ризик?
+10. Що таке GitOps? Яку роль виконує ArgoCD в GitOps-workflow?
+11. Як security scanning (SAST, Container Scanning) інтегрується в CI Pipeline?
+12. Поясніть, чому виклик `make ci` у GitHub Actions краще, ніж прямий виклик команд у YAML.

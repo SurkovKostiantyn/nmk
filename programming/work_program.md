@@ -1,80 +1,117 @@
 # 1. ОПИС НАВЧАЛЬНОЇ ДИСЦИПЛІНИ
 
-<table border="1" cellpadding="5" cellspacing="0" style="width:100%; text-align:center;">
+<style>
+  table{
+    width: 100%;
+    cellpadding: 5;
+    cellspacing: 0;
+  }
+  table, th, td {
+    border: 1px solid black !important;
+    border-collapse: collapse;
+  }
+</style>
+
+<table>
+  <thead>
     <tr>
-        <th rowspan="2" style="width:30%;">Найменування<br>показників</th>
-        <th rowspan="2" style="width:35%;">Галузь знань, спеціаль-<br>ність, ступінь<br>вищої освіти</th>
-        <th style="width:35%;">Характеристика навчальної<br>дисципліни</th>
+      <th rowspan="2">Найменування показників</th>
+      <th rowspan="2">Галузь знань, спеціальність, ступінь вищої освіти</th>
+      <th colspan="2">Характеристика навчальної дисципліни</th>
     </tr>
     <tr>
-        <th>Денна форма навчання</th>
+      <td>Денна форма навчання</td>
     </tr>
+  </thead>
+  <tbody>
+    <!-- row 1 -->
     <tr>
-        <td style="text-align:left;">Кількість кредитів - 4</td>
-        <td rowspan="7">
-            Галузь: 12<br>Інформаційні<br>технології<br><br>
-            Спеціальність або<br>освітня програма<br>
-            122 Комп’ютерні<br>науки
-        </td>
-        <td>Статус дисципліни нормативна</td>
+      <td>Кількість кредитів - 4</td>
+      <td rowspan="7">
+        Галузь:<br>
+        12 Інформаційні технології<br>
+        Спеціальність або освітня програма:<br>
+        122 Комп'ютерні науки
+      </td>
+      <td>Статус дисципліни нормативна</td>
     </tr>
+    <!-- row 2 -->
     <tr>
-        <td style="text-align:left;">Залікових модулів - 2</td>
-        <td>Рік підготовки</td>
+      <td>Залікових модулів - 2</td>
+      <td>Рік підготовки</td>
     </tr>
+    <!-- row 3 -->
     <tr>
-        <td style="text-align:left;">Змістових модулів - 8</td>
-        <td>2</td>
+      <td>Змістових модулів - 8</td>
+      <td>2</td>
     </tr>
+    <!-- row 4 -->
     <tr>
-        <td rowspan="4" style="text-align:left;">Загальна кількість годин<br>- 90</td>
-        <td>Семестр</td>
+      <td rowspan="4">Загальна кількість годин - 120</td>
+      <td>Семестр</td>
     </tr>
+    <!-- row 5 -->
     <tr>
-        <td>1</td>
+      <td>1</td>
     </tr>
+    <!-- row 6 -->
     <tr>
-        <td>Лекції (год.)</td>
+      <td>Лекції (год.)</td>
     </tr>
+    <!-- row 7 -->
     <tr>
-        <td>36</td>
+      <td>36</td>
     </tr>
+    <!-- row 8 -->
     <tr>
-        <td rowspan="10" style="text-align:left;">
-            Тижневих годин для<br>денної форми навчання:<br>
-            аудиторних:<br>
-            2 семестр – 2 години
-        </td>
-        <td rowspan="10">Ступінь вищої освi-<br>ти: бакалавр</td>
-        <td>Практичні, семінарські (год.)</td>
+      <td rowspan="10">
+        Тижневих годин для<br>
+        денної форми навчання: аудиторних:<br>
+        2 семестр – 2 години
+      </td>
+      <td rowspan="10">
+        Ступінь вищої освіти:<br>
+        бакалавр
+      </td>
+      <td>Практичні, семінарські (год.)</td>
     </tr>
+    <!-- row 9 -->
     <tr>
-        <td>36</td>
+      <td>36</td>
     </tr>
+    <!-- row 10 -->
     <tr>
-        <td>Лабораторні (год.)</td>
+      <td>Лабораторні (год.)</td>
     </tr>
+    <!-- row 11 -->
     <tr>
-        <td>&nbsp;</td>
+      <td>—</td>
     </tr>
+    <!-- row 12 -->
     <tr>
-        <td>Самостійна робота (год.)</td>
+      <td>Самостійна робота (год.)</td>
     </tr>
+    <!-- row 13 -->
     <tr>
-        <td>48</td>
+      <td>48</td>
     </tr>
+    <!-- row 14 -->
     <tr>
-        <td>Індивідуальне завдання (год.)</td>
+      <td>Індивідуальне завдання (год.)</td>
     </tr>
+    <!-- row 15 -->
     <tr>
-        <td>&nbsp;</td>
+      <td>—</td>
     </tr>
+    <!-- row 16 -->
     <tr>
-        <td>Вид контролю:</td>
+      <td>Вид контролю:</td>
     </tr>
+    <!-- row 17 -->
     <tr>
-        <td>Екзамен</td>
+      <td>Екзамен</td>
     </tr>
+  </tbody>
 </table>
 
 # 2. МЕТА ТА ЗАВДАННЯ НАВЧАЛЬНОЇ ДИСЦИПЛІНИ
@@ -230,28 +267,38 @@
 **Тема 18. Тестування, дебагінг та розгортання**
 Як шукати баги. Огляд популярних безкоштовних хостингів. Завантаження проєкту на реальний сервер.
 
+# 4. СТРУКТУРА НАВЧАЛЬНОЇ ДИСЦИПЛІНИ
+
 <table>
   <thead>
     <tr>
       <th rowspan="2">Назви змістових модулів і тем</th>
-      <th rowspan="2">Загальна кількість годин</th>
-      <th colspan="4">У тому числі (годин)</th>
+      <th rowspan="2">Кількість<br>годин всього</th>
+      <th colspan="5">У тому числі (годин)</th>
     </tr>
     <tr>
-      <th>Лекції</th>
-      <th>Практичні</th>
-      <th>Лабораторні</th>
-      <th>Самостійна робота</th>
+      <th>лк</th>
+      <th>пр</th>
+      <th>лаб</th>
+      <th>інд</th>
+      <th>с.р.</th>
+    </tr>
+    <tr>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><b>Змістовий модуль 1. Основи мови PHP та веброзробки</b></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td colspan="7"><b>Заліковий модуль 1</b></td>
+    </tr>
+    <tr>
+      <td colspan="7"><b>Змістовий модуль 1. Основи мови PHP та веброзробки</b></td>
     </tr>
     <tr>
       <td>1. Вступ до веброзробки та екосистеми PHP</td>
@@ -259,6 +306,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -267,6 +315,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -275,6 +324,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">4</td>
     </tr>
     <tr>
@@ -283,6 +333,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -291,6 +342,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -299,15 +351,11 @@
       <td align="center"><b>10</b></td>
       <td align="center"><b>0</b></td>
       <td align="center"><b>10</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
     <tr>
-      <td><b>Змістовий модуль 2. Взаємодія з клієнтом та збереження стану</b></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td colspan="7"><b>Змістовий модуль 2. Взаємодія з клієнтом та збереження стану</b></td>
     </tr>
     <tr>
       <td>6. Основи протоколу HTTP та обробка запитів</td>
@@ -315,6 +363,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -323,6 +372,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -331,6 +381,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -339,6 +390,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -347,15 +399,11 @@
       <td align="center"><b>8</b></td>
       <td align="center"><b>0</b></td>
       <td align="center"><b>8</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
     <tr>
-      <td><b>Змістовий модуль 3. Основи роботи з базами даних (MySQL)</b></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td colspan="7"><b>Змістовий модуль 3. Основи роботи з базами даних (MySQL)</b></td>
     </tr>
     <tr>
       <td>10. Вступ до баз даних та PhpMyAdmin</td>
@@ -363,6 +411,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -371,6 +420,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -379,6 +429,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">4</td>
     </tr>
     <tr>
@@ -387,6 +438,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -395,6 +447,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -403,15 +456,11 @@
       <td align="center"><b>10</b></td>
       <td align="center"><b>0</b></td>
       <td align="center"><b>10</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
     <tr>
-      <td><b>Змістовий модуль 4. Базова архітектура та випуск проєкту (MVP)</b></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td colspan="7"><b>Змістовий модуль 4. Базова архітектура та випуск проєкту (MVP)</b></td>
     </tr>
     <tr>
       <td>15. Організація коду: поділ логіки та подання</td>
@@ -419,6 +468,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -427,6 +477,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -435,6 +486,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -443,6 +495,7 @@
       <td align="center">2</td>
       <td align="center">0</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -451,14 +504,25 @@
       <td align="center"><b>8</b></td>
       <td align="center"><b>0</b></td>
       <td align="center"><b>8</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
     <tr>
-      <td><b>Разом за семестр (120 годин / 4 кредити ECTS)</b></td>
+      <td><b>Разом за заліковий модуль 1</b></td>
       <td align="center"><b>120</b></td>
       <td align="center"><b>36</b></td>
       <td align="center"><b>0</b></td>
       <td align="center"><b>36</b></td>
+      <td align="center"><b>—</b></td>
+      <td align="center"><b>48</b></td>
+    </tr>
+    <tr>
+      <td><b>УСЬОГО ЗА ДИСЦИПЛІНОЮ (120 годин / 4 кредити ECTS)</b></td>
+      <td align="center"><b>120</b></td>
+      <td align="center"><b>36</b></td>
+      <td align="center"><b>0</b></td>
+      <td align="center"><b>36</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>48</b></td>
     </tr>
   </tbody>
@@ -466,27 +530,112 @@
 
 # 5. ТЕМИ ЛАБОРАТОРНИХ ЗАНЯТЬ
 
-| № з/п | Тема лабораторного заняття                                     | Кількість годин |
-| :---: | :------------------------------------------------------------- | :-------------: |
-|   1   | Встановлення сервера та "Hello World"                          |        2        |
-|   2   | Виведення динамічного контенту                                 |        2        |
-|   3   | Робота з умовами в розмітці                                    |        2        |
-|   4   | Форматування даних власними функціями                          |        2        |
-|   5   | Зберігання та виведення статусу (Масиви)                       |        2        |
-|   6   | HTML-форма "Створити завдання"                                 |        2        |
-|   7   | Валідація даних форми                                          |        2        |
-|   8   | Завантаження файлів (Робота з файлами)                         |        2        |
-|   9   | Сторінка логіну (Сесії)                                        |        2        |
-|  10   | Налаштування СКБД MySQL                                        |        2        |
-|  11   | Зв'язок скрипта з MySQL                                        |        2        |
-|  12   | Читання завдань із бази                                        |        2        |
-|  13   | Додавання завдань у БД                                         |        2        |
-|  14   | Видалити/Редагувати (Prepared Statements)                      |        2        |
-|  15   | Рефакторинг (Організація файлів)                               |        2        |
-|  16   | Переведення логіки на Об'єктно-орієнтоване програмування (OOP) |        2        |
-|  17   | Реєстрація користувачів (Безпека)                              |        2        |
-|  18   | Фіналізація MVP-проєкту та його підготовка до здачі            |        2        |
-|       | **Разом**                                                      |     **36**      |
+<table>
+  <thead>
+    <tr>
+      <th>№ з/п</th>
+      <th>Тема лабораторного заняття</th>
+      <th>Кількість годин</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">1</td>
+      <td>Встановлення сервера та "Hello World"</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Виведення динамічного контенту</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Робота з умовами в розмітці</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Форматування даних власними функціями</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Зберігання та виведення статусу (Масиви)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>HTML-форма "Створити завдання"</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">7</td>
+      <td>Валідація даних форми</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">8</td>
+      <td>Завантаження файлів (Робота з файлами)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">9</td>
+      <td>Сторінка логіну (Сесії)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">10</td>
+      <td>Налаштування СКБД MySQL</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">11</td>
+      <td>Зв'язок скрипта з MySQL</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">12</td>
+      <td>Читання завдань із бази</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">13</td>
+      <td>Додавання завдань у БД</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">14</td>
+      <td>Видалити/Редагувати (Prepared Statements)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">15</td>
+      <td>Рефакторинг (Організація файлів)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">16</td>
+      <td>Переведення логіки на Об'єктно-орієнтоване програмування (OOP)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">17</td>
+      <td>Реєстрація користувачів (Безпека)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">18</td>
+      <td>Фіналізація MVP-проєкту та його підготовка до здачі</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><b>Разом</b></td>
+      <td align="center"><b>36</b></td>
+    </tr>
+  </tbody>
+</table>
 
 # 6. ТЕМИ ПРАКТИЧНИХ ЗАНЯТЬ (Якщо передбачено навчальним планом)
 
@@ -494,21 +643,82 @@
 
 # 7. САМОСТІЙНА РОБОТА
 
-| № з/п | Тема самостійної роботи                            | Кількість годин |
-| :---: | :------------------------------------------------- | :-------------: |
-|   1   | Базове вивчення функцій роботи з рядками та датою  |        4        |
-|   2   | Просунута робота з масивами                        |        4        |
-|   3   | Математичні функції в PHP                          |        4        |
-|   4   | Робота з регулярними виразами (RegEx)              |        4        |
-|   5   | Поглиблене вивчення протоколу HTTP                 |        4        |
-|   6   | Кешування на рівні сервера                         |        4        |
-|   7   | Принципи нормалізації баз даних                    |        4        |
-|   8   | Зв'язки між таблицями (SQL JOIN)                   |        4        |
-|   9   | Альтернативні формати даних (JSON)                 |        4        |
-|  10   | Архітектурний патерн MVC (Розширена теорія)        |        4        |
-|  11   | Теоретичні основи ООП: поліморфізм та наслідування |        4        |
-|  12   | Підготовка звітності та презентації MVP            |        4        |
-|       | **Разом**                                          |     **48**      |
+<table>
+  <thead>
+    <tr>
+      <th>№ з/п</th>
+      <th>Тема самостійної роботи</th>
+      <th>Кількість годин</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">1</td>
+      <td>Базове вивчення функцій роботи з рядками та датою</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Просунута робота з масивами</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Математичні функції в PHP</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Робота з регулярними виразами (RegEx)</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Поглиблене вивчення протоколу HTTP</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>Кешування на рівні сервера</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">7</td>
+      <td>Принципи нормалізації баз даних</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">8</td>
+      <td>Зв'язки між таблицями (SQL JOIN)</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">9</td>
+      <td>Альтернативні формати даних (JSON)</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">10</td>
+      <td>Архітектурний патерн MVC (Розширена теорія)</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">11</td>
+      <td>Теоретичні основи ООП: поліморфізм та наслідування</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td align="center">12</td>
+      <td>Підготовка звітності та презентації MVP</td>
+      <td align="center">4</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><b>Разом</b></td>
+      <td align="center"><b>48</b></td>
+    </tr>
+  </tbody>
+</table>
 
 # 8. ІНДИВІДУАЛЬНІ ЗАВДАННЯ
 
@@ -532,42 +742,92 @@
 
 Для поточного та підсумкового контролю успішності здобувачів вищої освіти використовується модульно-рейтингова система, яка передбачає роз- поділ балів за виконання усіх запланованих видів робіт. Така система оціню- вання виключає можливість суб’єктивного відношення викладача і орієнтує здобувача вищої освіти на підрахунок своїх балів за конкретні види робіт.
 
-**Розподіл балів з дисципліни (3 семестр): (макс. кількість балів )
-(денна форма навчання, підсумковий контроль - залік)**
+## Розподіл балів з дисципліни, заліковий модуль 1 (3 семестр): (макс. кількість балів - 100)
 
-<table border="1" cellpadding="5" cellspacing="0" style="width:100%; text-align:center;">
+(денна форма навчання, підсумковий контроль - залік)
+
+<table>
+  <thead>
     <tr>
-        <th colspan="4">Поточний контроль</th>
-        <th rowspan="2">Підсумковий тест (Залік)</th>
-        <th rowspan="2">Разом</th>
+      <th colspan="4" align="center">Поточне оцінювання та самостійна робота</th>
+      <th rowspan="2" align="center">Підсумковий тест (Залік)</th>
+      <th rowspan="2" align="center">Разом</th>
     </tr>
     <tr>
-        <th>Змістовий модуль 1</th>
-        <th>Змістовий модуль 2</th>
-        <th>Змістовий модуль 3</th>
-        <th>Змістовий модуль 4</th>
+      <th align="center">Змістовий<br>модуль 1</th>
+      <th align="center">Змістовий<br>модуль 2</th>
+      <th align="center">Змістовий<br>модуль 3</th>
+      <th align="center">Змістовий<br>модуль 4</th>
     </tr>
+  </thead>
+  <tbody>
     <tr>
-        <td>20</td>
-        <td>20</td>
-        <td>20</td>
-        <td>20</td>
-        <td>20</td>
-        <td><b>100</b></td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center"><b>100</b></td>
     </tr>
+  </tbody>
 </table>
 
 ## Шкала оцінювання: національна та ECTS
 
-| Сума балів за всі види<br>навчальної діяльності | Оцінка<br>ECTS | Оцінка за національною шкалою для екзамену,<br>курсового проекту (роботи), практики | Оцінка за національною шкалою<br>для заліку                 |
-| :---------------------------------------------: | :------------: | :---------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-|                   **90-100**                    |     **A**      | відмінно                                                                            | зараховано                                                  |
-|                    **82-89**                    |     **B**      | добре                                                                               | зараховано                                                  |
-|                    **74-81**                    |     **C**      | добре                                                                               | зараховано                                                  |
-|                    **64-73**                    |     **D**      | задовільно                                                                          | зараховано                                                  |
-|                    **60-63**                    |     **E**      | задовільно                                                                          | зараховано                                                  |
-|                    **35-59**                    |     **FX**     | незадовільно з можливістю повторного складання                                      | не зараховано з можливістю повторного складання             |
-|                    **1-34**                     |     **F**      | незадовільно з обов'язковим повторним вивченням дисципліни                          | не зараховано з обов'язковим повторним вивченням дисципліни |
+<table>
+  <thead>
+    <tr>
+      <th align="center">Сума балів за всі види<br>навчальної діяльності</th>
+      <th align="center">Оцінка<br>ECTS</th>
+      <th>Оцінка за національною шкалою для екзамену,<br>курсового проекту (роботи), практики</th>
+      <th>Оцінка за національною шкалою<br>для заліку</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><b>90–100</b></td>
+      <td align="center"><b>A</b></td>
+      <td>відмінно</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>82–89</b></td>
+      <td align="center"><b>B</b></td>
+      <td>добре</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>74–81</b></td>
+      <td align="center"><b>C</b></td>
+      <td>добре</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>64–73</b></td>
+      <td align="center"><b>D</b></td>
+      <td>задовільно</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>60–63</b></td>
+      <td align="center"><b>E</b></td>
+      <td>задовільно</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>35–59</b></td>
+      <td align="center"><b>FX</b></td>
+      <td>незадовільно з можливістю повторного складання</td>
+      <td>не зараховано з можливістю повторного складання</td>
+    </tr>
+    <tr>
+      <td align="center"><b>1–34</b></td>
+      <td align="center"><b>F</b></td>
+      <td>незадовільно з обов'язковим повторним вивченням дисципліни</td>
+      <td>не зараховано з обов'язковим повторним вивченням дисципліни</td>
+    </tr>
+  </tbody>
+</table>
 
 # 12. НАВЧАЛЬНО-МЕТОДИЧНЕ ЗАБЕЗПЕЧЕННЯ ДИСЦИПЛІНИ
 

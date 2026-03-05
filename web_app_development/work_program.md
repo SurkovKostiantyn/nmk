@@ -1,48 +1,115 @@
 # 1. ОПИС НАВЧАЛЬНОЇ ДИСЦИПЛІНИ
 
+<style>
+  table{
+    width: 100%;
+    cellpadding: 5;
+    cellspacing: 0;
+  }
+  table, th, td {
+    border: 1px solid black !important;
+    border-collapse: collapse;
+  }
+</style>
+
 <table>
+  <thead>
+    <tr>
+      <th rowspan="2">Найменування показників</th>
+      <th rowspan="2">Галузь знань, спеціальність, ступінь вищої освіти</th>
+      <th colspan="2">Характеристика навчальної дисципліни</th>
+    </tr>
+    <tr>
+      <td>Денна форма навчання</td>
+    </tr>
+  </thead>
   <tbody>
-    <tr>
-      <td rowspan="2" align="center">Найменування показників</td>
-      <td rowspan="2" align="center">Галузь знань, спеціальність, ступінь вищої освіти</td>
-      <td align="center">Характеристика навчальної дисципліни</td>
-    </tr>
-    <tr>
-      <td align="center">Денна форма навчання</td>
-    </tr>
+    <!-- row 1 -->
     <tr>
       <td>Кількість кредитів - 4</td>
-      <td rowspan="3" align="center">Галузь: 12<br>Інформаційні технології<br><br>Спеціальність або освітня програма<br>122 Комп'ютерні науки</td>
-      <td align="center">Статус дисципліни нормативна</td>
+      <td rowspan="7">
+        Галузь:<br>
+        12 Інформаційні технології<br>
+        Спеціальність або освітня програма:<br>
+        122 Комп'ютерні науки
+      </td>
+      <td>Статус дисципліни нормативна</td>
     </tr>
+    <!-- row 2 -->
     <tr>
       <td>Залікових модулів - 1</td>
-      <td align="center">Рік підготовки<br>4</td>
+      <td>Рік підготовки</td>
     </tr>
+    <!-- row 3 -->
     <tr>
       <td>Змістових модулів - 4</td>
-      <td align="center">Семестр<br>8</td>
+      <td>4</td>
     </tr>
+    <!-- row 4 -->
     <tr>
-      <td rowspan="1" align="center">Загальна кількість годин - 120</td>
-      <td rowspan="7" align="center">Ступінь вищої освіти: бакалавр</td>
-      <td align="center">Лекції (год.)<br>36</td>
+      <td rowspan="4">Загальна кількість годин - 120</td>
+      <td>Семестр</td>
     </tr>
+    <!-- row 5 -->
     <tr>
-      <td rowspan="6">Тижневих годин для денної форми навчання:<br>аудиторних:<br>8 семестр &ndash; 3 години</td>
-      <td align="center">Практичні, семінарські (год.)<br>18</td>
+      <td>8</td>
     </tr>
+    <!-- row 6 -->
     <tr>
-      <td align="center">Лабораторні (год.)<br>18</td>
+      <td>Лекції (год.)</td>
     </tr>
+    <!-- row 7 -->
     <tr>
-      <td align="center">Самостійна робота (год.)<br>48</td>
+      <td>36</td>
     </tr>
+    <!-- row 8 -->
     <tr>
-      <td align="center">Індивідуальне завдання (год.)<br>-</td>
+      <td rowspan="10">
+        Тижневих годин для<br>
+        денної форми навчання: аудиторних:<br>
+        8 семестр – 3 години
+      </td>
+      <td rowspan="10">
+        Ступінь вищої освіти:<br>
+        бакалавр
+      </td>
+      <td>Практичні, семінарські (год.)</td>
     </tr>
+    <!-- row 9 -->
     <tr>
-      <td align="center">Вид контролю:<br>Залік</td>
+      <td>18</td>
+    </tr>
+    <!-- row 10 -->
+    <tr>
+      <td>Лабораторні (год.)</td>
+    </tr>
+    <!-- row 11 -->
+    <tr>
+      <td>18</td>
+    </tr>
+    <!-- row 12 -->
+    <tr>
+      <td>Самостійна робота (год.)</td>
+    </tr>
+    <!-- row 13 -->
+    <tr>
+      <td>48</td>
+    </tr>
+    <!-- row 14 -->
+    <tr>
+      <td>Індивідуальне завдання (год.)</td>
+    </tr>
+    <!-- row 15 -->
+    <tr>
+      <td>—</td>
+    </tr>
+    <!-- row 16 -->
+    <tr>
+      <td>Вид контролю:</td>
+    </tr>
+    <!-- row 17 -->
+    <tr>
+      <td>Залік</td>
     </tr>
   </tbody>
 </table>
@@ -92,7 +159,7 @@
 - **СК12** – Здатність проектувати та розробляти клієнт-серверні застосунки, використовуючи сучасні фреймворки, бібліотеки та технології.
 - **СК19** – Здатність застосовувати технології та інструментальні засоби для створення інтерактивних веб-додатків та інтеграції бекенд-функціоналу, розробки адаптивного дизайну, забезпечувати конфіденційність даних.
 
-## 2.4. За результатами вивчення навчальної дисципліни студент по- винен знати та вміти:
+## 2.4. За результатами вивчення навчальної дисципліни студент повинен:
 
 ### Знати:
 
@@ -227,38 +294,54 @@
 
 # 4. СТРУКТУРА НАВЧАЛЬНОЇ ДИСЦИПЛІНИ
 
-<table>
+<table border="1" cellpadding="5" cellspacing="0">
   <thead>
     <tr>
       <th rowspan="2">Назви змістових модулів і тем</th>
-      <th rowspan="2">Загальна кількість годин</th>
-      <th colspan="4">У тому числі (годин)</th>
+      <th rowspan="2">Кількість<br>годин всього</th>
+      <th colspan="5">У тому числі (годин)</th>
     </tr>
     <tr>
-      <th>Лекції</th>
-      <th>Практичні</th>
-      <th>Лабораторні</th>
-      <th>Самостійна робота</th>
+      <th>лк</th>
+      <th>пр</th>
+      <th>лаб</th>
+      <th>інд</th>
+      <th>с.р.</th>
+    </tr>
+    <tr>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td colspan="6"><b>Змістовий модуль 1. Основи декларативного програмування та екосистема розробки</b></td>
+      <td colspan="7"><b>Заліковий модуль 1</b></td>
+    </tr>
+    <!-- ═══════════════════════════════ МОДУЛЬ 1 ═══════════════════════════════ -->
+    <tr>
+      <td colspan="7"><b>Змістовий модуль 1. Основи декларативного програмування та екосистема розробки</b></td>
     </tr>
     <tr>
       <td>Тема 1. Еволюція веб-технологій та місце React у сучасній розробці</td>
       <td align="center">7</td>
       <td align="center">2</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 2. Механізми роботи React: Virtual DOM та Reconciliation</td>
       <td align="center">7</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -267,14 +350,16 @@
       <td align="center">2</td>
       <td align="center">2</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 4. JSX: Синтаксис, обмеження та можливості</td>
       <td align="center">5</td>
       <td align="center">2</td>
-      <td align="center">-</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -283,33 +368,38 @@
       <td align="center"><b>8</b></td>
       <td align="center"><b>4</b></td>
       <td align="center"><b>4</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
+    <!-- ═══════════════════════════════ МОДУЛЬ 2 ═══════════════════════════════ -->
     <tr>
-      <td colspan="6"><b>Змістовий модуль 2. Компонентна модель та керування станом</b></td>
+      <td colspan="7"><b>Змістовий модуль 2. Компонентна модель та керування станом</b></td>
     </tr>
     <tr>
       <td>Тема 5. Функціональні компоненти та пропси (Props)</td>
       <td align="center">7</td>
       <td align="center">2</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 6. Хук useState: Робота з локальним станом</td>
       <td align="center">7</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 7. Обробка подій та робота з формами</td>
       <td align="center">6</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -317,15 +407,17 @@
       <td align="center">6</td>
       <td align="center">2</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
       <td>Тема 9. Списки, ключі та умовний рендеринг</td>
       <td align="center">6</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -334,25 +426,29 @@
       <td align="center"><b>10</b></td>
       <td align="center"><b>4</b></td>
       <td align="center"><b>6</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
+    <!-- ═══════════════════════════════ МОДУЛЬ 3 ═══════════════════════════════ -->
     <tr>
-      <td colspan="6"><b>Змістовий модуль 3. Просунуті концепції та архітектурні патерни</b></td>
+      <td colspan="7"><b>Змістовий модуль 3. Просунуті концепції та архітектурні патерни</b></td>
     </tr>
     <tr>
       <td>Тема 10. Оптимізація продуктивності: useMemo та useCallback</td>
       <td align="center">7</td>
       <td align="center">2</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 11. Глобальне керування станом: Context API</td>
       <td align="center">6</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -360,23 +456,26 @@
       <td align="center">7</td>
       <td align="center">2</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 13. Взаємодія з API та асинхронність</td>
       <td align="center">6</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
       <td>Тема 14. TypeScript у React: Типізація для надійності</td>
       <td align="center">4</td>
       <td align="center">2</td>
-      <td align="center">-</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">2</td>
     </tr>
     <tr>
@@ -385,10 +484,12 @@
       <td align="center"><b>10</b></td>
       <td align="center"><b>4</b></td>
       <td align="center"><b>4</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
+    <!-- ═══════════════════════════════ МОДУЛЬ 4 ═══════════════════════════════ -->
     <tr>
-      <td colspan="6"><b>Змістовий модуль 4. Сучасна екосистема та професійні стандарти</b></td>
+      <td colspan="7"><b>Змістовий модуль 4. Сучасна екосистема та професійні стандарти</b></td>
     </tr>
     <tr>
       <td>Тема 15. Тестування React-додатків</td>
@@ -396,6 +497,7 @@
       <td align="center">2</td>
       <td align="center">2</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -403,7 +505,8 @@
       <td align="center">7</td>
       <td align="center">2</td>
       <td align="center">2</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -412,14 +515,16 @@
       <td align="center">2</td>
       <td align="center">2</td>
       <td align="center">2</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
       <td>Тема 18. Деплоймент, безпека та етика розробки</td>
       <td align="center">5</td>
       <td align="center">2</td>
-      <td align="center">-</td>
-      <td align="center">-</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
+      <td align="center">—</td>
       <td align="center">3</td>
     </tr>
     <tr>
@@ -428,14 +533,17 @@
       <td align="center"><b>8</b></td>
       <td align="center"><b>6</b></td>
       <td align="center"><b>4</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>12</b></td>
     </tr>
+    <!-- ═══════════════════════════════ ПІДСУМОК ═══════════════════════════════ -->
     <tr>
-      <td><b>Разом за семестр (120 годин / 4 кредити ECTS)</b></td>
+      <td><b>Разом за заліковий модуль 1 (120 годин / 4 кредити ECTS)</b></td>
       <td align="center"><b>120</b></td>
       <td align="center"><b>36</b></td>
       <td align="center"><b>18</b></td>
       <td align="center"><b>18</b></td>
+      <td align="center"><b>—</b></td>
       <td align="center"><b>48</b></td>
     </tr>
   </tbody>
@@ -443,44 +551,175 @@
 
 # 5. ТЕМИ ЛАБОРАТОРНИХ ЗАНЯТЬ
 
-| № з/п | Тема лабораторного заняття                          | Кількість годин |
-| :---: | :-------------------------------------------------- | :-------------: |
-|   1   | Створення каркаса додатка та базових UI-компонентів |        2        |
-|   2   | Реалізація стрічки новин або списку об'єктів        |        2        |
-|   3   | Інтеграція системи фільтрації та пошуку             |        2        |
-|   4   | Розробка багатосторінкової навігації                |        2        |
-|   5   | Створення системи автентифікації                    |        2        |
-|   6   | Підключення до зовнішнього API                      |        2        |
-|   7   | Впровадження TypeScript                             |        2        |
-|   8   | Написання тестів                                    |        2        |
-|   9   | Фінальна збірка та деплоймент                       |        2        |
-|       | **Разом**                                           |     **18**      |
+<table>
+  <thead>
+    <tr>
+      <th>№ з/п</th>
+      <th>Тема лабораторного заняття</th>
+      <th>Кількість годин</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">1</td>
+      <td>Створення каркаса додатка та базових UI-компонентів</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Реалізація стрічки новин або списку об'єктів</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Інтеграція системи фільтрації та пошуку</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Розробка багатосторінкової навігації</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Створення системи автентифікації</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>Підключення до зовнішнього API</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">7</td>
+      <td>Впровадження TypeScript</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">8</td>
+      <td>Написання тестів</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">9</td>
+      <td>Фінальна збірка та деплоймент</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><b>Разом</b></td>
+      <td align="center"><b>18</b></td>
+    </tr>
+  </tbody>
+</table>
 
 # 6. ТЕМИ ПРАКТИЧНИХ ЗАНЯТЬ
 
-| № з/п | Тема практичного заняття              | Кількість годин |
-| :---: | :------------------------------------ | :-------------: |
-|   1   | Налаштування оточення та робота з Git |        2        |
-|   2   | Трансформація масивів даних           |        2        |
-|   3   | Логіка умовного відображення          |        2        |
-|   4   | Валідація введених даних              |        2        |
-|   5   | Побудова ієрархії компонентів         |        2        |
-|   6   | Налагодження коду (Debugging)         |        2        |
-|   7   | Робота з URL-параметрами              |        2        |
-|   8   | Абстракція бізнес-логіки              |        2        |
-|   9   | Аналіз продуктивності                 |        2        |
-|       | **Разом**                             |     **18**      |
+<table>
+  <thead>
+    <tr>
+      <th>№ з/п</th>
+      <th>Тема практичного заняття</th>
+      <th>Кількість годин</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">1</td>
+      <td>Налаштування оточення та робота з Git</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Трансформація масивів даних</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Логіка умовного відображення</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Валідація введених даних</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Побудова ієрархії компонентів</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">6</td>
+      <td>Налагодження коду (Debugging)</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">7</td>
+      <td>Робота з URL-параметрами</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">8</td>
+      <td>Абстракція бізнес-логіки</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td align="center">9</td>
+      <td>Аналіз продуктивності</td>
+      <td align="center">2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><b>Разом</b></td>
+      <td align="center"><b>18</b></td>
+    </tr>
+  </tbody>
+</table>
 
 # 7. САМОСТІЙНА РОБОТА
 
-| № з/п | Види, зміст самостійної роботи                       | Кількість годин |
-| :---: | :--------------------------------------------------- | :-------------: |
-|   1   | Дослідження екосистеми Next.js                       |       10        |
-|   2   | Опанування інструментів тестування                   |        8        |
-|   3   | Вивчення State Management бібліотек                  |        8        |
-|   4   | Розробка власного кастомного хука для складних задач |        6        |
-|   5   | Підготовка до захисту проєкту                        |       16        |
-|       | **Разом**                                            |     **48**      |
+<table>
+  <thead>
+    <tr>
+      <th>№ з/п</th>
+      <th>Тема самостійної роботи</th>
+      <th>Кількість годин</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">1</td>
+      <td>Дослідження екосистеми Next.js</td>
+      <td align="center">10</td>
+    </tr>
+    <tr>
+      <td align="center">2</td>
+      <td>Опанування інструментів тестування</td>
+      <td align="center">8</td>
+    </tr>
+    <tr>
+      <td align="center">3</td>
+      <td>Вивчення State Management бібліотек</td>
+      <td align="center">8</td>
+    </tr>
+    <tr>
+      <td align="center">4</td>
+      <td>Розробка власного кастомного хука для складних задач</td>
+      <td align="center">6</td>
+    </tr>
+    <tr>
+      <td align="center">5</td>
+      <td>Підготовка до захисту проєкту</td>
+      <td align="center">16</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><b>Разом</b></td>
+      <td align="center"><b>48</b></td>
+    </tr>
+  </tbody>
+</table>
 
 # 8. ІНДИВІДУАЛЬНІ ЗАВДАННЯ
 
@@ -504,30 +743,31 @@
 
 Для поточного та підсумкового контролю успішності здобувачів вищої освіти використовується модульно-рейтингова система, яка передбачає роз- поділ балів за виконання усіх запланованих видів робіт. Така система оціню- вання виключає можливість суб’єктивного відношення викладача і орієнтує здобувача вищої освіти на підрахунок своїх балів за конкретні види робіт.
 
-**Розподіл балів з дисципліни (8 семестр)**: (макс. кількість балів )
+## Розподіл балів з дисципліни, заліковий модуль 1 (8 семестр): (макс. кількість балів - 100)
+
 (денна форма навчання, підсумковий контроль - залік)
 
 <table>
   <thead>
     <tr>
       <th colspan="4" align="center">Поточне оцінювання та самостійна робота</th>
-      <th rowspan="2" align="center">Залікове<br>тестування</th>
+      <th rowspan="2" align="center">Підсумковий тест (Залік)</th>
       <th rowspan="2" align="center">Разом</th>
     </tr>
     <tr>
-      <th align="center">Змістовний<br>модуль 1</th>
-      <th align="center">Змістовний<br>модуль 2</th>
-      <th align="center">Змістовний<br>модуль 3</th>
-      <th align="center">Змістовний<br>модуль 4</th>
+      <th align="center">Змістовий<br>модуль 1</th>
+      <th align="center">Змістовий<br>модуль 2</th>
+      <th align="center">Змістовий<br>модуль 3</th>
+      <th align="center">Змістовий<br>модуль 4</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td align="center"><b>20</b></td>
-      <td align="center"><b>20</b></td>
-      <td align="center"><b>20</b></td>
-      <td align="center"><b>20</b></td>
-      <td align="center"><b>20</b></td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center">20</td>
+      <td align="center">20</td>
       <td align="center"><b>100</b></td>
     </tr>
   </tbody>
@@ -535,15 +775,60 @@
 
 ## Шкала оцінювання: національна та ECTS
 
-| Сума балів за всі види<br>навчальної діяльності | Оцінка<br>ECTS | Оцінка за національною шкалою для екзамену,<br>курсового проекту (роботи), практики | Оцінка за національною шкалою<br>для заліку                 |
-| :---------------------------------------------: | :------------: | :---------------------------------------------------------------------------------- | :---------------------------------------------------------- |
-|                   **90-100**                    |     **A**      | відмінно                                                                            | зараховано                                                  |
-|                    **82-89**                    |     **B**      | добре                                                                               | зараховано                                                  |
-|                    **74-81**                    |     **C**      | добре                                                                               | зараховано                                                  |
-|                    **64-73**                    |     **D**      | задовільно                                                                          | зараховано                                                  |
-|                    **60-63**                    |     **E**      | задовільно                                                                          | зараховано                                                  |
-|                    **35-59**                    |     **FX**     | незадовільно з можливістю повторного складання                                      | не зараховано з можливістю повторного складання             |
-|                    **1-34**                     |     **F**      | незадовільно з обов'язковим повторним вивченням дисципліни                          | не зараховано з обов'язковим повторним вивченням дисципліни |
+<table>
+  <thead>
+    <tr>
+      <th align="center">Сума балів за всі види<br>навчальної діяльності</th>
+      <th align="center">Оцінка<br>ECTS</th>
+      <th>Оцінка за національною шкалою для екзамену,<br>курсового проекту (роботи), практики</th>
+      <th>Оцінка за національною шкалою<br>для заліку</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><b>90–100</b></td>
+      <td align="center"><b>A</b></td>
+      <td>відмінно</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>82–89</b></td>
+      <td align="center"><b>B</b></td>
+      <td>добре</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>74–81</b></td>
+      <td align="center"><b>C</b></td>
+      <td>добре</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>64–73</b></td>
+      <td align="center"><b>D</b></td>
+      <td>задовільно</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>60–63</b></td>
+      <td align="center"><b>E</b></td>
+      <td>задовільно</td>
+      <td>зараховано</td>
+    </tr>
+    <tr>
+      <td align="center"><b>35–59</b></td>
+      <td align="center"><b>FX</b></td>
+      <td>незадовільно з можливістю повторного складання</td>
+      <td>не зараховано з можливістю повторного складання</td>
+    </tr>
+    <tr>
+      <td align="center"><b>1–34</b></td>
+      <td align="center"><b>F</b></td>
+      <td>незадовільно з обов'язковим повторним вивченням дисципліни</td>
+      <td>не зараховано з обов'язковим повторним вивченням дисципліни</td>
+    </tr>
+  </tbody>
+</table>
 
 # 12. НАВЧАЛЬНО-МЕТОДИЧНЕ ЗАБЕЗПЕЧЕННЯ ДИСЦИПЛІНИ
 

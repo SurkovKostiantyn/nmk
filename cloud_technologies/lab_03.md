@@ -26,8 +26,6 @@
 
 > **Always Free ресурси Oracle Cloud:** 2 AMD Compute VM (1 OCPU, 1 GB RAM кожна), 200 GB Block Volume, 1 VCN з необмеженою кількістю підмереж — **назавжди, без обмеження 12 місяців**.
 
----
-
 ## Завдання
 
 1. Створити Virtual Cloud Network (VCN) з адресним простором `10.0.0.0/16`

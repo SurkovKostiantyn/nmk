@@ -7,6 +7,7 @@
 3. Комунікація між сервісами: синхронна та асинхронна
 4. API Gateway: концепція та хмарні реалізації
 5. Service Mesh та розподілена простежуваність
+6. No-Code/Low-Code інтеграційні платформи: n8n та аналоги
 
 ## Перелік умовних скорочень
 
@@ -27,6 +28,12 @@
 - **WAF** — Web Application Firewall — брандмауер веб-застосунків
 - **DNS** — Domain Name System — система доменних імен
 - **RPC** — Remote Procedure Call — виклик віддаленої процедури
+- **n8n** — Node-based workflow automation tool — інструмент автоматизації робочих процесів
+- **iPaaS** — Integration Platform as a Service — інтеграційна платформа як послуга
+- **Webhook** — HTTP-зворотній виклик при настанні події
+- **ETL** — Extract, Transform, Load — видобування, трансформація, завантаження
+- **BPMN** — Business Process Model and Notation — нотація моделювання бізнес-процесів
+- **OSS** — Open Source Software — відкрите програмне забезпечення
 
 ---
 
@@ -262,6 +269,285 @@ Istio Control Plane (istiod):
 
 ---
 
+## 6. No-Code/Low-Code інтеграційні платформи: n8n та аналоги
+
+### 6.1 Контекст: проблема «клею» між мікросервісами
+
+У мікросервісній архітектурі неминуче виникає потреба в **інтеграційному шарі** — коді, що з'єднує різнорідні сервіси, трансформує дані між ними та реагує на події. Такий код часто називають «glue code» (код-клей): він не містить бізнес-логіки, але є критично важливим для роботи всієї системи.
+
+Традиційний підхід — писати цей клей вручну (Lambda-функції, скрипти, мікросервіси-адаптери). **No-Code/Low-Code Integration Platforms** пропонують альтернативу: графічний конструктор **workflow** (робочих процесів), де інтеграції описуються не кодом, а візуальними діаграмами з'єднання вузлів.
+
+### 6.2 n8n — відкрита платформа автоматизації
+
+**n8n** (вимовляється «nodemation», n-eight-n) — відкрита (fair-code license) платформа автоматизації робочих процесів з можливістю self-hosting. Створена у 2019 році Яном Оберхайзером.
+
+**Ключові характеристики n8n:**
+
+- **Self-hosted або хмарне SaaS** (n8n.cloud): повний контроль над даними
+- **450+ вбудованих інтеграцій** (Slack, GitHub, PostgreSQL, S3, Stripe, Telegram, OpenAI тощо)
+- **JavaScript/Python у вузлах** для складних трансформацій даних
+- **Webhooks**: прийом HTTP-запитів від зовнішніх сервісів
+- **Розклад** (Cron): запуск workflows за розкладом
+- **Sub-workflows**: виклик одного workflow з іншого
+- **Error handling**: обробка помилок на рівні workflow
+- **Fair-code license**: безкоштовно для self-hosted; комерційна ліцензія для вбудованого перепродажу
+
+**Архітектура n8n:**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      n8n Server                              │
+│                                                              │
+│  ┌───────────┐   ┌────────────┐   ┌────────────────────────┐│
+│  │ Scheduler │   │  Webhook   │   │  Workers (queue mode)  ││
+│  │  (Cron)   │   │  Receiver  │   │  (Redis + Bull)        ││
+│  └─────┬─────┘   └─────┬──────┘   └──────────┬─────────────┘│
+│        │               │                      │              │
+│        └───────────────┼──────────────────────┘              │
+│                        ▼                                     │
+│              ┌─────────────────┐                             │
+│              │  Workflow Engine │                             │
+│              │  (Node Runner)  │                             │
+│              └────────┬────────┘                             │
+│                       │ виконує вузли послідовно/паралельно  │
+│  ┌────────┐  ┌───────┐│┌──────────┐  ┌──────────┐           │
+│  │HTTP    │  │Slack  │││PostgreSQL│  │ OpenAI   │  ...      │
+│  │Request │  │Node  │││  Node    │  │  Node    │           │
+│  └────────┘  └───────┘│└──────────┘  └──────────┘           │
+│              ┌─────────────────┐                             │
+│              │   SQLite / PG   │ (зберігання workflow + logs)│
+│              └─────────────────┘                             │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 6.3 Роль n8n у мікросервісній архітектурі
+
+**n8n як Integration Middleware:**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    Мікросервісна система                     │
+│                                                              │
+│  Order Service ──► SQS Queue ──►┐                           │
+│                                  │   ┌──────────────────┐   │
+│  Payment Service ──► Webhook ───►├──►│  n8n Workflow    │   │
+│                                  │   │  (Integration    │───►│Slack│
+│  CRM (Salesforce) ──► API ──────►│   │   Middleware)    │   │     │
+│                                  │   └───────┬──────────┘   │Email│
+│                                              │               │     │
+│                        ┌─────────────────────┘               │DB   │
+│                        ▼                                      └─────┘
+│              Inventory Service API
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Типові сценарії використання n8n у мікросервісах:**
+
+| Сценарій                 | Опис                                                                  | Альтернатива без n8n            |
+| ------------------------ | --------------------------------------------------------------------- | ------------------------------- |
+| **Event forwarding**     | Подія в SQS → трансформація → POST в зовнішній CRM                    | Lambda + кастомний код          |
+| **Data synchronization** | Щогодини синхронізувати замовлення між Order Service та ERP           | Scheduled Lambda + DB queries   |
+| **Notification routing** | При новому замовленні → Slack-повідомлення + Email + Telegram         | Lambda + SNS + кілька адаптерів |
+| **API orchestration**    | Агрегувати дані з 5 API → трансформувати → записати в БД              | Кастомний aggregator-сервіс     |
+| **Approval workflow**    | Людина затверджує замовлення через форму → активується наступний крок | BPMN-система або кастомний код  |
+| **Error alerting**       | CloudWatch Alarm → Webhook → n8n → Slack + Jira issue                 | Lambda                          |
+
+### 6.4 Приклад workflow n8n: сповіщення при новому замовленні
+
+**Сценарій:** Коли в базі даних PostgreSQL з'являється нове замовлення → надіслати повідомлення у Slack та відправити Email клієнту.
+
+```
+[Trigger: PostgreSQL]                           [Налаштування]
+  Тип: Poll                             ──►     Query:
+  Interval: 1 хвилина                           SELECT * FROM orders
+                                                 WHERE created_at > {{$now.minus(1,'minute')}}
+                                                 AND status = 'new'
+         │
+         ▼
+[IF: є нові замовлення?]
+  true ──────────────────────────────────────────────────────────┐
+  false → Stop workflow                                           │
+                                                                  │
+         ┌────────────────────────────────────────────────────────┘
+         │
+         ▼
+[Split In Batches]  ← для кожного замовлення окремо
+         │
+         ├──► [Slack Node]
+         │      Channel: #orders
+         │      Message: «Нове замовлення #{{$json.id}} від {{$json.customer_name}}
+         │                на суму {{$json.total}} грн»
+         │
+         └──► [Send Email Node]
+                To: {{$json.customer_email}}
+                Subject: Ваше замовлення #{{$json.id}} прийнято
+                Body: HTML-шаблон з деталями замовлення
+```
+
+**Код у вузлі «Function» (JavaScript) для трансформації даних:**
+
+```javascript
+// Вузол: Transform Order Data
+const orders = $input.all();
+
+return orders.map((order) => ({
+  json: {
+    ...order.json,
+    total_formatted: `${(order.json.total / 100).toFixed(2)} грн`,
+    created_at_formatted: new Date(order.json.created_at).toLocaleString(
+      "uk-UA",
+      { timeZone: "Europe/Kyiv" },
+    ),
+    customer_name: order.json.first_name + " " + order.json.last_name,
+  },
+}));
+```
+
+### 6.5 Розгортання n8n у хмарі
+
+**Варіант 1: Docker Compose (локально або на VM)**
+
+```yaml
+# docker-compose.yml
+version: "3.8"
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=securepassword
+      - N8N_HOST=n8n.mycompany.com
+      - N8N_PROTOCOL=https
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=n8npassword
+      - EXECUTIONS_MODE=queue # для горизонтального масштабування
+      - QUEUE_BULL_REDIS_HOST=redis
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on: [postgres, redis]
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: n8n
+      POSTGRES_USER: n8n
+      POSTGRES_PASSWORD: n8npassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+
+volumes:
+  n8n_data:
+  postgres_data:
+```
+
+**Варіант 2: Kubernetes Deployment**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: n8n }
+  template:
+    metadata:
+      labels: { app: n8n }
+    spec:
+      containers:
+        - name: n8n
+          image: n8nio/n8n:latest
+          ports:
+            - containerPort: 5678
+          env:
+            - name: DB_TYPE
+              value: postgresdb
+            - name: N8N_BASIC_AUTH_ACTIVE
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: n8n-secrets # DB_PASSWORD, AUTH_PASSWORD тощо
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { cpu: 500m, memory: 1Gi }
+```
+
+### 6.6 Порівняння: n8n та аналоги
+
+**Хмарні No-Code/Low-Code iPaaS платформи:**
+
+| Платформа              | Тип      | Ліцензія   | Hosting      | Безкоштовний тир           | Сильна сторона                      |
+| ---------------------- | -------- | ---------- | ------------ | -------------------------- | ----------------------------------- |
+| **n8n**                | Low-code | Fair-code  | Self + Cloud | Self-hosted безліміт       | Технічна гнучкість, JS/Python вузли |
+| **Make (Integromat)**  | No-code  | Комерційна | SaaS         | 1000 ops/міс               | Простота, готові шаблони            |
+| **Zapier**             | No-code  | Комерційна | SaaS         | 100 task/міс               | Найбільше інтеграцій (7000+)        |
+| **Apache Airflow**     | Code     | OSS        | Self         | Безкоштовно                | DAG-орієнтований, Data Engineering  |
+| **AWS Step Functions** | Low-code | AWS        | Cloud        | 4000 state transitions/міс | Глибока AWS-інтеграція              |
+| **Azure Logic Apps**   | Low-code | Azure      | Cloud        | 4000 runs/міс              | Office 365, Teams, SharePoint       |
+| **Temporal**           | Code     | OSS        | Self + Cloud | Безкоштовно                | Надійні довготривалі workflow       |
+| **Prefect**            | Code     | OSS+SaaS   | Self + Cloud | Є                          | Data pipeline orchestration         |
+
+**Детальніше про ключових конкурентів:**
+
+**Make (раніше Integromat):**
+
+- Найближчий конкурент n8n за функціональністю та ціною
+- Povний No-code: інтуїтивніший для нетехнічних користувачів
+- «Scenario» = n8n workflow; «Module» = n8n вузол
+- Обмеження: немає JavaScript в базовому тирі; платний self-hosting
+
+**Azure Logic Apps:**
+
+- Microsoft-орієнтований: найкраща інтеграція з Teams, SharePoint, Office 365, Dynamics
+- Flow-designer у браузері без коду
+- **Consumption model**: оплата за кількість дій (actions) — передбачуваний для малих workflow
+- Connector library: 1000+ готових конекторів
+- Nested Logic Apps: виклик одного з іншого (аналог n8n Sub-workflows)
+
+**Apache Airflow:**
+
+- **Python-first**: workflow описуються як DAG (Directed Acyclic Graph) у Python-файлах
+- Ідеальний для **Data Engineering** (ETL/ELT пайплайни, ML pipelines)
+- Не підходить для event-driven сценаріїв (лише розклад і ручний запуск)
+- **AWS MWAA** (Managed Workflows for Apache Airflow) — хмарна версія від AWS
+- **Google Cloud Composer** — хмарна версія від Google
+
+**Temporal:**
+
+- Платформа для **reliable long-running workflows** (транзакції, що тривають дні/тижні)
+- Code-first (Go, Java, Python, TypeScript SDK)
+- Унікальна функція: **автоматичне відновлення** після падіння worker — workflow продовжується з того місця, де зупинився
+- Ідеально для Saga-оркестрації
+
+### 6.7 Критерії вибору між підходами
+
+**Коли n8n краще ніж кастомний Lambda/сервіс:**
+
+- Не-технічні члени команди мають підтримувати або змінювати workflow
+- Інтеграції між 3+ сторонніми сервісами (Slack + GitHub + CRM + Email)
+- Прототипування інтеграцій за лічені хвилини
+- Потрібні вбудований UI для журналу виконань та помилок
+- Невелика команда без ресурсів на підтримку кастомного коду
+
+**Коли кастомний код краще ніж n8n:**
+
+- Критичні з точки зору latency операції (< 100 мс — n8n не підходить)
+- Складна бізнес-логіка, що потребує unit-тестування
+- Великі обсяги даних (n8n не є data streaming платформою)
+- Суворі вимоги до безпеки та аудиту (хоча self-hosted n8n вирішує більшість)
+
+---
+
 ## Висновки
 
 1. **Мікросервісна архітектура** вирішує проблему масштабованості та незалежного деплойменту, але вносить складність розподілених систем (мережеві відмови, distributed transactions, observability).
@@ -274,6 +560,8 @@ Istio Control Plane (istiod):
 
 5. **Service Mesh** автоматизує реалізацію mTLS, observability та traffic policies на рівні інфраструктури, не вимагаючи змін у коді застосунків.
 
+6. **n8n та iPaaS-платформи** (Make, Azure Logic Apps, Zapier) заповнюють нішу «glue code» між мікросервісами — дозволяючи автоматизувати інтеграції без або з мінімальним кодом. n8n є найбільш технічно гнучким рішенням для self-hosted сценаріїв із підтримкою JavaScript/Python, тоді як AWS Step Functions та Azure Logic Apps є оптимальними для deep cloud-native інтеграцій у відповідних екосистемах.
+
 ---
 
 ## Джерела
@@ -284,6 +572,9 @@ Istio Control Plane (istiod):
 4. AWS Documentation. (2024). _Amazon API Gateway Developer Guide_. https://docs.aws.amazon.com/apigateway/
 5. AWS Documentation. (2024). _Amazon SQS Developer Guide_. https://docs.aws.amazon.com/sqs/
 6. Istio Documentation. (2024). _Istio Service Mesh_. https://istio.io/docs/
+7. n8n Documentation. (2024). _n8n Workflow Automation_. https://docs.n8n.io/
+8. Fowler, M. (2015). _Workflow Patterns_. https://martinfowler.com/articles/workflowPatterns.html
+9. Oberheiser, J. (2023). _n8n: Fair-code Workflow Automation_. https://n8n.io/blog/
 
 ---
 
@@ -293,9 +584,14 @@ Istio Control Plane (istiod):
 2. Що таке Bounded Context у DDD? Як він допомагає визначити межі мікросервісу?
 3. Поясніть патерн Database per Service. Яку проблему вирішує порівняно зі Shared Database?
 4. Що таке Saga pattern? Чим він відрізняється від ACID-транзакцій?
-5. Коли гRPC є кращим вибором за REST для комунікації між сервісами?
+5. Коли gRPC є кращим вибором за REST для комунікації між сервісами?
 6. Поясніть різницю між SQS та SNS. Що таке Fan-out патерн?
 7. Що таке API Gateway? Назвіть 5 наскрізних функцій, які він виконує.
 8. Що таке Service Mesh (Istio)? Яку проблему вирішує Sidecar Proxy?
 9. Поясніть Choreography-based Saga з прикладом E-commerce.
 10. Чому Martin Fowler рекомендує не починати нові проєкти відразу з мікросервісів?
+11. Що таке n8n? Чим він відрізняється від AWS Lambda як інструменту інтеграції?
+12. Назвіть 3 сценарії у мікросервісній архітектурі, де n8n є доцільнішим, ніж кастомний код.
+13. Порівняйте n8n та Apache Airflow: для яких задач підходить кожен?
+14. Що таке iPaaS? Наведіть приклади хмарних iPaaS-рішень від AWS і Azure.
+15. У яких випадках кастомний Lambda-код є кращим вибором, ніж No-Code платформа?
