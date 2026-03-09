@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №1 - Вступ до хмарних технологій</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Вступ до хмарних технологій</h2>
+          <h4 style="color: #666">Лекція №1</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План лекції -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Що таке хмарні технології</li>
+            <li>Історія розвитку хмарних обчислень</li>
+            <li>
+              Моделі послуг: <span class="highlight-blue">IaaS</span>,
+              <span class="highlight-blue">PaaS</span>,
+              <span class="highlight-blue">SaaS</span>
+            </li>
+            <li>Типи хмарних середовищ</li>
+          </ul>
+        </section>
+
+        <!-- Визначення -->
+        <section>
+          <section>
+            <h2>1. Що таке "хмарні обчислення"?</h2>
+            <blockquote>
+              <strong>За визначенням NIST:</strong> це модель надання зручного
+              мережевого доступу на вимогу до спільного пулу налаштовуваних
+              обчислювальних ресурсів (мереж, серверів, сховищ, застосунків), що
+              може бути швидко виділений з мінімальними зусиллями.
+            </blockquote>
+            <p>
+              <em>Простими словами:</em> оренда ресурсів через Інтернет за
+              моделлю "як послуга".
+            </p>
+          </section>
+
+          <section>
+            <h3>5 характеристик (NIST)</h3>
+            <ul>
+              <li>
+                <strong>Самообслуговування на вимогу:</strong> оренда без
+                людей-посередників.
+              </li>
+              <li>
+                <strong>Широкий мережевий доступ:</strong> з будь-якого
+                пристрою.
+              </li>
+              <li>
+                <strong>Об'єднання в пул:</strong> ресурси спільні для багатьох
+                (ізольовано).
+              </li>
+              <li><strong>Еластичність:</strong> миттєве масштабування.</li>
+              <li>
+                <strong>Вимірюваність послуг:</strong> платиш за те, що
+                використав.
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Чому це вигідно?</h3>
+            <ul style="font-size: 0.9em">
+              <li>
+                💵 <strong>Зниження витрат:</strong> нуль капітальних інвестицій
+                (на сервери).
+              </li>
+              <li>
+                📈 <strong>Швидке масштабування:</strong> адаптація до
+                навантаження.
+              </li>
+              <li>
+                🌍 <strong>Доступність:</strong> робота з будь-якої точки світу.
+              </li>
+              <li>
+                🛡️ <strong>Надійність та Безпека:</strong> захист від провідних
+                техно-гігантів.
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Історія -->
+        <section>
+          <section>
+            <h2>2. Як ми до цього прийшли?</h2>
+            <p>Від мейнфреймів до Cloud-first</p>
+          </section>
+          <section>
+            <h3>Хронологія розвитку</h3>
+            <ul style="font-size: 0.8em">
+              <li>
+                <strong>1970-ті:</strong> IBM VM/370 — перша комерційна
+                віртуалізація.
+              </li>
+              <li><strong>1999:</strong> Salesforce — поява першого SaaS.</li>
+              <li>
+                <strong>1990-2000-ті:</strong> Власні сервери компаній
+                (On-premise).
+              </li>
+              <li>
+                <strong>2006:</strong> Amazon запускає
+                <span class="highlight-blue">AWS</span> (EC2, S3). Народження
+                публічної хмари!
+              </li>
+              <li><strong>2010:</strong> Запуск Microsoft Azure.</li>
+              <li>
+                <strong>2013-2014:</strong> Docker (контейнери) та AWS Lambda
+                (Serverless).
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Моделі послуг -->
+        <section>
+          <section>
+            <h2>3. Моделі хмарних послуг</h2>
+            <p>IaaS, PaaS, SaaS</p>
+          </section>
+
+          <section>
+            <h3>IaaS — Інфраструктура як послуга</h3>
+            <p style="text-align: left; font-size: 0.8em; margin-left: 10%">
+              🌥️ <strong>Що це:</strong> Провайдер дає "залізо", мережу та
+              диски.
+            </p>
+            <ul style="font-size: 0.8em">
+              <li>Ви самі встановлюєте ОС, базу даних та свій код.</li>
+              <li>
+                <em>Кому треба:</em> Сисадмінам, для "переїзду" своїх серверів у
+                хмару.
+              </li>
+              <li><em>Приклади:</em> AWS EC2, Azure Virtual Machines.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>PaaS — Платформа як послуга</h3>
+            <p style="text-align: left; font-size: 0.8em; margin-left: 10%">
+              🚀 <strong>Що це:</strong> Провайдер дає готове середовище для
+              виконання коду (Node.js, Python), налаштовує веб-сервер та ОС.
+            </p>
+            <ul style="font-size: 0.8em">
+              <li>
+                Ви приносите <strong>лише свій застосунок</strong> і дані.
+              </li>
+              <li>
+                <em>Кому треба:</em> Розробникам, щоб не думати про
+                інфраструктуру.
+              </li>
+              <li><em>Приклади:</em> AWS Elastic Beanstalk, Heroku.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>SaaS — ПЗ як послуга</h3>
+            <p style="text-align: left; font-size: 0.8em; margin-left: 10%">
+              💻 <strong>Що це:</strong> Повністю готовий продукт, відкривається
+              в браузері.
+            </p>
+            <ul style="font-size: 0.8em">
+              <li>Провайдер відповідає за все.</li>
+              <li><em>Кому треба:</em> Кінцевим користувачам.</li>
+              <li>
+                <em>Приклади:</em> Zoom, Microsoft 365, Google Drive, Jira.
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Типи середовищ -->
+        <section>
+          <section>
+            <h2>4. Типи хмарних середовищ</h2>
+          </section>
+
+          <section>
+            <h3>Публічна та Приватна хмари</h3>
+            <table style="font-size: 0.7em; width: 100%">
+              <tr>
+                <th style="width: 50%">Публічна (Public)</th>
+                <th style="width: 50%">Приватна (Private)</th>
+              </tr>
+              <tr>
+                <td>
+                  <ul>
+                    <li>Власник: AWS, Google, Azure.</li>
+                    <li>Ресурси спільні для всіх.</li>
+                    <li>Найдешевша на старті.</li>
+                    <li>Ідеально для стартапів.</li>
+                  </ul>
+                </td>
+                <td>
+                  <ul>
+                    <li>Власник: Ваша організація.</li>
+                    <li>Ізольоване "залізо" (напр., через VMware).</li>
+                    <li>Дорога та безпечна.</li>
+                    <li>Ідеально для банків та уряду.</li>
+                  </ul>
+                </td>
+              </tr>
+            </table>
+          </section>
+
+          <section>
+            <h3>Гібридна та Мультихмарна</h3>
+            <ul style="font-size: 0.8em">
+              <li>
+                <span class="highlight-blue">Гібридна:</span> Об'єднує публічну
+                та приватну. <br /><em
+                  >(Секретні дані у себе, а при пікових навантаженнях сайт
+                  підключає AWS — "cloud bursting").</em
+                >
+              </li>
+              <li style="margin-top: 20px">
+                <span class="highlight-blue">Мультихмарна:</span> Використання
+                одразу кількох публічних хмар (напр., AWS + GCP). <br /><em
+                  >(Щоб не залежати від одного провайдера та брати кращі
+                  інструменти у кожного).</em
+                >
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li>
+              Хмара звільнила ІТ від необхідності купувати дорогі сервери.
+            </li>
+            <li>Лідер ринку — <strong>AWS</strong> (з 2006 року).</li>
+            <li>
+              Обирайте <span class="highlight-blue">IaaS</span> для контролю,
+              <span class="highlight-blue">PaaS</span> для швидкого
+              програмування, <span class="highlight-blue">SaaS</span> для
+              готового рішення.
+            </li>
+            <li>
+              Моделі розгортання: публічна, приватна, гібридна, мультихмарна.
+            </li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

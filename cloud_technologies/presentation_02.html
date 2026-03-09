@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №2 - Огляд постачальників хмарних послуг</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .vs-table {
+          font-size: 0.6em;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Переваги, недоліки та огляд постачальників хмарних послуг</h2>
+          <h4 style="color: #666">Лекція №2</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Переваги хмарних технологій</li>
+            <li>Виклики та недоліки (ризики)</li>
+            <li>Огляд провайдерів: AWS, Azure, GCP</li>
+            <li><span class="highlight-blue">Порівняльний аналіз</span></li>
+          </ul>
+        </section>
+
+        <!-- 1. Переваги -->
+        <section>
+            <section>
+                <h2>1. Переваги хмарних технологій</h2>
+                <p>Фінансові, технічні та організаційні</p>
+            </section>
+            
+            <section>
+                <h3>Зміна моделі витрат</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 50%;">💳 CapEx (On-premise)</th>
+                        <th style="width: 50%;">💸 OpEx (Хмара)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>Великі початкові інвестиції в "залізо".</li>
+                                <li>Ризик купити зайве або недооцінити навантаження.</li>
+                                <li>Амортизація 3-5 років.</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Нуль початкових вкладень.</li>
+                                <li>Pay-as-you-go (платиш лише за те, чим користуєшся).</li>
+                                <li>Масштабування витрат разом з бізнесом.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>Технічні переваги</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Еластичність:</span> автоматичне додавання серверів (Auto Scaling) при пікових навантаженнях (напр. "Чорна п'ятниця").</li>
+                    <li><span class="highlight-blue">SLA 99.99%:</span> недосяжна для локальних серверів надійність.</li>
+                    <li><span class="highlight-blue">Time-to-Market:</span> новий сервер за 2 хвилини замість 2 місяців.</li>
+                    <li><span class="highlight-blue">Інновації:</span> миттєвий доступ до AI, ML та Big Data без найму дорогих фахівців.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 2. Недоліки / Виклики -->
+        <section>
+            <section>
+                <h2>2. Виклики та недоліки</h2>
+                <p>Що може піти не так?</p>
+            </section>
+
+            <section>
+                <h3>Основні ризики</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Vendor Lock-in:</span> "прив'язка" до унікальних сервісів одного провайдера. Важко і дорого переїхати відчути на іншого.</li>
+                    <li><span class="highlight-blue">Непередбачуваність витрат:</span> "хмарні зомбі" (забуті сервери) або різкий сплеск трафіку можуть спричинити величезний рахунок.</li>
+                    <li><span class="highlight-blue">Залежність від Iнтернету:</span> немає мережі — бізнес зупиняється.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Модель спільної відповідальності</h3>
+                <blockquote>
+                  <strong>Важливо:</strong> Провайдер захищає <em>саму хмару</em> (стіни датацентру, гіпервізор). <br><br>Клієнт захищає інфраструктуру <em>У хмарі</em> (свої паролі, відкриті порти, дані користувачів).
+                </blockquote>
+                <p style="font-size: 0.7em;"><em>Більшість витоків даних стаються через помилки конфігурації клієнта (напр., публічно відкриті S3-кошики).</em></p>
+            </section>
+        </section>
+
+        <!-- 3. Провайдери -->
+        <section>
+            <section>
+                <h2>3. Основні гравці ринку (Велика трійка)</h2>
+            </section>
+
+            <section>
+                <h3>Amazon Web Services (AWS)</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Лідер ринку (~32%), запущений у 2006.</li>
+                    <li><strong>Переваги:</strong> Найбільший каталог (200+ сервісів), найзріліша екосистема.</li>
+                    <li><strong>Недоліки:</strong> Складний у вивченні через величезну кількість налаштувань.</li>
+                    <li><em>Клієнти:</em> Netflix, Airbnb, Siemens.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Microsoft Azure</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Другий гравець (~22%), запущений у 2010.</li>
+                    <li><strong>Переваги:</strong> Ідеальна інтеграція з Windows, Office 365, Active Directory. Найкращий для гібридних хмар (Azure Arc).</li>
+                    <li>Найбільша кількість датацентрів у світі (60+ регіонів).</li>
+                    <li><em>Клієнти:</em> BMW, FedEx, Adobe.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Google Cloud Platform (GCP)</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Третій гравець (~11%).</li>
+                    <li><strong>Переваги:</strong> Технологічний лідер у сфері <span class="highlight-blue">Штучного Інтелекту (ML/AI)</span> та Аналітики <span class="highlight-blue">(BigQuery)</span>.</li>
+                    <li>Творці Kubernetes (золотий стандарт контейнерів).</li>
+                    <li><em>Клієнти:</em> Spotify, Twitter / X, PayPal.</li>
+                </ul>
+            </section>
+        </section>
+        
+        <!-- 4. Порівняння / Висновки -->
+        <section>
+          <h2>Висновки: Кого обрати?</h2>
+          <ul style="font-size: 0.8em">
+            <li>Обирайте <strong>AWS</strong> для максимальної гнучкості та надійності.</li>
+            <li>Обирайте <strong>Azure</strong>, якщо ви велика корпорація, що вже працює на екосистемі Microsoft.</li>
+            <li>Обирайте <strong>Google Cloud</strong>, якщо ваш бізнес побудований навколо аналітики великих даних та Штучного Інтелекту.</li>
+            <li><span class="highlight-blue">Мультихмарна стратегія:</span> використовувати одразу кількох провайдерів, щоб уникнути Vendor Lock-in (але це складно в управлінні).</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

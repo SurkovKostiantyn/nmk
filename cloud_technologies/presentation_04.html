@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №4 - Хмарна мережева інфраструктура</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .vs-table {
+          font-size: 0.6em;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Хмарна мережева інфраструктура</h2>
+          <h4 style="color: #666">Лекція №4</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Віртуальні приватні мережі (VPC/VNet)</li>
+            <li>Підмережі та маршрутизація</li>
+            <li>Балансування навантаження у хмарі</li>
+            <li>Міжмережеві екрани (SG та NACL)</li>
+            <li><span class="highlight-blue">CDN та глобальний DNS</span></li>
+          </ul>
+        </section>
+
+        <!-- 1. VPC / VNet -->
+        <section>
+            <section>
+                <h2>1. Віртуальні мережі: VPC та VNet</h2>
+                <p>Ваша "територія" у хмарі</p>
+            </section>
+            
+            <section>
+                <h3>Що таке VPC?</h3>
+                <blockquote>
+                  <strong>VPC (Virtual Private Cloud)</strong> — це ваш ізольований "орендований офіс" у великому датацентрі провайдера. Ви повністю керуєте простором IP-адрес, підмережами і тим, хто має сюди доступ.
+                </blockquote>
+            </section>
+
+            <section>
+                <h3>Архітектура підмереж</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Публічна (Public):</span> має доступ до Інтернету через Internet Gateway (IGW). <em>Тут живуть веб-сервери і балансувальники.</em></li>
+                    <li><span class="highlight-blue">Приватна (Private):</span> захована від прямого доступу з Інтернету. Вихід в Інтернет (напр. за оновленнями) — лише через NAT Gateway. <em>Тут живуть бази даних і бекенд.</em></li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 2. Балансування -->
+        <section>
+            <section>
+                <h2>2. Балансування навантаження (Load Balancers)</h2>
+                <p>Розподіл трафіку між серверами</p>
+            </section>
+
+            <section>
+                <h3>Навіщо це потрібно?</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Розподіляє 10 000 користувачів на 5 серверів по 2 000 на кожен.</li>
+                    <li>Автоматично виключає сервер, якщо той завис (Health Checks).</li>
+                    <li>Знімає навантаження з розшифровування HTTPS-трафіку (SSL-термінація).</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h3>ALB vs NLB</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 50%;">ALB (Application Load Balancer)</th>
+                        <th style="width: 50%;">NLB (Network Load Balancer)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>Рівень L7 (працює з HTTP/HTTPS).</li>
+                                <li>Розуміє URL. Може відправити запит до <code>/api/</code> на один сервер, а <code>/images/</code> — на інший.</li>
+                                <li>Ідеальний для веб-сайтів.</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Рівень L4 (працює з TCP/UDP).</li>
+                                <li>Не дивиться всередину запиту. Ультра-швидкий (мільйони запитів в секунду).</li>
+                                <li>Ідеальний для ігор, IoT.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <!-- 3. Міжмережеві екрани -->
+        <section>
+            <section>
+                <h2>3. Міжмережеві екрани (Фаєрволи)</h2>
+            </section>
+
+            <section>
+                <h3>Security Groups (SG)</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Працюють на рівні <strong>одного сервера (віртуальної машини)</strong>.</li>
+                    <li><span class="highlight-blue">Stateful:</span> якщо ви дозволили хтось зайти на сервер, відповідь надійшлеться назад автоматично.</li>
+                    <li><em>Логіка:</em> Всі правила є ТІЛЬКИ ДОЗВОЛЯЮЧИМИ. Все, що не дозволено — заборонено.</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h3>Network ACL (NACL)</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Працюють на рівні <strong>цілої підмережі</strong>.</li>
+                    <li><span class="highlight-blue">Stateless:</span> треба явно написати правило і для вхідного, і для вихідного трафіку.</li>
+                    <li><em>Логіка:</em> Можуть містити правила "ДОЗВОЛИТИ" і "ЗАБОРОНИТИ" (напр., швидко заблокувати IP хакера для всієї підмережі).</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 4. CDN & DNS -->
+        <section>
+            <section>
+                <h2>4. CDN та Глобальна маршрутизація</h2>
+            </section>
+
+            <section>
+                <h3>CDN (Content Delivery Network)</h3>
+                <p style="font-size: 0.8em">Географічно розподілена мережа серверів, яка копіює (кешує) ваш сайт ближче до клієнта.</p>
+                <blockquote>
+                    Користувач з Токіо не чекає поки картинка завантажиться з Києва. Він миттєво отримує її з локального серверу CDN у Токіо.
+                </blockquote>
+                <p style="font-size: 0.7em"><em>Приклади:</em> Amazon CloudFront, Cloudflare.</p>
+            </section>
+
+            <section>
+                <h3>Розумний DNS (Amazon Route 53)</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Geolocation:</span> відправляє клієнта на сервер у його країні.</li>
+                    <li><span class="highlight-blue">Latency:</span> вимірює затримку і відправляє клієнта до найшвидшого для нього сервера.</li>
+                    <li><span class="highlight-blue">Failover:</span> якщо європейський сервер впаде, DNS автоматично перенаправить усіх на запасний сервер в США.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- Підсумок / Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li>Бази даних та інші критичні сервіси мають бути приховані у приватній підмережі (Private Subnet).</li>
+            <li>Security Groups (SG) та NACL разом формують потужний дворівневий мережевий захист.</li>
+            <li>CDN — найпростіший спосіб в рази прискорити завантаження сайту для користувачів з усього світу.</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

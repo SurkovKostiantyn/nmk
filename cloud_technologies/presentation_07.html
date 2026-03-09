@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №7 - Контейнеризація та оркестрація в IaaS</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .vs-table {
+          font-size: 0.6em;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Контейнеризація та оркестрація в IaaS</h2>
+          <h4 style="color: #666">Лекція №7</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Віртуальні машини (VM) проти Контейнерів</li>
+            <li>Основи Docker (Архітектура, Образи, Контейнери)</li>
+            <li>Реєстри контейнерів (Container Registry)</li>
+            <li>Оркестрація: Kubernetes (K8s)</li>
+            <li><span class="highlight-blue">Керовані хмарні сервіси (EKS, AKS, GKE)</span></li>
+          </ul>
+        </section>
+
+        <!-- 1. VM vs Containers -->
+        <section>
+            <section>
+                <h2>1. VM проти Контейнерів</h2>
+                <p>Яку проблему ми вирішуємо?</p>
+            </section>
+
+            <section>
+                <h3>Головний біль розробника</h3>
+                <blockquote>
+                  "На моєму ноутбуці все працює ідеально! А на сервері чомусь помилка..."<br><br>
+                  <strong>Рішення:</strong> Упакувати саму програму <em>і всі її залежності (бібліотеки)</em> в єдиний монолітний ящик під назвою "Контейнер".
+                </blockquote>
+            </section>
+            
+            <section>
+                <h3>Відмінності</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 50%;">Віртуальна машина (VM)</th>
+                        <th style="width: 50%;">Контейнер (Docker)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul>
+                                <li><strong>Власна (гостьова) ОС.</strong></li>
+                                <li>Важить гігабайти.</li>
+                                <li>Запускається хвилини.</li>
+                                <li>Повна апаратна ізоляція.</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li><strong>Спільне ядро з хост-ОС.</strong> Немає власної ОС.</li>
+                                <li>Важить мегабайти.</li>
+                                <li>Запускається за секунди.</li>
+                                <li>Ізоляція на рівні процесів.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <!-- 2. Docker -->
+        <section>
+            <section>
+                <h2>2. Основи Docker</h2>
+                <p>Стандарт де-факто у контейнерах</p>
+            </section>
+
+            <section>
+                <h3>Образ (Image) vs Контейнер</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Образ (Image)</span> — це незмінний шаблон (креслення) вашої програми.</li>
+                    <li><span class="highlight-blue">Контейнер</span> — це "живий" запущений процес, створений із цього шаблону. З одного образу можна запустити 100 контейнерів.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Dockerfile</h3>
+                <p style="font-size: 0.8em">Це текстовий файл-інструкція, як зібрати образ:</p>
+                <pre><code class="language-dockerfile" style="font-size: 0.7em;">
+# 1. Візьми за основу готовий Python
+FROM python:3.11-slim
+
+# 2. Скопіюй мій код
+COPY . /app
+WORKDIR /app
+
+# 3. Встанови пакети
+RUN pip install -r requirements.txt
+
+# 4. При запуску - виконай ось це
+CMD ["python", "server.py"]
+                </code></pre>
+            </section>
+        </section>
+
+        <!-- 3. Registry -->
+        <section>
+            <section>
+                <h2>3. Реєстр контейнерів</h2>
+                <p>Де зберігати готові образи?</p>
+            </section>
+
+            <section>
+                <h3>Container Registry</h3>
+                <p style="font-size: 0.8em">Аналог GitHub, але не для вихідного коду, а для готових зібраних Docker-образів.</p>
+                <ul style="font-size: 0.8em">
+                    <li><strong>Docker Hub:</strong> Найбільший публічний реєстр у світі.</li>
+                    <li><strong>Amazon ECR:</strong> Приватний і безпечний реєстр в хмарі AWS. Сам сканує образи на віруси та вразливості.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 4. Kubernetes -->
+        <section>
+            <section>
+                <h2>4. Оркестрація: Kubernetes</h2>
+                <p>Навіщо нам оркестратор?</p>
+            </section>
+
+            <section>
+                <h3>Проблема одного Docker</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Docker чудово крутить 5 контейнерів на <strong>одному</strong> сервері.</li>
+                    <li>Що робити, якщо у нас 5 000 контейнерів на 100 серверах?</li>
+                    <li>Хто перезапустить контейнер, якщо він раптово "впаде"?</li>
+                    <li>Хто автоматично додасть нові контейнери під час "Чорної п'ятниці"?</li>
+                </ul>
+                <p class="highlight-blue">Для цього створили Kubernetes (K8s).</p>
+            </section>
+
+            <section>
+                <h3>Основні поняття K8s</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 25%;">Термін</th>
+                        <th style="width: 75%;">Опис</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Pod</strong></td>
+                        <td>Мінімальна піщинка в K8s. Обгортка над одним або кількома контейнерами.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Deployment</strong></td>
+                        <td>Правило: "Я хочу, щоб завжди працювало рівно 5 Pod'ів з моїм сайтом. Якщо один помре — сам створи новий".</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Service</strong></td>
+                        <td>Стабільна IP-адреса та балансувальник. Трафік з Інтернету йде на Service, а він вже роздає його на Pod'и.</td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <!-- 5. Керовані сервіси -->
+        <section>
+            <section>
+                <h2>5. Керовані хмарні сервіси</h2>
+                <p>Не налаштовуйте K8s власноруч</p>
+            </section>
+
+            <section>
+                <h3>Головні гравці</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">GKE (Google):</span> Найкрутіший і найпросунутіший, адже саме Google придумала Kubernetes.</li>
+                    <li><span class="highlight-blue">EKS (Amazon):</span> Найпопулярніший для бізнесу, глибоко інтегрований з сервісами AWS.</li>
+                    <li><span class="highlight-blue">AKS (Azure):</span> Безкоштовний "мозок" (Control Plane), ви платите тільки за самі сервери-Worker'и.</li>
+                </ul>
+                <p style="font-size: 0.6em; margin-top:20px"><em>* Для тих, кому K8s занадто складний, в Amazon існує "спрощена альтернатива" — сервіс <strong>ECS</strong>.</em></p>
+            </section>
+        </section>
+
+        <!-- Підсумок / Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li>Контейнери розв'язали проблему "на моєму комп'ютері працює", упакувавши залежності разом із кодом.</li>
+            <li>Docker швидший і легший за віртуальну машину (не містить власної ОС).</li>
+            <li>Kubernetes (K8s) життєво необхідний для керування сотнями контейнерів у production, забезпечуючи відмовостійкість.</li>
+            <li>Керовані хмарні сервіси (EKS, GKE) звільняють системних адміністраторів від пекельної роботи з налаштування K8s "з нуля".</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

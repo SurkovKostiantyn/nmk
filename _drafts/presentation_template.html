@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>{{Назва презентації}}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>{{Головна тема лекції / презентації}}</h2>
+          <h4 style="color: #666">{{Підзаголовок або номер лекції}}</h4>
+          <p><small>{{Назва дисципліни або автор}}</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План</h2>
+          <ul>
+            <li>Пункт 1</li>
+            <li>Пункт 2</li>
+            <li>Пункт 3</li>
+            <li><span class="highlight-blue">Акцентований пункт 4</span></li>
+          </ul>
+        </section>
+
+        <!-- Звичайний текстовий слайд -->
+        <section>
+            <h2>Стандартний слайд</h2>
+            <p>Текст для пояснення матеріалу...</p>
+        </section>
+
+        <!-- Слайд із цитатою / важливим визначенням -->
+        <section>
+            <h2>Важливе визначення</h2>
+            <blockquote>
+              <strong>Термін:</strong> це коротке і чітке пояснення поняття, яке студенти мають запам'ятати.
+            </blockquote>
+        </section>
+
+        <!-- Слайд із колонками / вкладені слайди -->
+        <section>
+            <section>
+                <h2>Група слайдів на одну тему</h2>
+                <p>Натисніть "вниз", щоб побачити більше деталей цієї теми.</p>
+            </section>
+            <section>
+                <h3>Деталь 1</h3>
+                <p>...</p>
+            </section>
+            <section>
+                <h3>Деталь 2</h3>
+                <p>...</p>
+            </section>
+        </section>
+        
+        <!-- Підсумок / Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li>Ключовий теза 1.</li>
+            <li>Ключовий теза 2.</li>
+            <li>Ключовий теза 3.</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

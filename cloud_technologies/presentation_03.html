@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №3 - Безпека у хмарних середовищах</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .vs-table {
+          font-size: 0.6em;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Безпека та відповідальність у хмарних середовищах</h2>
+          <h4 style="color: #666">Лекція №3</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Модель спільної відповідальності за безпеку</li>
+            <li>Ідентифікація та управління доступом (IAM)</li>
+            <li>Шифрування даних у хмарі</li>
+            <li>Стандарти відповідності (GDPR, ISO 27001)</li>
+            <li><span class="highlight-blue">Типові загрози та методи захисту</span></li>
+          </ul>
+        </section>
+
+        <!-- 1. Модель спільної відповідальності -->
+        <section>
+            <section>
+                <h2>1. Shared Responsibility Model</h2>
+                <p>Хто і за що відповідає?</p>
+            </section>
+            
+            <section>
+                <h3>Головне правило хмарної безпеки</h3>
+                <blockquote>
+                  <strong>Провайдер</strong> відповідає за безпеку <em>САМОЇ</em> хмари (фізичні сервери, охорона датацентру, гіпервізор). <br><br>
+                  <strong>Клієнт</strong> відповідає за безпеку <em>У ХМАРІ</em> (паролі, налаштування доступу, шифрування, застосунки).
+                </blockquote>
+            </section>
+
+            <section>
+                <h3>Різниця за моделями</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">IaaS (напр. AWS EC2):</span> Клієнт відповідає за оновлення ОС, фаєрволи, бази даних та застосунки.</li>
+                    <li><span class="highlight-blue">PaaS (напр. Heroku):</span> Провайдер оновлює ОС і середовище; Клієнт відповідає за код та дані.</li>
+                    <li><span class="highlight-blue">SaaS (напр. Gmail):</span> Провайдер контролює майже все; Клієнт відповідає лише за свій обліковий запис та власні дані.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 2. IAM -->
+        <section>
+            <section>
+                <h2>2. Управління доступом (IAM)</h2>
+                <p>Хто має доступ і до чого?</p>
+            </section>
+
+            <section>
+                <h3>Золоті принципи IAM</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">PoLP (Принцип мінімальних привілеїв):</span> давати лише ті права, які необхідні для роботи, і нічого більше.</li>
+                    <li><span class="highlight-blue">Zero Trust ("Нульова довіра"):</span> ніколи не довіряй, завжди перевіряй кожен запит.</li>
+                    <li><span class="highlight-blue">SSO (Single Sign-On):</span> один логін для доступу до всіх корпоративних систем.</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h3>Багатофакторна автентифікація (MFA)</h3>
+                <p style="font-size: 0.8em">За даними Microsoft, MFA блокує <strong>99.9%</strong> автоматизованих атак.</p>
+                <ul style="font-size: 0.7em">
+                    <li><strong>Що знає користувач:</strong> Пароль, PIN-код.</li>
+                    <li><strong>Що має користувач:</strong> Смартфон (SMS/Authenticator), YubiKey.</li>
+                    <li><strong>Ким є користувач (біометрія):</strong> Відбиток пальця, FaceID.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 3. Шифрування -->
+        <section>
+            <section>
+                <h2>3. Шифрування даних</h2>
+            </section>
+
+            <section>
+                <h3>Два стани даних</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 50%;">Data at Rest (У спокої)</th>
+                        <th style="width: 50%;">Data in Transit (В транзиті)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>Дані лежать на дисках чи в базах.</li>
+                                <li>Головний захист: <strong>AES-256</strong>.</li>
+                                <li>Шифрується автоматично хмарою (SSE) або ключем клієнта.</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Дані передаються через Інтернет.</li>
+                                <li>Головний захист: <strong>HTTPS (TLS v1.3)</strong>, VPN.</li>
+                                <li>Захищає від перехоплення (MitM атак).</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+            
+            <section>
+                <h3>Що таке KMS?</h3>
+                <p style="font-size: 0.8em"><strong>Key Management Service (KMS)</strong> — спеціалізований сервіс (на зразок сейфа) для безпечного зберігання, генерації та ротації криптографічних ключів у хмарі.</p>
+            </section>
+        </section>
+
+        <!-- 4. Стандарти Відповідності -->
+        <section>
+            <h2>4. Compliance (Відповідність)</h2>
+            <ul style="font-size: 0.8em">
+                <li><span class="highlight-blue">GDPR:</span> закон ЄС про захист персональних даних (штрафи до €20 млн або 4% річного обороту).</li>
+                <li><span class="highlight-blue">ISO 27001:</span> міжнародний стандарт управління інформаційною безпекою (добровільний).</li>
+                <li><span class="highlight-blue">SOC 2:</span> аудит безпеки та конфіденційності хмарних провайдерів.</li>
+                <li><span class="highlight-blue">PCI DSS:</span> стандарт для обробки платіжних карток.</li>
+            </ul>
+        </section>
+
+        <!-- 5. Загрози -->
+        <section>
+            <section>
+                <h2>5. Типові загрози</h2>
+            </section>
+
+            <section>
+                <h3>Неправильна конфігурація</h3>
+                <p style="font-size: 0.8em">Це <strong>найпоширеніша причина витоків даних!</strong></p>
+                <ul style="font-size: 0.7em">
+                    <li>Відкриті публічно S3-кошики (як було з Toyota: 10 років публічного доступу).</li>
+                    <li>Відкриті порти баз даних на весь Інтернет.</li>
+                    <li><em>Лікування:</em> CSPM-інструменти (автоматичні сканери налаштувань).</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Втрачені ключі та інсайдерські загрози</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Витік ключів:</span> розробник випадково комітить паролі на GitHub (сканери хакерів знаходять їх за секунди).</li>
+                    <li><span class="highlight-blue">Supply Chain Attack:</span> атака через легітимне стороннє ПЗ (інцидент із SolarWinds).</li>
+                    <li><span class="highlight-blue">Інсайдери:</span> завжди потрібен аудит-лог (AWS CloudTrail), щоб бачити <em>хто</em> і <em>коли</em> звертався до даних.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>Defense in Depth</h3>
+                <p style="font-size: 0.8em">"Ешелонована оборона": кілька незалежних шарів захисту (Периметр -> Мережа -> Доступ -> Дані -> Застосунок). Якщо один падає, інші тримають удар.</p>
+            </section>
+        </section>
+
+        <!-- Підсумок / Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li>Хмарний провайдер <strong>не</strong> захистить вас від вашої ж поганої конфігурації.</li>
+            <li>IAM (доступ) та MFA — це фундамент захисту сучасної інфраструктури.</li>
+            <li>Дані мають бути зашифровані завжди: і коли лежать, і коли передаються.</li>
+            <li>Відповідність вимогам (Compliance) є спільною відповідальністю клієнта та провайдера.</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

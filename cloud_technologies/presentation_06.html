@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №6 - Хмарне зберігання даних в IaaS</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .vs-table {
+          font-size: 0.6em;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Хмарне зберігання даних в IaaS</h2>
+          <h4 style="color: #666">Лекція №6</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Три типи хмарного сховища</li>
+            <li>Блочне сховище (Amazon EBS)</li>
+            <li>Об'єктне сховище (Amazon S3)</li>
+            <li>Файлове сховище та NAS у хмарі (EFS, FSx)</li>
+            <li><span class="highlight-blue">Резервне копіювання та аварійне відновлення (DR)</span></li>
+          </ul>
+        </section>
+
+        <!-- 1. Типи хмарного сховища -->
+        <section>
+            <section>
+                <h2>1. Три парадигми зберігання</h2>
+            </section>
+            
+            <section>
+                <h3>Порівняння архітектур</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 33%;">Блочне (Block)</th>
+                        <th style="width: 33%;">Об'єктне (Object)</th>
+                        <th style="width: 33%;">Файлове (File)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>Як жорсткий диск.</li>
+                                <li>Зберігає дані блоками.</li>
+                                <li>Підключається до <strong>одного</strong> сервера.</li>
+                                <li><em>(Для ОС, Баз Даних).</em></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Як "бездонна флешка" в Інтернеті.</li>
+                                <li>Файл + Метадані. Доступ по HTTP.</li>
+                                <li>Безмежний обсяг.</li>
+                                <li><em>(Для фото, відео, бекапів).</em></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Як мережевий диск (NAS).</li>
+                                <li>Ієрархія папок і файлів.</li>
+                                <li>Одночасний доступ для <strong>тисяч</strong> серверів.</li>
+                                <li><em>(Спільні файли, веб-сайти).</em></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <!-- 2. Блочне сховище (EBS) -->
+        <section>
+            <section>
+                <h2>2. Блочне сховище (EBS)</h2>
+                <p>Ваш віртуальний жорсткий диск</p>
+            </section>
+
+            <section>
+                <h3>Amazon EBS (Elastic Block Store)</h3>
+                <ul style="font-size: 0.8em">
+                    <li>Живе окремо від сервера. Сервер вимкнули — диск лишився.</li>
+                    <li>Автоматично створює резервну копію всередині свого датацентру.</li>
+                    <li><span class="highlight-blue">Snapshots (Знімки):</span> Інкрементальні бекапи диску (зберігають лише зміни), які автоматично відправляються в S3.</li>
+                    <li><strong>Тип gp3</strong> — золотий стандарт (дешевий і швидкий NVMe SSD).</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 3. Об'єктне сховище (S3) -->
+        <section>
+            <section>
+                <h2>3. Об'єктне сховище (Amazon S3)</h2>
+                <p>Найпопулярніший сервіс AWS</p>
+            </section>
+
+            <section>
+                <h3>Концепція S3</h3>
+                <p style="font-size: 0.8em">Дані існують не в папках, а в <strong>Кошиках (Buckets)</strong> як плоский набір об'єктів. Кожен об'єкт має свій унікальний URL.</p>
+                <ul style="font-size: 0.7em">
+                    <li><strong>Надійність:</strong> 99.999999999% (11 дев'яток). Дані зберігаються одразу в трьох датацентрах.</li>
+                    <li>Може віддавати статичні сайти (HTML/CSS) прямо з S3 без жодного сервера!</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h3>Класи зберігання (Як зекономити?)</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 30%;">Клас</th>
+                        <th style="width: 70%;">Застосування</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Standard</strong></td>
+                        <td>Частий миттєвий доступ (аватарки користувачів). Найдорожчий.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Standard-IA</strong></td>
+                        <td>Рідкий доступ, але коли треба — видає миттєво (звіти за минулий місяць). Удвічі дешевше.</td>
+                    </tr>
+                    <tr>
+                        <td><strong style="color:red">Glacier Deep Archive</strong></td>
+                        <td>"Цифрова мерзлото". Архівування на роки. Очікування файлу — 12-48 годин. <strong>Але ціна — копійки</strong> ($0.00099/ГБ).</td>
+                    </tr>
+                </table>
+                <p style="font-size: 0.6em; margin-top: 10px;"><em>* Lifecycle Policies вміють переміщувати файли між цими класами автоматично.</em></p>
+            </section>
+        </section>
+
+        <!-- 4. Файлове сховище (EFS) -->
+        <section>
+            <section>
+                <h2>4. Файлове сховище у хмарі</h2>
+            </section>
+
+            <section>
+                <h3>Amazon EFS та FSx</h3>
+                <ul style="font-size: 0.8em">
+                    <li><strong>Amazon EFS (Elastic File System):</strong> NFS-диск для Linux. Можна змонтувати одночасно до сотень серверів. Розмір "гумовий" — росте автоматом.</li>
+                    <li><strong>Amazon FSx for Windows:</strong> Рідний мережевий диск для серверів на Windows (підтримує протокол SMB і Active Directory).</li>
+                    <li><strong>FSx for Lustre:</strong> Супершвидка система для машинного навчання (ML) та суперкомп'ютерів.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 5. DR (Аварійне відновлення) -->
+        <section>
+            <section>
+                <h2>5. Аварійне відновлення (DR)</h2>
+                <p>Disaster Recovery</p>
+            </section>
+
+            <section>
+                <h3>Дві головні метрики</h3>
+                <blockquote>
+                  <strong>RPO (Recovery Point Objective):</strong> "Скільки даних ми готові втратити?" <em>(Наприклад: максимум за 15 хвилин до аварії).</em><br><br>
+                  <strong>RTO (Recovery Time Objective):</strong> "Як довго система може 'лежати'?" <em>(Наприклад: відновити сайт за 1 годину).</em>
+                </blockquote>
+            </section>
+
+            <section>
+                <h3>Стратегії відновлення</h3>
+                <ol style="font-size: 0.7em">
+                    <li><strong>Backup & Restore:</strong> Бекапи лежать в архіві. Якщо сервер впаде — створюємо новий, качаємо бекап. Дешево, але дуже повільно (RTO = години).</li>
+                    <li><strong>Pilot Light:</strong> База даних уже працює в резервному місті, сервери вимкнені і чекають.</li>
+                    <li><strong>Warm Standby:</strong> Зменшена копія проекту працює 24/7. При аварії просто збільшуємо її потужність.</li>
+                    <li><strong>Multi-Site (Active/Active):</strong> Сайт одночасно працює в Європі та США. Якщо Європа падає, трафік непомітно переходить до США. Супердорого, але RTO = 0.</li>
+                </ol>
+            </section>
+        </section>
+
+        <!-- Підсумок / Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li><strong>EBS (блочне):</strong> для баз даних та ОС (один сервер).</li>
+            <li><strong>S3 (об'єктне):</strong> для файлів, медіа та бекапів. Нескінченне і дешеве.</li>
+            <li><strong>EFS (файлове):</strong> для спільного доступу сотень серверів до однієї папки.</li>
+            <li>Життя без бекапів — біль. <em>Snapshots</em> та <em>S3 Glacier</em> роблять резервне копіювання дешевим та надійним.</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>

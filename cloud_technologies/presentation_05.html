@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №5 - Основи IaaS: віртуальні машини</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <!-- Обираємо світлу тему, яка добре підходить для навчальних презентацій -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none; /* Забороняємо капслок для заголовків для кращої читабельності кирилиці */
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      /* Корегуємо відступи у списках для кращої сприйнятливості */
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .vs-table {
+          font-size: 0.6em;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Основи IaaS: віртуальні машини та обчислювальні ресурси</h2>
+          <h4 style="color: #666">Лекція №5</h4>
+          <p><small>Дисципліна: Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Концепція IaaS (Infrastructure as a Service)</li>
+            <li>Віртуальні машини та типи інстансів</li>
+            <li>Життєвий цикл EC2 та управління</li>
+            <li>Групи автоматичного масштабування (ASG)</li>
+            <li><span class="highlight-blue">Моделі оплати (Спот, Зарезервовані тощо)</span></li>
+          </ul>
+        </section>
+
+        <!-- 1. Концепція IaaS -->
+        <section>
+            <section>
+                <h2>1. Концепція IaaS</h2>
+            </section>
+            
+            <section>
+                <h3>Що таке IaaS?</h3>
+                <blockquote>
+                  <strong>IaaS (Infrastructure as a Service)</strong> — це модель, за якої провайдер дає вам "голе залізо" в оренду: віртуальну машину (ОС), диск і мережу. <br><br>
+                  <em>Усе програмне забезпечення, бази даних і код ви налаштовуєте самі.</em>
+                </blockquote>
+            </section>
+
+            <section>
+                <h3>Коли обирати IaaS?</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Lift-and-shift:</span> перенесення серверів з вашого датацентру в хмару "як є".</li>
+                    <li>Потрібен повний контроль над операційною системою.</li>
+                    <li>Старі програми (Legacy), які не вміють працювати в сучасних хмарних PaaS-сервісах.</li>
+                </ul>
+            </section>
+        </section>
+
+        <!-- 2. Віртуальні машини та Типи (EC2) -->
+        <section>
+            <section>
+                <h2>2. Віртуальні машини EC2</h2>
+                <p>Як читати типи серверів?</p>
+            </section>
+
+            <section>
+                <h3>Гіпервізор</h3>
+                <p style="font-size: 0.8em">Це програма, яка ділить один великий реальний (залізний) сервер на багато ізольованих "віртуальних" серверів. <br>Кожна віртуальна машина "думає", що вона працює на окремому комп'ютері.</p>
+                <p style="font-size: 0.7em"><em>AWS: Nitro / GCP: KVM / Azure: Hyper-V</em></p>
+            </section>
+            
+            <section>
+                <h3>Сімейства інстансів AWS</h3>
+                <ul style="font-size: 0.8em">
+                    <li><strong>M (General Purpose):</strong> збалансовані, для всього потроху.</li>
+                    <li><strong>C (Compute Optimized):</strong> потужні процесори для математики, швидких обчислень чи batch-задач.</li>
+                    <li><strong>R (Memory Optimized):</strong> дуже багато оперативної пам'яті (для баз даних в пам'яті, напр. Redis).</li>
+                    <li><strong>P/G (GPU Accelerators):</strong> відеокарти NVIDIA для машинного навчання або рендерингу.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h3>AMI (Amazon Machine Image)</h3>
+                <p style="font-size: 0.8em">Це шаблон, з якого встановлюється віртуальна машина (наприклад, чистий "Ubuntu 22.04" або готовий "Windows Server зі встановленим SQL").</p>
+                <blockquote><strong>Golden Image:</strong> Це ваш власний, ідеально налаштований корпоративний образ, з якого ви запускаєте всі нові сервери компанії.</blockquote>
+            </section>
+        </section>
+
+        <!-- 3. Керування та Масштабування -->
+        <section>
+            <section>
+                <h2>3. Управління та Масштабування</h2>
+            </section>
+
+            <section>
+                <h3>Життєвий цикл (Lifecycle)</h3>
+                <ul style="font-size: 0.8em">
+                    <li><span class="highlight-blue">Running:</span> сервер працює, ви платите за нього і за диск.</li>
+                    <li><span class="highlight-blue">Stopped:</span> сервер вимкнений, ви НЕ платите за сервер, але **продовжуєте платити за місце на диску**.</li>
+                    <li><span class="highlight-blue">Terminated:</span> сервер видалено назавжди, плата припиняється.</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h3>Auto Scaling Group (ASG)</h3>
+                <p style="font-size: 0.8em">Група 자동ичного масштабування. Вона сама додає сервери, коли навантаження зростає, і видаляє їх, коли відвідувачів немає.</p>
+                <p style="font-size: 0.7em">Приклад: <br><em>Min: 2</em> — Вночі працюють мінімум 2 сервери.<br><em>Desired: 4</em> — Нормальний стан.<br><em>Max: 10</em> — Чорна п'ятниця, розширення максимум до 10 серверів.</p>
+            </section>
+        </section>
+
+        <!-- 4. Моделі оплати -->
+        <section>
+            <section>
+                <h2>4. Моделі оплати EC2</h2>
+                <p>Як не збанкрутувати у хмарі</p>
+            </section>
+
+            <section>
+                <h3>Основні моделі</h3>
+                <table class="vs-table">
+                    <tr>
+                        <th style="width: 50%;">Опис</th>
+                        <th style="width: 50%;">Коли використовувати?</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>On-Demand (За запитом)</strong><br>
+                            Платите посекундно. Найдорожче.
+                        </td>
+                        <td>Для коротких або непередбачуваних тестів.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Reserved / Savings Plans</strong><br>
+                            Разовий контракт на 1-3 роки зі знижкою до 72%.
+                        </td>
+                        <td>Для стабільних проєктів (баз даних, головних веб-серверів).</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong style="color:red">Spot (Спот)</strong><br>
+                            Оренда серверів, які простоюють, зі знижкою до 90%. Але AWS <strong>може відібрати їх у вас у будь-який момент</strong> (з попередиженням у 2 хв).
+                        </td>
+                        <td>Для обчислень, рендерингу, тестів (де не страшно, якщо сервер раптово вимкнеться). Ніколи не ставте туди БД!</td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <!-- Підсумок / Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li>Віртуальні машини ідеальні, коли потрібен повний контроль над операційною системою.</li>
+            <li>Тип інстанса (M, C, R, GPU) повинен чітко відповідати тому, яку задачу виконує програма.</li>
+            <li>Auto Scaling (ASG) — головний інструмент хмарної еластичності.</li>
+            <li>Розумне поєднання типів оплати (Reserved + Spot замість On-Demand) економить компаніям мільйони доларів.</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t", // поточний слайд / загальна кількість
+        transition: "slide", // none/fade/slide/convex/concave/zoom
+      });
+    </script>
+  </body>
+</html>
