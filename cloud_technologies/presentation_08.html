@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №8: Інфраструктура як код (IaC)</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none;
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .reveal table {
+        font-size: 0.8em;
+        margin: 20px auto;
+      }
+      .reveal code {
+        background: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+      }
+      .reveal pre {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        font-size: 0.7em;
+        text-align: left;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Інфраструктура як код (IaC)</h2>
+          <h4 style="color: #666">Лекція №8 (2 години)</h4>
+          <p><small>Хмарні технології</small></p>
+        </section>
+
+        <!-- План -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Концепція Infrastructure as Code та її значення</li>
+            <li>Інструменти IaC: Terraform, AWS CloudFormation, Pulumi</li>
+            <li>Terraform: архітектура, синтаксис HCL та основні команди</li>
+            <li><span class="highlight-blue">Управління станом та модульність у Terraform</span></li>
+            <li>Найкращі практики IaC та інтеграція з CI/CD</li>
+          </ul>
+        </section>
+
+        <!-- Вступ -->
+        <section>
+          <h2>Проблема ручного управління</h2>
+          <p>Уявіть компанію, що розгортає нове production-середовище вручну:</p>
+          <ul>
+            <li>Адміністратор входить у консоль AWS</li>
+            <li>Клацає у десятках меню</li>
+            <li>Створює VPC, підмережі, security groups, EC2-інстанси</li>
+            <li>Налаштовує балансувальник — все це займає <span class="highlight-blue">кілька годин</span></li>
+          </ul>
+          <p><small>Наступне середовище (staging, dev) він намагається зробити ідентичним першому — і це майже неможливо без помилок.</small></p>
+        </section>
+
+        <!-- Визначення IaC -->
+        <section>
+          <h2>Що таке Infrastructure as Code?</h2>
+          <blockquote>
+            <strong>Infrastructure as Code (IaC)</strong> — практика управління та провізіонування обчислювальної інфраструктури за допомогою машинозчитуваних конфігураційних файлів замість ручних операцій через консоль або CLI.
+          </blockquote>
+          <p class="highlight-blue">Результат: відтворювані, версіоновані та автоматизовані середовища</p>
+        </section>
+
+        <!-- Переваги IaC -->
+        <section>
+          <h2>Ключові переваги IaC</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Перевага</th>
+                <th>Опис</th>
+                <th>Приклад</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Відтворюваність</strong></td>
+                <td>Однаковий код → однакова інфраструктура</td>
+                <td>Dev, staging, production ідентичні</td>
+              </tr>
+              <tr>
+                <td><strong>Версіонування</strong></td>
+                <td>Код в Git → повна історія змін</td>
+                <td>Можна відкотити до попередньої конфігурації</td>
+              </tr>
+              <tr>
+                <td><strong>Автоматизація</strong></td>
+                <td>Інфраструктура деплоїться автоматично в CI/CD</td>
+                <td>Нові середовища за хвилини, а не дні</td>
+              </tr>
+              <tr>
+                <td><strong>Рецензування</strong></td>
+                <td>Pull Request → перегляд колегами</td>
+                <td>Запобігання помилкам у конфігурації</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Підходи -->
+        <section>
+          <section>
+            <h2>Підходи до IaC</h2>
+            <h3>Imperative vs Declarative</h3>
+            <p>Натисніть "вниз", щоб побачити детальне порівняння</p>
+          </section>
+          <section>
+            <h3>Imperative (Процедурний) підхід</h3>
+            <p>Описуємо <strong>послідовність кроків</strong> для досягнення бажаного стану:</p>
+            <pre><code># Bash-скрипт (imperative)
+aws ec2 create-vpc --cidr-block 10.0.0.0/16
+aws ec2 create-subnet --vpc-id vpc-xxx --cidr-block 10.0.1.0/24
+aws ec2 run-instances --image-id ami-xxx --instance-type t3.medium</code></pre>
+            <p class="highlight-blue">Проблема: важко управляти станом; при повторному запуску — дублювання ресурсів</p>
+          </section>
+          <section>
+            <h3>Declarative (Декларативний) підхід</h3>
+            <p>Описуємо <strong>бажаний кінцевий стан</strong>; інструмент сам визначає, що потрібно зробити:</p>
+            <pre><code># Terraform (declarative)
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}</code></pre>
+            <p class="highlight-blue">Інструмент порівнює поточний стан із бажаним і вносить лише необхідні зміни</p>
+          </section>
+        </section>
+
+        <!-- Категорії інструментів -->
+        <section>
+          <h2>Категорії IaC-інструментів</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Категорія</th>
+                <th>Опис</th>
+                <th>Приклади</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Провізіонування</strong></td>
+                <td>Створення інфраструктури</td>
+                <td>Terraform, CloudFormation, Pulumi</td>
+              </tr>
+              <tr>
+                <td><strong>Конфігурування</strong></td>
+                <td>Налаштування ОС та ПЗ</td>
+                <td>Ansible, Chef, Puppet, SaltStack</td>
+              </tr>
+              <tr>
+                <td><strong>Immutable infra</strong></td>
+                <td>Заміна замість змін</td>
+                <td>Packer (AMI), Docker</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Terraform -->
+        <section>
+          <section>
+            <h2>Terraform</h2>
+            <p>Найпопулярніший мультихмарний IaC-інструмент (HashiCorp, 2014)</p>
+            <ul>
+              <li><span class="highlight-blue">Мультихмарний</span>: підтримує AWS, Azure, GCP, Kubernetes, GitHub та тисячі провайдерів</li>
+              <li><strong>Декларативний</strong>: описуємо бажаний стан у HCL</li>
+              <li><strong>Управління станом</strong>: зберігає поточний стан у <code>terraform.tfstate</code></li>
+              <li><strong>Планування</strong>: <code>terraform plan</code> показує зміни до застосування</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Архітектура Terraform</h3>
+            <pre><code>┌─────────────────────────────────────────┐
+│              Terraform Core             │
+│  HCL Config Files ──► State Comparison │
+└────────────────────────┬────────────────┘
+                          │ Plugin Protocol
+                          ▼
+        ┌─────────────────────────────────┐
+        │           Provider Plugins      │
+        │  aws   │  azurerm  │  google   │
+        └─────────────────────────────────┘
+                          │ API Calls
+                          ▼
+                 Хмарні провайдери
+               (AWS, Azure, GCP, ...)</code></pre>
+          </section>
+        </section>
+
+        <!-- Інші інструменти -->
+        <section>
+          <h2>Інші ключові IaC-інструменти</h2>
+          <ul>
+            <li><strong>AWS CloudFormation</strong> — рідний IaC-сервіс AWS (JSON/YAML)</li>
+            <li><strong>Azure Bicep</strong> — DSL поверх ARM (компілюється у JSON)</li>
+            <li><strong>Pulumi</strong> — IaC з повноцінними мовами програмування (Python, TypeScript, Go, C#)</li>
+            <li><strong>Google Cloud Deployment Manager</strong> — рідний IaC-сервіс GCP (YAML/Jinja2)</li>
+          </ul>
+          <p class="highlight-blue">Terraform є стандартом де-факто для мультихмарного IaC</p>
+        </section>
+
+        <!-- Структура Terraform-проєкту -->
+        <section>
+          <h2>Структура Terraform-проєкту</h2>
+          <pre><code>my-infrastructure/
+├── main.tf          # Основні ресурси
+├── variables.tf     # Оголошення змінних
+├── outputs.tf       # Вихідні значення
+├── providers.tf     # Конфігурація провайдерів
+├── terraform.tfvars # Значення змінних (не комітити!)
+└── modules/         # Перевикористовувані модулі
+    └── vpc/
+        ├── main.tf
+        ├── variables.tf
+        └── outputs.tf</code></pre>
+        </section>
+
+        <!-- Синтаксис HCL -->
+        <section>
+          <section>
+            <h2>Синтаксис HCL</h2>
+            <h3>Основні конструкції</h3>
+            <p>Натисніть "вниз", щоб побачити приклади коду</p>
+          </section>
+          <section>
+            <h3>Provider та Resource</h3>
+            <pre><code>terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "eu-central-1"
+}
+
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "main-vpc"
+    Environment = var.environment
+  }
+}</code></pre>
+          </section>
+          <section>
+            <h3>Variables та Outputs</h3>
+            <pre><code># variables.tf
+variable "environment" {
+  description = "Середовище (dev/staging/prod)"
+  type        = string
+  default     = "dev"
+}
+
+# outputs.tf
+output "vpc_id" {
+  description = "ID створеного VPC"
+  value       = aws_vpc.main.id
+}</code></pre>
+          </section>
+          <section>
+            <h3>Data Sources</h3>
+            <pre><code># Отримати найновіший AMI Amazon Linux 2023
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+  filter {
+    name   = "name"
+    values = ["al2023-ami-*-x86_64"]
+  }
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t3.medium"
+}</code></pre>
+          </section>
+        </section>
+
+        <!-- Основні команди -->
+        <section>
+          <h2>Основні Terraform-команди</h2>
+          <pre><code># 1. Ініціалізація проєкту
+terraform init
+
+# 2. Форматування коду
+terraform fmt
+
+# 3. Перевірка синтаксису
+terraform validate
+
+# 4. Планування змін
+terraform plan -var-file="prod.tfvars"
+
+# 5. Застосування змін
+terraform apply -var-file="prod.tfvars" -auto-approve
+
+# 6. Знищення всіх ресурсів
+terraform destroy</code></pre>
+        </section>
+
+        <!-- Умовна логіка -->
+        <section>
+          <section>
+            <h2>Умовна логіка та цикли</h2>
+            <p>Натисніть "вниз", щоб побачити приклади</p>
+          </section>
+          <section>
+            <h3>Count (Умовний/кратний ресурс)</h3>
+            <pre><code>resource "aws_instance" "web" {
+  count         = var.environment == "prod" ? 3 : 1
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t3.medium"
+  tags = {
+    Name = "web-${count.index + 1}"
+  }
+}</code></pre>
+          </section>
+          <section>
+            <h3>For Each (Ітерація по колекції)</h3>
+            <pre><code>variable "subnets" {
+  default = {
+    public-1a  = { cidr = "10.0.1.0/24", az = "eu-central-1a" }
+    public-1b  = { cidr = "10.0.2.0/24", az = "eu-central-1b" }
+    private-1a = { cidr = "10.0.3.0/24", az = "eu-central-1a" }
+  }
+}
+
+resource "aws_subnet" "all" {
+  for_each = var.subnets
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value.cidr
+  availability_zone = each.value.az
+  tags = { Name = each.key }
+}</code></pre>
+          </section>
+        </section>
+
+        <!-- State Management -->
+        <section>
+          <section>
+            <h2>Управління станом</h2>
+            <h3>Terraform State</h3>
+            <blockquote>
+              <strong>State File (terraform.tfstate)</strong> — файл, що зберігає поточний стан усіх керованих ресурсів (ID, атрибути).
+            </blockquote>
+            <p class="highlight-blue">Критично важливо: ніколи не видаляйте tfstate вручну!</p>
+          </section>
+          <section>
+            <h3>Remote State (S3 + DynamoDB)</h3>
+            <pre><code>terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state"
+    key            = "prod/vpc/terraform.tfstate"
+    region         = "eu-central-1"
+    encrypt        = true
+    dynamodb_table = "terraform-locks"  # State locking
+  }
+}</code></pre>
+            <p><strong>State Locking</strong> запобігає одночасному застосуванню змін кількома розробниками</p>
+          </section>
+        </section>
+
+        <!-- Модулі -->
+        <section>
+          <section>
+            <h2>Terraform Modules</h2>
+            <blockquote>
+              <strong>Модуль</strong> — перевикористовуваний блок Terraform-конфігурації. Аналог функції у програмуванні.
+            </blockquote>
+            <p class="highlight-blue">Terraform Registry (registry.terraform.io) — публічна бібліотека перевірених модулів</p>
+          </section>
+          <section>
+            <h3>Виклик модуля</h3>
+            <pre><code># Використання публічного модуля
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.5.2"
+
+  name = "main-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = ["eu-central-1a", "eu-central-1b"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.4.0/24", "10.0.5.0/24"]
+
+  enable_nat_gateway = true
+  single_nat_gateway = true
+}</code></pre>
+          </section>
+        </section>
+
+        <!-- Найкращі практики -->
+        <section>
+          <section>
+            <h2>Найкращі практики IaC</h2>
+            <ul>
+              <li><strong>Структура проєкту</strong> — розділення середовищ та модулів</li>
+              <li><strong>Версіонування</strong> — фіксуйте версії провайдерів</li>
+              <li><strong>Тегування</strong> — всі ресурси повинні мати теги</li>
+              <li><strong>Secrets Management</strong> — ніколи не хардкодьте паролі</li>
+              <li><strong>Статичний аналіз</strong> — використовуйте lint та security сканери</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Приклад структури проєкту</h3>
+            <pre><code>infrastructure/
+├── environments/
+│   ├── dev/
+│   ├── staging/
+│   └── prod/
+├── modules/
+│   ├── vpc/
+│   ├── eks/
+│   └── rds/
+└── common/
+    └── providers.tf</code></pre>
+          </section>
+          <section>
+            <h3>Правильне управління секретами</h3>
+            <pre><code># Неправильно
+resource "aws_db_instance" "main" {
+  password = "MySecretPassword123"  # НЕБЕЗПЕЧНО!
+}
+
+# Правильно
+data "aws_secretsmanager_secret_version" "db_password" {
+  secret_id = "prod/db/password"
+}
+
+resource "aws_db_instance" "main" {
+  password = data.aws_secretsmanager_secret_version.db_password.secret_string
+}</code></pre>
+          </section>
+        </section>
+
+        <!-- CI/CD -->
+        <section>
+          <section>
+            <h2>Інтеграція у CI/CD pipeline</h2>
+            <h3>GitOps-workflow</h3>
+            <pre><code>Розробник      GitHub PR      CI Pipeline         CD Pipeline
+    │               │              │                    │
+    ├─ git push ───►│              │                    │
+    │               ├─ lint ──────►│                    │
+    │               ├─ validate ──►│                    │
+    │               ├─ plan ──────►│ (terraform plan)   │
+    │               │ PR review    │                    │
+    │ PR Approved    │              │                    │
+    │               ├─ merge ─────►│                    │
+    │               │              ├─ apply ───────────►│
+    │               │              │   (terraform apply) │</code></pre>
+          </section>
+          <section>
+            <h3>GitHub Actions Pipeline</h3>
+            <pre><code>name: Terraform CI/CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+        if: github.event_name == 'pull_request'
+
+      - name: Terraform Apply
+        run: terraform apply tfplan
+        if: github.ref == 'refs/heads/main'</code></pre>
+          </section>
+        </section>
+
+        <!-- Drift Detection -->
+        <section>
+          <h2>Configuration Drift</h2>
+          <blockquote>
+            <strong>Configuration Drift</strong> — стан, коли реальна інфраструктура відхиляється від конфігурації в коді (внаслідок ручних змін, збоїв тощо).
+          </blockquote>
+          <h3>Виявлення та усунення</h3>
+          <ul>
+            <li><code>terraform plan</code> — показує різниці між кодом та реальним станом</li>
+            <li>Регулярний запуск <code>terraform plan</code> у CI</li>
+            <li>AWS Config Rules — моніторинг відповідності</li>
+            <li>Terraform Cloud — вбудована drift detection</li>
+          </ul>
+        </section>
+
+        <!-- Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li><strong>IaC</strong> є фундаментальною практикою сучасної хмарної інженерії</li>
+            <li><strong>Terraform</strong> є стандартом де-факто для мультихмарного IaC</li>
+            <li><strong>Remote State + State Locking</strong> обов'язкові для командної роботи</li>
+            <li><strong>Модульність та DRY-принцип</strong> дозволяють перевикористовувати конфігурації</li>
+            <li><strong>Інтеграція у CI/CD pipeline</strong> — золотий стандарт GitOps</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t",
+        transition: "slide",
+      });
+    </script>
+  </body>
+</html>

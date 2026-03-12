@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №9: Моніторинг, логування та відмовостійкість в IaaS</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none;
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      .reveal ul {
+        display: block;
+        margin-left: 10%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .reveal table {
+        font-size: 0.8em;
+        margin: 20px auto;
+      }
+      .reveal code {
+        background: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+      }
+      .reveal pre {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        font-size: 0.7em;
+        text-align: left;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Моніторинг, логування та відмовостійкість в IaaS</h2>
+          <h4 style="color: #666">Лекція №9 (2 години)</h4>
+          <p><small>Хмарні технології</small></p>
+        </section>
+
+        <!-- План -->
+        <section>
+          <h2>План лекції</h2>
+          <ul>
+            <li>Концепція спостережуваності (Observability): метрики, логи, трейси</li>
+            <li>Хмарні сервіси моніторингу: CloudWatch, Azure Monitor, Cloud Monitoring</li>
+            <li>Логування та централізований збір журналів</li>
+            <li><span class="highlight-blue">Розподілене трасування</span></li>
+            <li>Відмовостійкість: патерни надійних систем</li>
+          </ul>
+        </section>
+
+        <!-- Вступ -->
+        <section>
+          <h2>Важливість спостережуваності</h2>
+          <p>Розгортання системи в хмарі — це лише початок. Дійсна зрілість хмарних операцій визначається здатністю команди <strong>зрозуміти, що відбувається всередині системи</strong> в будь-який момент часу.</p>
+          <p class="highlight-blue">Паралельно, будь-яка система врешті-решт зазнає збоїв — питання не «чи відбудеться відмова», а «коли» і «наскільки добре система відновиться».</p>
+        </section>
+
+        <!-- Observability vs Monitoring -->
+        <section>
+          <section>
+            <h2>Observability vs Monitoring</h2>
+            <h3>Різниця в підходах</h3>
+            <p>Натисніть "вниз", щоб побачити детальне порівняння</p>
+          </section>
+          <section>
+            <h3>Monitoring (Моніторинг)</h3>
+            <blockquote>
+              <strong>Monitoring</strong> — відповідає на питання «<strong>Чи справна система?</strong>». Ми заздалегідь знаємо, що перевіряти.
+            </blockquote>
+            <ul>
+              <li>Перевіряємо відомі метрики та показники</li>
+              <li>Аларми на попередньо визначені пороги</li>
+              <li>Чорна скринька — ми знаємо, що дивитися</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Observability (Спостережуваність)</h3>
+            <blockquote>
+              <strong>Observability</strong> — відповідає на питання «<strong>Чому система поводиться саме так?</strong>». Дозволяє досліджувати невідомі раніше стани.
+            </blockquote>
+            <ul>
+              <li>Система є спостережуваною, якщо її внутрішній стан можна визначити лише на основі зовнішніх виходів</li>
+              <li>Дозволяє аналізувати неочікувані проблеми</li>
+              <li>Біла скринька — ми можемо дослідити будь-який стан</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Три стовпи спостережуваності -->
+        <section>
+          <section>
+            <h2>Три стовпи спостережуваності</h2>
+            <h3>Metrics, Logs, Traces</h3>
+            <p>Натисніть "вниз", щоб побачити детальний опис кожного стовпа</p>
+          </section>
+          <section>
+            <h3>Metrics (Метрики)</h3>
+            <p><strong>Числові значення, що вимірюються у часі:</strong></p>
+            <ul>
+              <li>CPU utilization: 78%</li>
+              <li>Requests/sec: 1 250</li>
+              <li>Error rate: 0.3%</li>
+              <li>Response time (p95): 230 ms</li>
+              <li>Queue depth: 42</li>
+            </ul>
+            <p class="highlight-blue">Метрики — агреговані, займають мало місця, ідеальні для алертів і дашбордів</p>
+          </section>
+          <section>
+            <h3>Logs (Журнали)</h3>
+            <p><strong>Дискретні події у часі:</strong></p>
+            <pre><code>{
+  "timestamp": "2024-01-15T14:23:45.123Z",
+  "level": "ERROR",
+  "service": "payment-service",
+  "message": "Payment gateway timeout",
+  "transaction_id": "tx-9f8b2c",
+  "user_id": "u-12345",
+  "duration_ms": 5001,
+  "gateway": "stripe"
+}</code></pre>
+            <p class="highlight-blue">Логи детальні, але займають багато місця. Ідеальні для дебагінгу та розслідування інцидентів</p>
+          </section>
+          <section>
+            <h3>Traces (Розподілені трейси)</h3>
+            <p><strong>Фіксація шляху запиту через усі мікросервіси:</strong></p>
+            <pre><code>HTTP GET /api/orders/123
+│
+├── auth-service (25ms) — перевірка токена
+│
+├── order-service (180ms) — обробка
+│   ├── db-query (45ms) — SELECT * FROM orders
+│   └── inventory-service (120ms) — перевірка наявності
+│       └── db-query (35ms)
+│
+└── notification-service (15ms) — надсилання email</code></pre>
+            <p class="highlight-blue">Трейси критичні для мікросервісних архітектур</p>
+          </section>
+        </section>
+
+        <!-- SLA, SLO, SLI -->
+        <section>
+          <section>
+            <h2>SLA, SLO, SLI</h2>
+            <h3>Ієрархія показників якості</h3>
+            <p>Натисніть "вниз", щоб побачити детальні визначення</p>
+          </section>
+          <section>
+            <h3>SLI (Service Level Indicator)</h3>
+            <blockquote>
+              <strong>SLI</strong> — конкретна метрика, що вимірює якість обслуговування
+            </blockquote>
+            <ul>
+              <li>Доступність: <code>успішні запити / всі запити × 100%</code></li>
+              <li>Затримка: <code>% запитів, що виконані швидше порогового часу</code></li>
+              <li>Частота помилок: <code>помилкові запити / всі запити</code></li>
+            </ul>
+          </section>
+          <section>
+            <h3>SLO (Service Level Objective)</h3>
+            <blockquote>
+              <strong>SLO</strong> — цільове значення SLI
+            </blockquote>
+            <ul>
+              <li>Доступність ≥ 99.9% за місяць</li>
+              <li>p99 затримка ≤ 500 мс</li>
+              <li>Частота помилок ≤ 0.1%</li>
+            </ul>
+          </section>
+          <section>
+            <h3>SLA (Service Level Agreement)</h3>
+            <blockquote>
+              <strong>SLA</strong> — юридично обов'язкова угода між провайдером і клієнтом, базується на SLO. Передбачає компенсацію при порушенні.
+            </blockquote>
+          </section>
+          <section>
+            <h3>Error Budget (Бюджет помилок)</h3>
+            <pre><code>SLO: 99.9% доступність / місяць
+Error budget: 100% - 99.9% = 0.1% = 43.8 хвилин простою/місяць
+
+Використано: 25 хвилин → залишок: 18.8 хвилин</code></pre>
+            <p class="highlight-blue">Команда може витрачати error budget на ризиковані деплойменти</p>
+          </section>
+        </section>
+
+        <!-- CloudWatch -->
+        <section>
+          <section>
+            <h2>Amazon CloudWatch</h2>
+            <p>Центральна платформа моніторингу та спостережуваності в AWS</p>
+            <ul>
+              <li><strong>Metrics:</strong> автоматичний збір метрик від усіх AWS-сервісів</li>
+              <li><strong>Alarms:</strong> сповіщення при перевищенні порогів</li>
+              <li><strong>Dashboards:</strong> візуалізація метрик у реальному часі</li>
+              <li><strong>Logs:</strong> централізований збір журналів</li>
+              <li><strong>Container Insights:</strong> моніторинг EKS/ECS</li>
+            </ul>
+          </section>
+          <section>
+            <h3>CloudWatch Alarms</h3>
+            <pre><code>Alarm: WebServerCPUHigh
+  Metric:    CPUUtilization (EC2 Auto Scaling Group)
+  Threshold: > 80% протягом 3 з 3 хвилин
+  Action:    → SNS notification (email/SMS)
+             → Auto Scaling: додати 2 інстанси</code></pre>
+          </section>
+          <section>
+            <h3>CloudWatch Logs Insights</h3>
+            <p>SQL-подібна мова запитів для аналізу логів:</p>
+            <pre><code>fields @timestamp, @message, service
+| filter level = 'ERROR'
+| filter service = 'payment-service'
+| stats count() by error_type
+| sort count() desc</code></pre>
+          </section>
+        </section>
+
+        <!-- Інші хмарні сервіси -->
+        <section>
+          <h2>Хмарні сервіси моніторингу</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Провайдер</th>
+                <th>Платформа</th>
+                <th>Ключові можливості</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>AWS</strong></td>
+                <td>CloudWatch</td>
+                <td>Metrics, Logs, Alarms, X-Ray</td>
+              </tr>
+              <tr>
+                <td><strong>Azure</strong></td>
+                <td>Azure Monitor + Application Insights</td>
+                <td>Log Analytics (KQL), Smart Detection</td>
+              </tr>
+              <tr>
+                <td><strong>GCP</strong></td>
+                <td>Cloud Monitoring + Operations Suite</td>
+                <td>Trace, Profiler, Multi-cloud</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="highlight-blue">Для мультихмарних середовищ — Prometheus+Grafana або Datadog</p>
+        </section>
+
+        <!-- Сторонні інструменти -->
+        <section>
+          <h2>Сторонні інструменти моніторингу</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Інструмент</th>
+                <th>Тип</th>
+                <th>Особливості</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Prometheus + Grafana</strong></td>
+                <td>Open-source</td>
+                <td>Стандарт для K8s-моніторингу</td>
+              </tr>
+              <tr>
+                <td><strong>Datadog</strong></td>
+                <td>SaaS</td>
+                <td>Повна observability, AI-аналітика</td>
+              </tr>
+              <tr>
+                <td><strong>New Relic</strong></td>
+                <td>SaaS</td>
+                <td>APM + Infrastructure + Logs в одному</td>
+              </tr>
+              <tr>
+                <td><strong>Dynatrace</strong></td>
+                <td>SaaS</td>
+                <td>AI-автоматична побудова топології</td>
+              </tr>
+              <tr>
+                <td><strong>Elastic (ELK)</strong></td>
+                <td>Open-source + SaaS</td>
+                <td>Потужний пошук та аналіз логів</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Логування -->
+        <section>
+          <section>
+            <h2>Логування та централізований збір</h2>
+            <h3>Принципи ефективного логування</h3>
+            <p>Натисніть "вниз", щоб побачити детальні принципи</p>
+          </section>
+          <section>
+            <h3>Структуроване логування (JSON)</h3>
+            <pre><code>{
+  "timestamp": "2024-01-15T14:23:45.123Z",
+  "level": "INFO",
+  "service": "order-service",
+  "version": "1.4.2",
+  "trace_id": "abc123def456",
+  "span_id": "xyz789",
+  "user_id": "u-12345",
+  "action": "order_created",
+  "order_id": "ord-98765",
+  "amount": 149.99,
+  "currency": "UAH"
+}</code></pre>
+            <p class="highlight-blue">Переваги: легке парсинг, фільтрування, агрегування та запити</p>
+          </section>
+          <section>
+            <h3>Рівні логування</h3>
+            <ul>
+              <li><strong>DEBUG</strong>: детальна діагностична інформація (тільки при розробці)</li>
+              <li><strong>INFO</strong>: нормальні події (запуск, успішна дія)</li>
+              <li><strong>WARN</strong>: потенційно небезпечна ситуація, але система продовжує працювати</li>
+              <li><strong>ERROR</strong>: помилка, що перешкоджає виконанню конкретної операції</li>
+              <li><strong>CRITICAL/FATAL</strong>: критична помилка, що може спричинити зупинку сервісу</li>
+            </ul>
+          </section>
+          <section>
+            <h3>ELK-стек</h3>
+            <pre><code>Джерела логів               Збір/Обробка       Зберігання   Візуалізація
+───────────────             ─────────────       ──────────   ────────────
+EC2 Instance ──► Filebeat ──►               ──► Elasticsearch ──► Kibana
+Lambda       ──► Fluentd  ──► Logstash ─────►   (індекс)         (дашборд,
+ECS          ──► Logstash ──►               ──►                   Alerts)
+K8s Pods     ──► Fluent Bit►               ──►</code></pre>
+            <p><strong>OpenSearch</strong> — AWS-форк Elasticsearch</p>
+          </section>
+          <section>
+            <h3>Практики керування логами</h3>
+            <h4>Retention Policy (Термін зберігання):</h4>
+            <ul>
+              <li>DEBUG-логи: 7 днів</li>
+              <li>INFO-логи: 30 днів</li>
+              <li>ERROR-логи: 90 днів</li>
+              <li>Аудит-логи (безпека): 1–7 років (GDPR, SOX)</li>
+            </ul>
+            <h4>Log Sanitization (Приховування PII):</h4>
+            <pre><code># Неправильно — логування картки
+logger.info(f"Processing card {card_number}")  # '4532-1234-5678-9012'
+
+# Правильно — маскування
+logger.info(f"Processing card ****{card_number[-4:]}")  # '****9012'</code></pre>
+          </section>
+        </section>
+
+        <!-- Розподілене трасування -->
+        <section>
+          <section>
+            <h2>Розподілене трасування</h2>
+            <blockquote>
+              У мікросервісній архітектурі один HTTP-запит може пройти через 10–20 сервісів. <strong>Розподілене трасування</strong> відстежує весь шлях запиту та вимірює час виконання на кожному кроці.
+            </blockquote>
+            <h4>Terminology:</h4>
+            <ul>
+              <li><strong>Trace</strong> — весь шлях одного запиту від початку до кінця</li>
+              <li><strong>Span</strong> — одна операція в межах trace</li>
+              <li><strong>Trace ID</strong> — унікальний ID, що передається між сервісами</li>
+            </ul>
+          </section>
+          <section>
+            <h3>AWS X-Ray</h3>
+            <pre><code>Service Map (X-Ray Console):
+
+[Browser] ──► [API Gateway] ──► [Lambda: orders] ──► [DynamoDB]
+                                        │
+                                        └──► [Lambda: inventory] ──► [SQS]
+                                        │
+                                        └──► [SES: email]</code></pre>
+            <p>Для кожного вузла X-Ray показує:</p>
+            <ul>
+              <li>Кількість запитів/сек</li>
+              <li>Затримку (avg, p99)</li>
+              <li>% помилок / throttled / faults</li>
+            </ul>
+          </section>
+          <section>
+            <h3>X-Ray Segment та Subsegment</h3>
+            <pre><code>from aws_xray_sdk.core import xray_recorder
+
+@xray_recorder.capture('process_order')
+def process_order(order_id):
+    with xray_recorder.in_subsegment('validate'):
+        validate_order(order_id)
+    with xray_recorder.in_subsegment('db_write'):
+        save_to_db(order_id)</code></pre>
+          </section>
+          <section>
+            <h3>OpenTelemetry — відкритий стандарт</h3>
+            <p><strong>OpenTelemetry (OTel)</strong> — відкритий стандарт та набір SDK для збору метрик, логів і трейсів, що підтримується CNCF.</p>
+            <p class="highlight-blue">Переваги OTel:</p>
+            <ul>
+              <li>Vendor-neutral: один код → будь-який бекенд</li>
+              <li>Підтримується всіма хмарними провайдерами</li>
+              <li>Стає стандартом де-факто для observability в K8s</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Відмовостійкість -->
+        <section>
+          <section>
+            <h2>Відмовостійкість</h2>
+            <h3>Design for Failure</h3>
+            <blockquote>
+              Принцип <strong>«Everything can fail»</strong> стверджує: будь-який компонент системи врешті-решт відмовить. Задача архітектора — спроєктувати систему так, щоб відмова одного компонента не призводила до відмови всієї системи.
+            </blockquote>
+            <p class="highlight-blue">Chaos Engineering — навмисне введення збоїв для перевірки стійкості</p>
+          </section>
+          <section>
+            <h3>Circuit Breaker (Автоматичний вимикач)</h3>
+            <p>Патерн, що запобігає каскадним відмовам:</p>
+            <pre><code>Стан: CLOSED (нормальний)
+  → сервіс B недоступний: помилки
+  → поріг помилок перевищено
+
+Стан: OPEN (відкритий)
+  → запити до B відхиляються миттєво (fallback)
+  → чекаємо час відновлення (30 сек)
+
+Стан: HALF-OPEN
+  → пробний запит до B
+  → успіх → CLOSED
+  → невдача → OPEN знову</code></pre>
+          </section>
+          <section>
+            <h3>Retry з Exponential Backoff та Jitter</h3>
+            <pre><code>import random
+import time
+
+def call_with_retry(func, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            return func()
+        except TransientError as e:
+            if attempt == max_retries - 1:
+                raise
+            # Exponential backoff + random jitter
+            wait = (2 ** attempt) + random.uniform(0, 1)  # 1s, 2s, 4s + jitter
+            time.sleep(wait)</code></pre>
+            <p class="highlight-blue">Jitter запобігає "thundering herd" проблемі</p>
+          </section>
+          <section>
+            <h3>Інші патерни відмовостійкості</h3>
+            <ul>
+              <li><strong>Bulkhead</strong> — ізоляція ресурсів між незалежними частинами системи</li>
+              <li><strong>Timeout</strong> — завжди встановлюйте таймаут для зовнішніх викликів</li>
+              <li><strong>Cache-Aside</strong> — читання з кешу перед зверненням до БД</li>
+              <li><strong>Graceful Degradation</strong> — спрощений варіант відповіді при відмові сервісу</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Multi-AZ та Multi-Region</h3>
+            <h4>Multi-AZ (всередині регіону):</h4>
+            <ul>
+              <li>Захист від відмови одного датацентру</li>
+              <li>Автоматичне переключення: RDS Multi-AZ, ALB між AZ</li>
+              <li>Синхронна реплікація даних</li>
+            </ul>
+            <h4>Multi-Region (між регіонами):</h4>
+            <ul>
+              <li>Захист від катастрофи цілого регіону</li>
+              <li>Складніша реплікація (асинхронна або активно-активна)</li>
+              <li>Набагато вища вартість та складність</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Runbook та Incident Response</h3>
+            <blockquote>
+              <strong>Runbook</strong> — задокументована покрокова інструкція для реагування на конкретний тип інциденту. Критично важлива для ефективного відновлення в 3 годині ночі.
+            </blockquote>
+            <pre><code>Incident: High Error Rate on Payment Service (> 5%)
+Severity: P1
+
+1. Перевірити CloudWatch Dashboard: payment-service-prod
+2. Перевірити останні деплойменти (CodeDeploy Console, останні 2 год)
+3. Перевірити залежності: Stripe API Status
+4. Перевірити логи: CloudWatch Insights → payment-service → рівень ERROR
+5. Якщо деплоймент — виконати rollback
+6. Якщо Stripe → увімкнути резервний провайдер через feature flag
+7. Повідомити stakeholders через Slack #incidents
+8. Провести Post-Mortem протягом 48 годин</code></pre>
+          </section>
+        </section>
+
+        <!-- Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.8em">
+            <li><strong>Observability</strong> — ширша концепція, ніж моніторинг. Три стовпи (метрики, логи, трейси) разом дають повну картину стану системи</li>
+            <li><strong>SLI/SLO/SLA</strong> та Error Budget — фундамент SRE-практик. Помилковий бюджет балансує між надійністю та швидкістю розробки</li>
+            <li><strong>Хмарні платформи моніторингу</strong> надають готові інтеграції з усіма сервісами. Для мультихмарних — Prometheus+Grafana або Datadog</li>
+            <li><strong>Розподілене трасування</strong> є незамінним для мікросервісних систем, де єдиний запит охоплює десятки сервісів</li>
+            <li><strong>Патерни відмовостійкості</strong> та Multi-AZ розгортання — фундамент production-систем. Design for Failure та Chaos Engineering гарантують стійкість</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t",
+        transition: "slide",
+      });
+    </script>
+  </body>
+</html>
