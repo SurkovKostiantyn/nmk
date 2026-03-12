@@ -168,13 +168,14 @@ nc -zv <PUBLIC_IP> 80   # має бути closed, бо HTTP-сервер не з
 
 Якщо немає можливості зареєструватись у хмарі — можна симулювати AWS VPC локально.
 
-### Встановлення
+### Встановлення та Налаштування
 
 ```bash
 # Потрібен Docker Desktop (https://www.docker.com/products/docker-desktop)
-pip install localstack awscli-local
+# Встановлюємо пакети LocalStack, awscli та обгортку awslocal (з прапорцем --user для уникнення помилок прав доступу)
+pip install --user awscli localstack awscli-local
 
-# Запуск LocalStack
+# Запуск LocalStack у Docker
 docker run --rm -d \
   -p 4566:4566 \
   -e SERVICES=ec2,route53 \
@@ -182,31 +183,127 @@ docker run --rm -d \
   localstack/localstack
 ```
 
-### Робота з симульованим VPC
+> **Важливо для Windows (PowerShell):** Якщо після встановлення команди `aws` або `awslocal` не розпізнаються, переконайтеся, що шлях до скриптів Python додано у змінні середовища `PATH`.
+>
+> Щоб додати шлях у `PATH`, виконайте цю команду (але зверніть увагу: замініть `teach` на ім'я вашого користувача Windows, а `Python311` на вашу версію Python, якщо вона відрізняється):
+>
+> ```powershell
+> [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Users\teach\AppData\Roaming\Python\Python311\Scripts", "User"); $env:Path += ";C:\Users\teach\AppData\Roaming\Python\Python311\Scripts"
+> ```
+
+Далі необхідно налаштувати фіктивні облікові дані, оскільки AWS CLI вимагає їх наявності:
 
 ```bash
-# Встановити endpoint для LocalStack
-export AWS_ENDPOINT_URL=http://localhost:4566
-export AWS_DEFAULT_REGION=us-east-1
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
+aws configure
+# Введіть наступні значення, коли інструмент попросить:
+# AWS Access Key ID: test
+# AWS Secret Access Key: test
+# Default region name: us-east-1
+# Default output format: json
+```
 
+### Робота з симульованим VPC
+
+Використовуйте команду `awslocal` замість `aws`. Вона автоматично перенаправлятиме запити до локального LocalStack-контейнера.
+
+```bash
 # Створити VPC
-aws ec2 create-vpc --cidr-block 10.0.0.0/16
+awslocal ec2 create-vpc --cidr-block 10.0.0.0/16
 
-# Створити підмережу
-aws ec2 create-subnet --vpc-id <VPC_ID> --cidr-block 10.0.1.0/24
+# Створити підмережу (змініть <VPC_ID> на отриманий вище)
+awslocal ec2 create-subnet --vpc-id <VPC_ID> --cidr-block 10.0.1.0/24
 
 # Створити Internet Gateway
-aws ec2 create-internet-gateway
+awslocal ec2 create-internet-gateway
 
-# Прикріпити IGW до VPC
-aws ec2 attach-internet-gateway --vpc-id <VPC_ID> --internet-gateway-id <IGW_ID>
+# Прикріпити IGW до VPC (змініть на свої <VPC_ID> та <IGW_ID>)
+awslocal ec2 attach-internet-gateway --vpc-id <VPC_ID> --internet-gateway-id <IGW_ID>
 
-# Переглянути VPC
-aws ec2 describe-vpcs
-aws ec2 describe-subnets
+# Переглянути стан VPC та підмереж
+awslocal ec2 describe-vpcs
+awslocal ec2 describe-subnets
 ```
+
+### Практичне значення локальної симуляції
+
+### Як це використовується на практиці у розробці?
+
+Створення подібної віртуальної мережі локально має величезне значення для сучасних інженерів (DevOps та Backend):
+
+1. **Безпечне тестування мікросервісів:** Ви можете запустити свої сервіси так, як вони б працювали в хмарі. Наприклад, розмістити базу даних у "приватній підмережі" (без доступу до інтернету), а веб-сервер — у "публічній". LocalStack дозволить перевірити, чи дійсно веб-сервер має до неї доступ, а комп'ютери ззовні — ні.
+2. **Інтеграційні тести (CI/CD):** В автоматичних конвеєрах (наприклад, GitHub Actions чи GitLab CI) розробники часто піднімають тимчасовий контейнер LocalStack, створюють у ньому VPC, бази S3, черги SQS, запускають тести свого коду, а потім знищують контейнер. Це абсолютно безкоштовно і працює миттєво.
+3. **Навчання роботі з інфраструктурою:** Для вивчення інструментів оркестрації (наприклад, Terraform, Ansible чи AWS CDK) не обов'язково купувати хмарний акаунт і боятися зламати інфраструктуру або отримати величезний рахунок за ресурси. Більшість хмарних архітектур наразі можуть бути повністю написані в коді та вживу протестовані саме через такий локальний інструмент.
+
+#### Демонстрація: Запуск EC2-інстансу у нашій створеній підмережі
+
+Для перевірки роботи нашої мережі, ми можемо створити віртуальний сервер (EC2) та помістити його в конкретну створену нами підмережу:
+
+````bash
+# 1. Знаходимо ID нашої підмережі (SubnetId) з попереднього виводу (наприклад: subnet-fdb77180834222214)
+
+# 2. Запускаємо віртуальну машину (t2.micro) всередині нашої підмережі
+awslocal ec2 run-instances --image-id ami-000001 --count 1 --instance-type t2.micro --subnet-id <ВАШ_SUBNET_ID>
+
+Очікувана відповідь від LocalStack (фрагмент):
+```json
+...
+"InstanceId": "i-a4064262069363936",
+"ImageId": "ami-000001",
+"State": {
+    "Code": 0,
+    "Name": "pending"
+},
+...
+"SubnetId": "subnet-fdb77180834222214",
+"VpcId": "vpc-523f98001c2638213",
+"PrivateIpAddress": "10.0.1.4"
+...
+````
+
+**Що означає ця відповідь:**
+
+- **`InstanceId`** — ідентифікатор нашого нового віртуального сервера.
+- **`State (pending)`** — статус сервера: він щойно почав запускатися і буде доступний за кілька секунд.
+- **`VpcId` та `SubnetId`** — LocalStack розмістив сервер рівно у тій мережі та підмережі, яку ми створили раніше.
+- **`PrivateIpAddress` (`10.0.1.4`)** — локальний DHCP-сервер у нашій VPC автоматично видав віртуальній машині вільну приватну IP-адресу з діапазону 10.0.1.0/24.
+
+# 3. Перевіряємо, що сервер запустився і отримав IP-адресу з нашого діапазону (10.0.1.X)
+
+awslocal ec2 describe-instances
+
+````
+
+### Приклад: Налаштування доступу до Інтернету для нашої підмережі (Public Subnet)
+
+У попередніх кроках ми створили `VPC`, Підмережу (`Subnet`) та Інтернет-шлюз (`Internet Gateway`). Але зараз наша підмережа "приватна" — з неї немає виходу в Інтернет.
+
+Щоб зробити підмережу "публічною" (наприклад, щоб наш створений EC2-сервер міг завантажувати оновлення), нам потрібно налаштувати **Таблицю маршрутизації (Route Table)**. Це типова задача для хмарного інженера:
+
+```bash
+# 1. Створюємо нову таблицю маршрутизації для нашої VPC
+awslocal ec2 create-route-table --vpc-id <ВАШ_VPC_ID>
+
+# З відповіді копіюємо RouteTableId (наприклад: rtb-0123456789abcdef0)
+
+# 2. Додаємо маршрут, який направляє весь невідомий трафік (0.0.0.0/0) до Інтернет-шлюзу (який ми створили раніше)
+awslocal ec2 create-route \
+    --route-table-id <ВАШ_ROUTE_TABLE_ID> \
+    --destination-cidr-block 0.0.0.0/0 \
+    --gateway-id <ВАШ_IGW_ID>
+
+# Зверніть увагу: для Windows (PowerShell) запишіть команду вище в один рядок:
+# awslocal ec2 create-route --route-table-id <ВАШ_ROUTE_TABLE_ID> --destination-cidr-block 0.0.0.0/0 --gateway-id <ВАШ_IGW_ID>
+
+# 3. Прив'язуємо цю таблицю маршрутизації до нашої підмережі
+awslocal ec2 associate-route-table \
+    --route-table-id <ВАШ_ROUTE_TABLE_ID> \
+    --subnet-id <ВАШ_SUBNET_ID>
+
+# Для Windows (PowerShell):
+# awslocal ec2 associate-route-table --route-table-id <ВАШ_ROUTE_TABLE_ID> --subnet-id <ВАШ_SUBNET_ID>
+````
+
+Цей конкретний приклад показує, як за допомогою декількох команд ми будуємо складну мережеву топологію: ми щойно перетворили ізольовану частину мережі на публічну зону (DMZ), куди тепер можна безпечно виставляти веб-сервери, залишаючи бази даних в інших (приватних) підмережах цієї ж VPC.
 
 ---
 
@@ -230,3 +327,7 @@ aws ec2 describe-subnets
 4. Скриншот успішного ping між vm-public та vm-private
 5. Відповіді на контрольні запитання у файлі `lab03.md`
 6. Посилання на GitHub-репозиторій або файл з матеріалами — надіслати в Classroom
+
+```
+
+```
