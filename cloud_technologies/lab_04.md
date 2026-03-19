@@ -310,12 +310,49 @@ sudo apt update && sudo apt install -y nginx
 sudo service nginx start   # У Codespaces використовуємо service замість systemctl
 ```
 
+**Приклад роботи в терміналі: перевірка статусу Nginx:**
+
+```bash
+@SurkovKostiantyn ➜ /workspaces/test (main) $ sudo service nginx status && sudo ss -ltnp | grep nginx || true
+ * nginx is running
+LISTEN 0      511          0.0.0.0:80         0.0.0.0:*    users:(("nginx",pid=10888,fd=5),("nginx",pid=10887,fd=5),("nginx",pid=10886,fd=5))
+LISTEN 0      511             [::]:80            [::]:*    users:(("nginx",pid=10888,fd=6),("nginx",pid=10887,fd=6),("nginx",pid=10886,fd=6))
+```
+
 **Відкриття порту:**
 
 1. У VS Code перейдіть на вкладку **Ports** (поруч із Terminal).
 2. Ви побачите, що порт 80 автоматично з'явився там.
 3. Клацніть правою кнопкою на **Visibility** і змініть з **Private** на **Public** (це аналог правила Ingress у хмарі).
 4. Натисніть на іконку глобуса (**Open in Browser**), щоб побачити сторінку Nginx.
+
+Якщо порт не відкрився автоматично, то виконайте наступні команди:
+
+```bash
+sudo ss -ltnp | grep nginx
+```
+
+Додайте порт вручну:
+
+1. Перейдіть на вкладку Ports.
+2. Натисніть кнопку Add Port (або "+").
+3. Введіть 80 і натисніть Enter.
+   Це змусить VS Code перевірити цей порт.
+
+**Приклад роботи в терміналі: перевірка доступності порту:**
+
+```bash
+@SurkovKostiantyn ➜ /workspaces/test (main) $ curl -I http://127.0.0.1
+HTTP/1.1 200 OK
+Server: nginx/1.24.0 (Ubuntu)
+Date: Thu, 19 Mar 2026 07:18:49 GMT
+Content-Type: text/html
+Content-Length: 615
+Last-Modified: Thu, 19 Mar 2026 07:13:17 GMT
+Connection: keep-alive
+ETag: "69bba20d-267"
+Accept-Ranges: bytes
+```
 
 **Створіть свою сторінку:**
 
