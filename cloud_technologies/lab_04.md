@@ -325,7 +325,49 @@ LOGO=ubuntu-logo
 
    _Примітка: Замініть `<NAME>` на унікальну назву вашого середовища (наприклад, `scaling-computing-machine-xyz`)._
 
----
+**Приклад роботи в терміналі: підключення до Codespace:**
+
+```bash
+PS C:\test> gh --version
+gh version 2.86.0 (2026-01-21)
+https://github.com/cli/cli/releases/tag/v2.86.0
+PS C:\test> gh auth login
+? Where do you use GitHub? GitHub.com
+? What is your preferred protocol for Git operations on this host? SSH
+? Upload your SSH public key to your GitHub account? C:\Users\teach\.ssh\id_rsa_codespac
+? Title for your SSH key: (GitHub CLI)
+
+? Title for your SSH key: GitHub CLI
+? How would you like to authenticate GitHub CLI? Login with a web browser
+
+! First copy your one-time code: \*\*\*\*-\*\*\*\*
+Press Enter to open https://github.com/login/device in your browser...
+✓ Authentication complete.
+- gh config set -h github.com git_protocol ssh
+✓ Configured git protocol
+✓ Uploaded the SSH key to your GitHub account: C:\Users\teach\.ssh\id_rsa_codespaces.pub
+✓ Logged in as SurkovKostiantyn
+
+PS C:\test> gh codespace list
+NAME                        DISPLAY NAME      REPOSITORY            BRANCH  STATE      CREATED AT
+reimagined-guide-vxgrpq...  reimagined guide  SurkovKostiantyn/...  main    Available  about 8 minutes ago
+PS C:\test> gh codespace ssh
+? Choose codespace: SurkovKostiantyn/test [main]: reimagined guide
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-1044-azure x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+@SurkovKostiantyn ➜ /workspaces/test (main) $
+```
 
 #### Крок 4. Встановлення Nginx та керування портами
 
