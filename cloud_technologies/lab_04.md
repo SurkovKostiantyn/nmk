@@ -212,7 +212,7 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE\.ssh" -Force
 ssh-keygen -t rsa -b 4096 -C "codespaces-key" -f "$env:USERPROFILE\.ssh\id_rsa_codespaces"
 ```
 
-Приклад роботи в терміналі:
+**Приклад роботи в терміналі:**
 
 ```powershell
 PS C:\nmk> New-Item -ItemType Directory -Path "$env:USERPROFILE\.ssh" -Force
@@ -270,6 +270,33 @@ free -h
 
 # Версія ОС (зазвичай це Ubuntu)
 cat /etc/os-release
+```
+
+**Приклад роботи в терміналі:**
+
+```bash
+@SurkovKostiantyn ➜ /workspaces/test (main) $ nproc
+2
+@SurkovKostiantyn ➜ /workspaces/test (main) $ lscpu | grep "Model name"
+Model name:                           Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
+@SurkovKostiantyn ➜ /workspaces/test (main) $ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       1.7Gi       248Mi        62Mi       6.2Gi       6.1Gi
+Swap:             0B          0B          0B
+@SurkovKostiantyn ➜ /workspaces/test (main) $ cat /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.3 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
 ```
 
 #### Крок 4. Встановлення Nginx та керування портами
