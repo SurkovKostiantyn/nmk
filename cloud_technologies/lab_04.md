@@ -29,6 +29,7 @@
 ## Хід виконання роботи
 
 Виберіть **один** із варіантів виконання:
+
 1. **Варіант 1: Традиційні хмарні VM (Oracle Cloud / AWS)** — робота з повноцінною віртуальною машиною, SSH та зовнішніми IP.
 2. **Варіант 2: GitHub Codespaces (Container-based)** — робота у хмарному контейнері з автоматичним форвардингом портів.
 
@@ -192,6 +193,7 @@ curl -s ifconfig.me
 **Мета:** Набути навички управління хмарним середовищем, налаштування веб-сервера Nginx та роботи з портами в умовах відсутності прямої публічної IP-адреси.
 
 #### Крок 1. Створення SSH-ключової пари
+
 Цей крок залишається ідентичним до оригіналу. Хоча Codespaces має вбудовану авторизацію, генерація ключів — це базова навичка для роботи з будь-якою хмарою.
 
 **Linux / macOS / Codespaces (Bash):**
@@ -210,13 +212,50 @@ New-Item -ItemType Directory -Path "$env:USERPROFILE\.ssh" -Force
 ssh-keygen -t rsa -b 4096 -C "codespaces-key" -f "$env:USERPROFILE\.ssh\id_rsa_codespaces"
 ```
 
+Приклад роботи в терміналі:
+
+```powershell
+PS C:\nmk> New-Item -ItemType Directory -Path "$env:USERPROFILE\.ssh" -Force
+
+
+    Directory: C:\Users\teach
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        19.03.2026      9:01                .ssh
+
+PS C:\nmk> ssh-keygen -t rsa -b 4096 -C "codespaces-key" -f "$env:USERPROFILE\.ssh\id_rsa_codespaces"
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in C:\Users\teach\.ssh\id_rsa_codespaces
+Your public key has been saved in C:\Users\teach\.ssh\id_rsa_codespaces.pub
+The key fingerprint is:
+SHA256:eJLV4yT/zaijQfbwlh******************gkpKRn9vOEsU codespaces-key
+The key's randomart image is:
++---[RSA 4096]----+
+|    .+..===.     |
+|    + .o o+B .   |
+|     **********  |
+|      ********** |
+|      ********** |
+|      ********** |
+|       **********|
+|      ********** |
+|       .....     |
++----[SHA256]-----+
+```
+
 #### Крок 2. Запуск хмарного середовища (Заміна Oracle/AWS)
+
 1. Створіть новий репозиторій на GitHub (наприклад, `cloud-lab-04`) або використайте існуючий.
 2. Натисніть зелену кнопку **<> Code**.
 3. Перейдіть на вкладку **Codespaces** і натисніть **Create codespace on main**.
 4. Зачекайте 10-20 секунд. Перед вами відкриється VS Code прямо у браузері. Це і є ваша "віртуальна машина".
 
 #### Крок 3. Дослідження системи та "підключення"
+
 У нижній частині екрана відкрийте вкладку **Terminal**. Ви вже авторизовані як користувач `vscode`.
 
 Перевірте характеристики вашої "хмари":
@@ -234,6 +273,7 @@ cat /etc/os-release
 ```
 
 #### Крок 4. Встановлення Nginx та керування портами
+
 У традиційних хмарах ми налаштовуємо Security Groups. У Codespaces ми використовуємо Port Forwarding.
 
 **Встановіть Nginx:**
@@ -244,6 +284,7 @@ sudo systemctl start nginx
 ```
 
 **Відкриття порту:**
+
 1. У VS Code перейдіть на вкладку **Ports** (поруч із Terminal).
 2. Ви побачите, що порт 80 автоматично з'явився там.
 3. Клацніть правою кнопкою на **Visibility** і змініть з **Private** на **Public** (це аналог правила Ingress у хмарі).
@@ -256,6 +297,7 @@ echo "<h1>Lab 04 — Codespaces VM by $(whoami)</h1>" | sudo tee /var/www/html/i
 ```
 
 #### Крок 5. Моніторинг ресурсів
+
 Оскільки в Codespaces немає графічної панелі CloudWatch, ми використовуємо професійні термінальні інструменти.
 
 **Встановіть монітор:**
@@ -273,9 +315,11 @@ yes > /dev/null &
 # Через 20 секунд вимкніть
 killall yes
 ```
+
 Спостерігайте в `htop`, як завантажується ядро процесора.
 
 #### Крок 6. Зупинка та зміна адреси
+
 У Codespaces поняття "IP" замінено на унікальний URL (наприклад, `legendary-space-trout-q7rv...github.dev`).
 
 1. Перейдіть на [github.com/codespaces](https://github.com/codespaces).
@@ -284,11 +328,11 @@ killall yes
 4. Перевірте вкладку **Ports**. URL для доступу до Nginx залишиться тим самим або зміниться? (Зазвичай у Codespaces URL прив'язаний до назви проєкту, що є зручнішим за динамічні IP).
 
 #### Крок 7. Концепція Auto Scaling (Теорія)
+
 Оскільки Codespaces — це одиничний контейнер, горизонтальне масштабування тут не реалізується наочно. Але ви можете порівняти:
 
 - **Scale Up (Вертикальне):** Зміна типу машини (наприклад, з 2-ядерної на 4-ядерну в налаштуваннях Codespace).
 - **Scale Out (Горизонтальне):** Створення декількох однакових Codespaces на базі одного репозиторію.
-
 
 ---
 
