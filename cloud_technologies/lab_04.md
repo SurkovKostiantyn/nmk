@@ -51,6 +51,10 @@ cat ~/.ssh/lab04_key.pub
 **Windows (PowerShell):**
 
 ```powershell
+# Створити папку .ssh, якщо вона не існує
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.ssh" -Force
+
+# Генерація ключової пари
 ssh-keygen -t rsa -b 4096 -C "lab04-cloud-key" -f "$env:USERPROFILE\.ssh\lab04_key"
 Get-Content "$env:USERPROFILE\.ssh\lab04_key.pub"
 ```
@@ -190,10 +194,20 @@ curl -s ifconfig.me
 #### Крок 1. Створення SSH-ключової пари
 Цей крок залишається ідентичним до оригіналу. Хоча Codespaces має вбудовану авторизацію, генерація ключів — це базова навичка для роботи з будь-якою хмарою.
 
-**Команда (у вашому локальному терміналі):**
+**Linux / macOS / Codespaces (Bash):**
 
 ```bash
 ssh-keygen -t rsa -b 4096 -C "codespaces-key" -f ~/.ssh/id_rsa_codespaces
+```
+
+**Windows (PowerShell):**
+
+```powershell
+# Створити папку .ssh, якщо вона не існує
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.ssh" -Force
+
+# Генерація ключової пари
+ssh-keygen -t rsa -b 4096 -C "codespaces-key" -f "$env:USERPROFILE\.ssh\id_rsa_codespaces"
 ```
 
 #### Крок 2. Запуск хмарного середовища (Заміна Oracle/AWS)
