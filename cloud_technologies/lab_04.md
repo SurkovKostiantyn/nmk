@@ -371,6 +371,21 @@ sudo apt install -y htop
 htop
 ```
 
+**Приклад роботи в терміналі: моніторинг ресурсів:**
+
+```bash
+@SurkovKostiantyn ➜ /workspaces/test (main) $ sudo apt install -y htop
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+htop is already the newest version (3.3.0-4build1).
+0 upgraded, 0 newly installed, 0 to remove and 145 not upgraded.
+```
+
+Після запуску команди htop, перед вами відкриється вікно з моніторингом ресурсів:
+
+![screenshot](./media/lab4_screen1.png)
+
 **Симуляція навантаження:**
 Відкрийте другий термінал і запустіть:
 
