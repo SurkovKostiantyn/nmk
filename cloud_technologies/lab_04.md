@@ -299,6 +299,34 @@ UBUNTU_CODENAME=noble
 LOGO=ubuntu-logo
 ```
 
+**Додатково: Підключення через локальний термінал (SSH)**
+
+Якщо ви хочете працювати з Codespace не в браузері, а у своєму звичному терміналі (PowerShell, CMD або Linux), виконайте наступне:
+
+1. **Встановіть GitHub CLI (`gh`)**, якщо він ще не встановлений: [cli.github.com](https://cli.github.com/).
+2. **Авторизуйтесь у GitHub** через термінал:
+   ```powershell
+   gh auth login
+   ```
+   (Оберіть `SSH` як протокол і завантажте свій публічний ключ `id_rsa_codespaces.pub`, коли запитає).
+3. **Налаштуйте SSH-конфігурацію** (виконується один раз):
+   ```powershell
+   gh codespace ssh --setup_ssh
+   ```
+4. **Підключіться до вашої машини**:
+
+   ```powershell
+   # Запустіть цю команду, щоб побачити список ваших активних Codespaces
+   gh codespace list
+
+   # Підключіться до обраного
+   gh codespace ssh -c <NAME>
+   ```
+
+   _Примітка: Замініть `<NAME>` на унікальну назву вашого середовища (наприклад, `scaling-computing-machine-xyz`)._
+
+---
+
 #### Крок 4. Встановлення Nginx та керування портами
 
 У традиційних хмарах ми налаштовуємо Security Groups. У Codespaces ми використовуємо Port Forwarding.
