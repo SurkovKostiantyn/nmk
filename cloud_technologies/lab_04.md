@@ -307,7 +307,7 @@ LOGO=ubuntu-logo
 
 ```bash
 sudo apt update && sudo apt install -y nginx
-sudo systemctl start nginx
+sudo service nginx start   # У Codespaces використовуємо service замість systemctl
 ```
 
 **Відкриття порту:**
