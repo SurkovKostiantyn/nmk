@@ -313,15 +313,27 @@ mc cp image.jpg myminio/lab05-bucket/
 mc ls myminio/lab05-bucket/
 ```
 
+Також файли з'являться в інтерфейсі http://127.0.0.1:9001/browser/lab05-bucket
+
+![](./media/lab5_screen1.png)
+
 ### Крок 3. Налаштування прав доступу (MinIO)
 
 ```powershell
 # Зробити файл public.txt публічним
 mc anonymous set download myminio/lab05-bucket/public.txt
 
+![](./media/lab5_screen2.png)
+
 # Перевірте доступ (без авторизації):
 Invoke-RestMethod -Uri "http://localhost:9000/lab05-bucket/public.txt"
 ```
+
+![](./media/lab5_screen3.png)
+
+Якщо спробувати отримати доступ до приватного файлу, то маємо отримати помилку:
+
+![](./media/lab5_screen4.png)
 
 Відкрийте в браузері **MinIO Console** (`http://localhost:9001`), авторизуйтесь (`admin` / `password`) та перевірте наявність файлів.
 
@@ -329,19 +341,27 @@ Invoke-RestMethod -Uri "http://localhost:9000/lab05-bucket/public.txt"
 
 ```powershell
 # Завантажити нові версії
-"Версія 2 — оновлений вміст" | Out-File -Encoding utf8 public.txt
+"верс. 2 — оновлений файл" | Out-File -Encoding utf8 public.txt
 mc cp public.txt myminio/lab05-bucket/
 
-"Версія 3 — ще одне оновлення" | Out-File -Encoding utf8 public.txt
+"верс. 3 — ще одне оновлення" | Out-File -Encoding utf8 public.txt
 mc cp public.txt myminio/lab05-bucket/
 
 # Переглянути всі версії об'єкта
 mc ls --versions myminio/lab05-bucket/public.txt
 
+![](./media/lab5_screen5.png)
+
 # Відновлення конкретної версії: скопіюйте VERSION_ID з попередньої команди
 mc cp --version-id <VERSION_ID> myminio/lab05-bucket/public.txt restored.txt
 Get-Content restored.txt
 ```
+
+![](./media/lab5_screen6.png)
+
+Також в папці з'явиться файл restored.txt
+
+![](./media/lab5_screen7.png)
 
 ### Крок 5. Налаштування Lifecycle Policy (MinIO)
 
