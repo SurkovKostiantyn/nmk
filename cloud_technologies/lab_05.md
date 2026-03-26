@@ -28,6 +28,8 @@
 
 ## Хід виконання роботи
 
+## Варіант 1.
+
 ### Крок 1. Створення об'єктного кошика
 
 #### Oracle Cloud Object Storage (рекомендовано)
@@ -234,6 +236,160 @@ echo "/dev/sdb /mnt/data ext4 defaults 0 2" | sudo tee -a /etc/fstab
 | Object Storage (Cold)     | AWS S3 Glacier | ~$0.004            | —              |
 | Block Storage (SSD)       | AWS EBS gp3    | ~$0.08             | 30 GB / 12 міс |
 | Block Storage (SSD)       | Oracle OCI     | ~$0.0255           | 200 GB завжди  |
+
+## Варіант 2.
+
+## Варіант 2. Локальна симуляція (MinIO та віртуальний диск VHD)
+
+Цей варіант підходить для тих, хто не може або не хоче використовувати хмарні сервіси. Усі команди розраховані на виконання у **Windows 10 + PowerShell**.
+
+### Крок 1. Створення об'єктного кошика (MinIO)
+
+MinIO — це високопродуктивне S3-сумісне об'єктне сховище.
+
+**Запуск MinIO через Docker (у PowerShell):**
+
+```powershell
+# Запустіть MinIO сервер локально
+docker run -d -p 9000:9000 -p 9001:9001 `
+  --name minio `
+  -e "MINIO_ROOT_USER=admin" `
+  -e "MINIO_ROOT_PASSWORD=password" `
+  minio/minio server /data --console-address ":9001"
+  
+# Створіть теку для клієнта MinIO (mc)
+New-Item -ItemType Directory -Force -Path $HOME\minio-binaries
+# Завантажте mc.exe для Windows
+Invoke-WebRequest -Uri "https://dl.min.io/client/mc/release/windows-amd64/mc.exe" -OutFile "$HOME\minio-binaries\mc.exe"
+
+# Додайте теку до PATH (щоб викликати mc напряму)
+$env:PATH += ";$HOME\minio-binaries\"
+
+# Налаштуйте alias (підключення) до локального сервера
+mc alias set myminio http://localhost:9000 admin password
+```
+
+**Створення кошика:**
+
+```powershell
+# Створення bucket з назвою lab05-bucket
+mc mb myminio/lab05-bucket
+
+# Увімкнення версіонування (для кроку 4)
+mc version enable myminio/lab05-bucket
+```
+
+### Крок 2. Завантаження файлів (MinIO)
+
+Підготуйте ті ж самі тестові файли.
+
+```powershell
+# Створення тестових файлів
+"Публічний файл — доступний всім" | Out-File -Encoding utf8 public.txt
+"Приватний файл — лише для власника" | Out-File -Encoding utf8 private.txt
+"<html><body><h1>Cloud Storage Lab</h1></body></html>" | Out-File -Encoding utf8 index.html
+
+# Завантажте будь-яке зображення
+Invoke-WebRequest -Uri "https://picsum.photos/200/200" -OutFile "image.jpg"
+
+# Завантаження файлів до кошика
+mc cp public.txt myminio/lab05-bucket/
+mc cp private.txt myminio/lab05-bucket/
+mc cp index.html myminio/lab05-bucket/
+mc cp image.jpg myminio/lab05-bucket/
+
+# Перегляд списку файлів
+mc ls myminio/lab05-bucket/
+```
+
+### Крок 3. Налаштування прав доступу (MinIO)
+
+```powershell
+# Зробити файл public.txt публічним
+mc anonymous set download myminio/lab05-bucket/public.txt
+
+# Перевірте доступ (без авторизації):
+Invoke-RestMethod -Uri "http://localhost:9000/lab05-bucket/public.txt"
+```
+
+Відкрийте в браузері **MinIO Console** (`http://localhost:9001`), авторизуйтесь (`admin` / `password`) та перевірте наявність файлів.
+
+### Крок 4. Версіонування об'єктів (MinIO)
+
+```powershell
+# Завантажити нові версії
+"Версія 2 — оновлений вміст" | Out-File -Encoding utf8 public.txt
+mc cp public.txt myminio/lab05-bucket/
+
+"Версія 3 — ще одне оновлення" | Out-File -Encoding utf8 public.txt
+mc cp public.txt myminio/lab05-bucket/
+
+# Переглянути всі версії об'єкта
+mc ls --versions myminio/lab05-bucket/public.txt
+
+# Відновлення конкретної версії: скопіюйте VERSION_ID з попередньої команди
+mc cp --version-id <VERSION_ID> myminio/lab05-bucket/public.txt restored.txt
+Get-Content restored.txt
+```
+
+### Крок 5. Налаштування Lifecycle Policy (MinIO)
+
+Налаштуємо автоматичне видалення об'єктів через 30 днів:
+
+```powershell
+# Створіть файл політики
+@"
+{
+    "Rules": [
+        {
+            "Expiration": {
+                "Days": 30
+            },
+            "ID": "auto-expire",
+            "NoncurrentVersionExpiration": {
+                "NoncurrentDays": 7
+            },
+            "Status": "Enabled"
+        }
+    ]
+}
+"@ | Out-File ilm.json -Encoding utf8
+
+# Застосуйте політику до кошика (в PowerShell використовуємо cmd /c для перенаправлення)
+cmd /c "mc ilm import myminio/lab05-bucket < ilm.json"
+
+# Перевірте застосування
+mc ilm current myminio/lab05-bucket
+```
+
+### Крок 6. Підключення Block Volume (Вбудований віртуальний диск VHD)
+
+Замість лінуксового Block Volume ми створимо віртуальний жорсткий диск (VHD) вбудованими засобами Windows, що ідеально імітує підключення блочного накопичувача.
+
+```powershell
+# Запустіть утиліту diskpart (запитає згоду Адміністратора):
+diskpart
+
+# У відкритій консолі diskpart (виклик DISKPART>) виконайте команди по черзі:
+create vdisk file="C:\virtual_drive.vhd" maximum=1024 type=expandable
+select vdisk file="C:\virtual_drive.vhd"
+attach vdisk
+create partition primary
+format fs=ntfs quick label="LabBlockVol"
+assign letter=V
+exit
+
+# Поверніться у звичайний PowerShell та перевірте:
+Get-Volume -DriveLetter V
+"Local Block Storage Test" | Out-File -Encoding utf8 "V:\test.txt"
+Get-ChildItem V:\
+```
+
+*(Альтернативний спосіб через інтерфейс: Натисніть `Win+X` -> `Керування дисками`. Оберіть меню `Дія` -> `Створити віртуальний жорсткий диск (VHD)`. Після створення диска у списку внизу, натисніть на нього "Ініціалізувати диск", а потім на нерозподіленому просторі — "Створити простий том" і пройдіть майстер форматування).*
+
+### Крок 7. Порівняння вартості зберігання
+
+У випадку локального розгортання вартість хмарного зберігання дорівнює **$0**, але ви використовуєте власні апаратні ресурси машини (пам'ять, CPU та дисковий простір Windows).
 
 ---
 
