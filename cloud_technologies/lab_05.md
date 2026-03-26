@@ -270,13 +270,11 @@ docker run -d -p 9000:9000 -p 9001:9001 `
   -e "MINIO_ROOT_PASSWORD=password" `
   minio/minio server /data --console-address ":9001"
 
-# Створіть теку для клієнта MinIO (mc)
-New-Item -ItemType Directory -Force -Path $HOME\minio-binaries
-# Завантажте mc.exe для Windows
-Invoke-WebRequest -Uri "https://dl.min.io/client/mc/release/windows-amd64/mc.exe" -OutFile "$HOME\minio-binaries\mc.exe"
+# Завантажте клієнт MinIO (mc.exe) у поточну папку
+Invoke-WebRequest -Uri "https://dl.min.io/client/mc/release/windows-amd64/mc.exe" -OutFile "mc.exe"
 
-# Додайте теку до PATH (щоб викликати mc напряму)
-$env:PATH += ";$HOME\minio-binaries\"
+# Додайте поточну папку до PATH (щоб викликати mc напряму)
+$env:PATH += ";$PWD"
 
 # Налаштуйте alias (підключення) до локального сервера
 mc alias set myminio http://localhost:9000 admin password
