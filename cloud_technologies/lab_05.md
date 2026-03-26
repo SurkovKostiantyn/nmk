@@ -384,10 +384,16 @@ Get-Content restored.txt
         }
     ]
 }
-"@ | Out-File ilm.json -Encoding utf8
+"@ | Out-File ilm.json -Encoding ascii
+
+Ця команда створить файл ilm.json в поточній папці
 
 # Застосуйте політику до кошика (в PowerShell використовуємо cmd /c для перенаправлення)
 cmd /c "mc ilm import myminio/lab05-bucket < ilm.json"
+
+Ця команда застосує політику до кошика lab05-bucket. Тепер через 30 днів всі файли будуть автоматично видалені.
+
+![](./media/lab5_screen8.png)
 
 # Перевірте застосування
 mc ilm current myminio/lab05-bucket
