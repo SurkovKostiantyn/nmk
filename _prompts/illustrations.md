@@ -7,10 +7,10 @@
 **Копіюйте та адаптуйте цей текст:**
 
 > "Create a professional technical illustration for text. 
-> **TEXT:** [ВСТАВИТИ ТЕКСТ]
+> **TEXT:** [ВСТАВИТИ_ТЕКСТ]
 > **Style:** Minimalist, flat vector, modern UI/UX design diagram.
 > **Background:** Dark theme, deep charcoal or navy blue (#1a1a1a).
-> **Details:** [ВСТАВИТИ ДОДАТКОВІ ДЕТАЛІ]
+> **Details:** [ВСТАВИТИ_ДОДАТКОВІ_ДЕТАЛІ]
 > **Color Palette:** High contrast. Main elements in bright blue (#3b82f6) and emerald green (#10b981). Text in clean white.
 > **Composition:** 16:9 aspect ratio, centered, clean margins, no cluttered background. 
 > **Quality:** 4k, crisp lines, no shadows or gradients unless necessary for depth."
