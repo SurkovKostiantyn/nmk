@@ -235,6 +235,18 @@ docker-compose up -d
 docker-compose ps
 ```
 
+В разі успіху в терміналі з'явиться інформація про запущений контейнер:
+
+![alt text](media/lab6_screen3.png)
+
+В інтерфейсі Docker Desktop також буде видно створений образ:
+
+![alt text](media/lab6_screen4.png)
+
+В інтерфейсі Docker Desktop також буде видно запущений контейнер:
+
+![alt text](media/lab6_screen5.png)
+
 3. **Перевірте роботу застосунку:**
 
 ```bash
