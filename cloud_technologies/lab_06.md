@@ -336,6 +336,8 @@ docker push <username>/lab06-app:latest
 
 Перевірте: відкрийте `https://hub.docker.com/r/<username>/lab06-app` у браузері.
 
+![alt text](media/lab6_screen7.png)
+
 ### Крок 6. Запуск контейнера на хмарній VM
 
 Підключіться до VM з Лабораторної №4:
