@@ -188,29 +188,56 @@ kind: Service
 metadata:
   name: lab07-service
 spec:
-  type: NodePort # або LoadBalancer у реальному хмарному кластері
+  type: NodePort
   selector:
     app: lab07-app
   ports:
     - protocol: TCP
       port: 80 # порт Service
-      targetPort: 3000 # порт контейнера
+      targetPort: 80 # порт контейнера (змінено з 3000 на 80 для nginx)
       nodePort: 30080 # зовнішній порт вузла (30000–32767)
 ```
 
 ```bash
+# Застосування конфігурації сервісу
 kubectl apply -f service.yaml
 
-# Переглянути Services
+# Перевірка статусу сервісів (отремання IP та портів)
 kubectl get svc
 
-# Відкрити застосунок через Minikube
-minikube service lab07-service
+# Відкриття застосунку у браузері через Minikube (використовуємо повний шлях, якщо minikube не у PATH)
+& "C:\Program Files\Kubernetes\Minikube\minikube.exe" service lab07-service
 
-# або через тунель:
+# Альтернативний спосіб: прокидання порту (Port Forwarding)
+# Дозволяє звернутися до сервісу через localhost:8080
 kubectl port-forward svc/lab07-service 8080:80
-# Відкрийте http://localhost:8080
 ```
+
+> [!NOTE]
+> **Що виводить консоль?**
+>
+> 1. **minikube service**: Оскільки ви використовуєте драйвер `docker` на Windows, Minikube не може надати прямий доступ до IP вузла (NodePort) через мережеві обмеження Docker Desktop. Тому він запускає **тунель** (SSH-проксі). У консолі з'явиться таблиця, де в полі **URL** буде вказано адресу `http://127.0.0.1:XXXXX`. Саме цю адресу потрібно використовувати для доступу.
+> 2. **kubectl port-forward**: Команда створює прямий тунель між вашим локальний портом `8080` та портом сервісу `80` всередині кластера. Вивід `Forwarding from 127.0.0.1:8080 -> 80` означає, що тепер застосунок доступний за адресою `http://localhost:8080`.
+
+![alt text](media/lab7_screen4.png)
+
+![alt text](media/lab7_screen5.png)
+
+Тепер відкриваємо Dashboard і бачимо наш кластер
+
+```bash
+& "C:\Program Files\Kubernetes\Minikube\minikube.exe" dashboard
+```
+
+![alt text](media/lab7_screen6.png)
+
+На дашборді ми бачимо стан наших робочих навантажень (**Workloads**):
+
+- **Deployments**: відображається створений нами `lab07-app`, який має 2 активні репліки.
+- **Pods**: перелічено два запущені поди з образом `nginx:1.25-alpine`. Також видно споживання ресурсів (CPU та RAM) для кожного пода.
+- **Replica Sets**: контролер, який забезпечує підтримку заданої кількості реплік (2/2).
+
+Всі індикатори зелені, що підтверджує стабільну роботу застосунку в кластері.
 
 ### Крок 4. Базові команди kubectl
 
@@ -236,10 +263,16 @@ kubectl get all                            # Всі ресурси
 ```bash
 # Збільшити кількість реплік до 4
 kubectl scale deployment lab07-app --replicas=4
+```
 
+Перевірте зміни в Dashboard або за допомогою команди
+
+```bash
 # Спостерігати за появою нових подів
 kubectl get pods -w
+```
 
+```bash
 # Зменшити до 1
 kubectl scale deployment lab07-app --replicas=1
 
@@ -249,26 +282,44 @@ for i in {1..5}; do curl -s $(minikube service lab07-service --url) | grep Hostn
 
 ### Крок 6. Rolling Update (оновлення без простою)
 
-```bash
-# Оновити образ на нову версію
-kubectl set image deployment/lab07-app app=<username>/lab06-app:latest
+**Rolling Update** — це стратегія оновлення, при якій Kubernetes поступово замінює старі Поди на нові. Це дозволяє оновити застосунок без припинення обслуговування користувачів.
 
-# Або — відредагуйте deployment.yaml (змініть image tag) та:
+1. Відкрийте файл `deployment.yaml` та змініть тег образу (наприклад, на новішу версію nginx):
+
+```yaml
+containers:
+  - name: app
+    image: nginx:1.27-alpine # було 1.25-alpine
+```
+
+2. Застосуйте оновлену конфігурацію:
+
+```bash
 kubectl apply -f deployment.yaml
 
-# Слідкуйте за ходом оновлення
+# Спостерігайте за процесом за допомогою Dashboard або команди:
+kubectl get pods -w
+
+![alt text](media/lab7_screen7.png)
+
+# Перевірка статусу завершення оновлення
 kubectl rollout status deployment/lab07-app
 
-# Переглянути історію оновлень
+# Перегляд історії оновлень кластера
 kubectl rollout history deployment/lab07-app
+```
 
-# Відкат до попередньої версії (якщо щось пішло не так)
+3. Якщо під час оновлення щось пішло не так, ви можете миттєво відкотитися до попередньої стабільної версії:
+
+```bash
 kubectl rollout undo deployment/lab07-app
 ```
 
-### Крок 7. ConfigMap
+### Крок 7. ConfigMap (Налаштування змінних оточення)
 
-Створіть `configmap.yaml`:
+**ConfigMap** — це об'єкт Kubernetes, який дозволяє зберігати конфігураційні дані (змінні оточення, файли налаштувань) окремо від образу контейнера.
+
+1. Створіть файл `configmap.yaml` із параметрами вашого застосунку:
 
 ```yaml
 apiVersion: v1
@@ -281,21 +332,40 @@ data:
   WELCOME_MSG: "Hello from ConfigMap!"
 ```
 
-Оновіть `deployment.yaml` для використання ConfigMap:
+2. Оновіть `deployment.yaml`. **Важливо:** секція `envFrom` має знаходитися всередині `containers` (на тому ж рівні, що й `image` чи `ports`):
 
 ```yaml
-envFrom:
-  - configMapRef:
-      name: lab07-config
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27-alpine
+      ports:
+        - containerPort: 80
+      # ... інші налаштування ...
+      envFrom:
+        - configMapRef:
+            name: lab07-config
 ```
+
+3. Застосуйте конфігурацію та виконайте перевірку:
 
 ```bash
+# 1. Створити ConfigMap у кластері
 kubectl apply -f configmap.yaml
+
+# 2. Оновити Deployment
 kubectl apply -f deployment.yaml
 
-# Переконайтесь, що змінні передані в Pod
-kubectl exec -it <pod-name> -- env | grep APP_VERSION
+# 3. Перевірити, що змінні успішно передані в Pod
+# Для Linux/macOS (Bash):
+kubectl exec -it $(kubectl get pods -l app=lab07-app -o jsonpath='{.items[0].metadata.name}') -- env | grep -E "APP_VERSION|WELCOME_MSG"
+
+# Для Windows (PowerShell):
+$pod = (kubectl get pods -l app=lab07-app -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -it $pod -- env | Select-String "APP_VERSION|WELCOME_MSG"
 ```
+
+![alt text](media/lab7_screen8.png)
 
 ---
 
