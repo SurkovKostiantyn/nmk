@@ -352,9 +352,11 @@ mc cp public.txt myminio/lab05-bucket/
 
 # Переглянути всі версії об'єкта
 mc ls --versions myminio/lab05-bucket/public.txt
+```
 
 ![](./media/lab5_screen5.png)
 
+```powershell
 # Відновлення конкретної версії: скопіюйте VERSION_ID з попередньої команди
 mc cp --version-id <VERSION_ID> myminio/lab05-bucket/public.txt restored.txt
 Get-Content restored.txt
@@ -395,9 +397,11 @@ Get-Content restored.txt
 cmd /c "mc ilm import myminio/lab05-bucket < ilm.json"
 
 Ця команда застосує політику до кошика lab05-bucket. Тепер через 30 днів всі файли будуть автоматично видалені.
+```
 
 ![](./media/lab5_screen8.png)
 
+```powershell
 # Перевірте застосування
 .\mc ilm ls myminio/lab05-bucket
 ```
