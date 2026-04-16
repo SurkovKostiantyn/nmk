@@ -323,9 +323,11 @@ mc ls myminio/lab05-bucket/
 ```powershell
 # Зробити файл public.txt публічним
 mc anonymous set download myminio/lab05-bucket/public.txt
+```
 
 ![](./media/lab5_screen2.png)
 
+```powershell
 # Перевірте доступ (без авторизації):
 Invoke-RestMethod -Uri "http://localhost:9000/lab05-bucket/public.txt"
 ```
