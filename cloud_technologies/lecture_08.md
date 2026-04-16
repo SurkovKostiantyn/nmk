@@ -200,53 +200,62 @@ my-infrastructure/
 ### 3.3 Синтаксис HCL
 
 **Provider (Провайдер):**
+Це плагін, який дозволяє Terraform взаємодіяти з API конкретного хмарного провайдера (AWS, Azure, GCP) або сервісу (GitHub, Kubernetes).
 
 ```hcl
 terraform {
+  # Блок конфігурації самого Terraform
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
+      source  = "hashicorp/aws" # Звідки завантажувати (Terraform Registry)
+      version = "~> 5.0"        # Версія: дозволено оновлення лише в межах мінорної версії 5.x
     }
   }
 }
 
+# Налаштування конкретного екземпляра провайдера
 provider "aws" {
-  region = "eu-central-1"
+  region = "eu-central-1" # Регіон, де створюватимуться ресурси
 }
 ```
 
 **Resource (Ресурс):**
+Описує конкретний компонент інфраструктури. Синтаксис: `resource "тип_ресурсу" "локальне_імʼя"`.
 
 ```hcl
 resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16" # Мережевий діапазон VPC
   enable_dns_hostnames = true
 
   tags = {
     Name        = "main-vpc"
-    Environment = var.environment
+    Environment = var.environment # Використання змінної
   }
 }
 
 resource "aws_subnet" "public" {
-  vpc_id     = aws_vpc.main.id   # Референс на ресурс aws_vpc.main
+  # Використання інтерполяції (id іншого ресурсу). 
+  # Це створює неявну залежність: subnet не почне створюватися, поки не готова VPC.
+  vpc_id     = aws_vpc.main.id   
   cidr_block = "10.0.1.0/24"
   availability_zone = "eu-central-1a"
 }
 ```
 
 **Variables (Змінні):**
+Дозволяють робити конфігурацію гнучкою та параметризованою.
 
 ```hcl
 # variables.tf
 variable "environment" {
-  description = "Середовище (dev/staging/prod)"
-  type        = string
-  default     = "dev"
+  description = "Опис змінної для документації"
+  type        = string  # Тип даних (string, number, bool, list, map, object)
+  default     = "dev"   # Значення за замовчуванням
+  
+  # Блок валідації для перевірки коректності введених даних
   validation {
     condition     = contains(["dev", "staging", "prod"], var.environment)
-    error_message = "Лише dev, staging або prod."
+    error_message = "Дозволені значення лише: dev, staging або prod."
   }
 }
 
@@ -257,12 +266,13 @@ variable "instance_type" {
 ```
 
 **Outputs (Вихідні значення):**
+Використовуються для виведення важливої інформації в консоль після `apply` або для передачі даних між модулями.
 
 ```hcl
 # outputs.tf
 output "vpc_id" {
   description = "ID створеного VPC"
-  value       = aws_vpc.main.id
+  value       = aws_vpc.main.id # Значення, яке буде виведено
 }
 
 output "public_subnet_id" {
@@ -271,9 +281,10 @@ output "public_subnet_id" {
 ```
 
 **Data Sources (Джерела даних):**
+Дозволяють Terraform отримувати (читати) інформацію про ресурси, які вже існують в хмарі або створені не через Terraform.
 
 ```hcl
-# Отримати найновіший AMI Amazon Linux 2023
+# Запит до AWS для пошуку найсвіжішого образу (AMI) Amazon Linux 2023
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -285,58 +296,52 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.amazon_linux.id
+  ami           = data.aws_ami.amazon_linux.id # Використання знайденого ID
   instance_type = "t3.medium"
 }
 ```
 
 ### 3.4 Основні Terraform-команди
 
-```bash
-# 1. Ініціалізація проєкту (завантаження провайдерів)
-terraform init
+Життєвий цикл роботи з інфраструктурою зазвичай складається з наступних кроків:
 
-# 2. Форматування коду
-terraform fmt
+1.  **`terraform init`** — ініціалізує робочу директорію, сканує код на наявність провайдерів та завантажує необхідні плагіни. Створює папку `.terraform`.
+2.  **`terraform fmt`** — автоматично форматує код згідно з канонічним стилем HCL (вирівнювання, відступи).
+3.  **`terraform validate`** — перевіряє код на синтаксичні помилки та логічну цілісність (наприклад, чи всі змінні оголошені).
+4.  **`terraform plan`** — порівнює поточний стан хмари (state) з вашим кодом і показує "план дій": що буде створено (+), змінено (~) або видалено (-).
+5.  **`terraform apply`** — виконує план. Після підтвердження користувачем Terraform надсилає API-запити провайдеру для створення ресурсів.
+6.  **`terraform destroy`** — безпечне видалення всіх ресурсів, описаних у поточному проєкті.
+7.  **`terraform show`** — виводить зрозумілий опис поточного стану інфраструктури (з файлу state).
+8.  **`terraform state list`** — показує список усіх ресурсів, які зараз знаходяться під управлінням даного проєкту.
 
-# 3. Перевірка синтаксису
-terraform validate
-
-# 4. Планування змін (показує, що буде зроблено)
-terraform plan -var-file="prod.tfvars"
-
-# 5. Застосування змін
-terraform apply -var-file="prod.tfvars" -auto-approve
-
-# 6. Знищення всіх ресурсів
-terraform destroy
-
-# 7. Показати поточний стан
-terraform show
-
-# 8. Список ресурсів у стані
-terraform state list
-```
+---
 
 ### 3.5 Умовна логіка та цикли
 
-**Count (Умовний/кратний ресурс):**
+**Count (Умовний або кратний ресурс):**
+Використовується, коли потрібно створити кілька однакових ресурсів або створити ресурс за умови.
 
 ```hcl
 resource "aws_instance" "web" {
+  # Тернарний оператор: якщо prod — створити 3 інстанси, інакше — 1.
   count         = var.environment == "prod" ? 3 : 1
+  
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t3.medium"
+  
   tags = {
+    # count.index — порядковий номер ресурсу (0, 1, 2...)
     Name = "web-${count.index + 1}"
   }
 }
 ```
 
 **For Each (Ітерація по колекції):**
+Більш гнучкий спосіб ітерації, дозволяє створювати ресурси на основі ключів карти (map) або списку (set).
 
 ```hcl
 variable "subnets" {
+  type = map(object({ cidr = string, az = string }))
   default = {
     public-1a  = { cidr = "10.0.1.0/24", az = "eu-central-1a" }
     public-1b  = { cidr = "10.0.2.0/24", az = "eu-central-1b" }
@@ -345,14 +350,17 @@ variable "subnets" {
 }
 
 resource "aws_subnet" "all" {
-  for_each = var.subnets
+  for_each = var.subnets # Створити subnet для кожного елемента карти
 
   vpc_id            = aws_vpc.main.id
-  cidr_block        = each.value.cidr
+  cidr_block        = each.value.cidr # Доступ до значень об'єкта
   availability_zone = each.value.az
-  tags = { Name = each.key }
+  tags = { 
+    Name = each.key # Ключ (наприклад, "public-1a") стає іменем
+  }
 }
 ```
+
 
 ---
 

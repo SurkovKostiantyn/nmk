@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Лекція №10: Основи PaaS та хмарні платформи розробки</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+      id="theme"
+    />
+
+    <style>
+      .reveal h1,
+      .reveal h2,
+      .reveal h3,
+      .reveal h4 {
+        text-transform: none;
+      }
+      .reveal .slide-number {
+        font-size: 20pt;
+        bottom: 20px !important;
+        left: 20px !important;
+        right: auto !important;
+      }
+      .reveal ul {
+        display: block;
+        margin-left: 5%;
+        margin-right: 5%;
+      }
+      .reveal li {
+        margin-bottom: 15px;
+      }
+      .highlight-blue {
+        color: #2a76dd;
+        font-weight: bold;
+      }
+      .reveal blockquote {
+        width: 90%;
+        font-size: 0.8em;
+        text-align: left;
+        padding: 20px;
+        background: #f9f9f9;
+        border-left: 5px solid #2a76dd;
+        margin: 20px auto;
+      }
+      .small-text {
+        font-size: 0.7em;
+      }
+      table {
+        font-size: 0.5em;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Заголовок -->
+        <section data-auto-animate>
+          <h2>Основи PaaS та хмарні платформи розробки</h2>
+          <h4 style="color: #666">Лекція №10</h4>
+          <p><small>Хмарні технології</small></p>
+        </section>
+
+        <!-- План/Зміст -->
+        <section>
+          <h2>План лекції</h2>
+          <ol class="small-text">
+            <li>Концепція PaaS та відмінності від IaaS</li>
+            <li>AWS Elastic Beanstalk</li>
+            <li>Azure App Service</li>
+            <li>Google App Engine</li>
+            <li>Порівняння PaaS-платформ та критерії вибору</li>
+            <li><span class="highlight-blue">Нове покоління PaaS: Vercel, Netlify, Render, Railway</span></li>
+          </ol>
+        </section>
+
+        <!-- Розділ 1: Концепція PaaS -->
+        <section>
+          <section>
+            <h2>1. Концепція PaaS</h2>
+            <blockquote>
+              <strong>PaaS (Platform as a Service)</strong> — платформа як послуга, що надає готове середовище для розробки, розгортання та масштабування застосунків.
+            </blockquote>
+          </section>
+          <section>
+            <h3>Порівняння IaaS vs PaaS</h3>
+            <table>
+              <tr>
+                <th>Шар</th>
+                <th>IaaS</th>
+                <th>PaaS</th>
+              </tr>
+              <tr>
+                <td>Дані / Застосунок</td>
+                <td>Клієнт</td>
+                <td>Клієнт</td>
+              </tr>
+              <tr>
+                <td>Рантайм / Middleware / ОС</td>
+                <td><span style="color: red">Клієнт</span></td>
+                <td><span style="color: green">Провайдер</span></td>
+              </tr>
+              <tr>
+                <td>Віртуалізація / Мережа / Обладнання</td>
+                <td>Провайдер</td>
+                <td>Провайдер</td>
+              </tr>
+            </table>
+          </section>
+          <section>
+            <h3>Переваги та обмеження</h3>
+            <div style="display: flex; gap: 20px; font-size: 0.6em;">
+              <div style="flex: 1; border: 1px solid #cfc; padding: 10px; background: #fafffa;">
+                <h4 style="color: green">Переваги</h4>
+                <ul>
+                  <li>Швидкість (git push → deploy)</li>
+                  <li>Менше DevOps-навантаження</li>
+                  <li>Автоматичні патчі безпеки</li>
+                  <li>Вбудована масштабованість</li>
+                </ul>
+              </div>
+              <div style="flex: 1; border: 1px solid #fcc; padding: 10px; background: #fffafa;">
+                <h4 style="color: red">Обмеження</h4>
+                <ul>
+                  <li>Менше контролю над ОС/мережею</li>
+                  <li>Vendor lock-in</li>
+                  <li>Обмеження рантайму (версії мов)</li>
+                  <li>Вища ціна при великих масштабах</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- Розділ 2: AWS Elastic Beanstalk -->
+        <section>
+          <section>
+            <h2>2. AWS Elastic Beanstalk (EB)</h2>
+            <p>Оркестратор AWS-ресурсів (EC2, ALB, ASG) для веб-застосунків.</p>
+            <ul class="small-text">
+              <li>Підтримка: Node.js, Python, Java, Docker, Go, .NET</li>
+              <li>Автоматичне управління інфраструктурою</li>
+              <li>EB CLI для зручного розгортання</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Команди EB CLI</h3>
+            <pre><code class="bash" style="font-size: 0.5em;">
+eb init    # Ініціалізація проєкту
+eb create  # Створення середовища
+eb deploy  # Деплоймент нової версії
+eb logs    # Перегляд логів
+eb open    # Відкрити у браузері
+            </code></pre>
+          </section>
+          <section>
+            <h3>Blue/Green Deployment</h3>
+            <ol class="small-text">
+              <li>Розгортання нової версії (Green) паралельно до поточної (Blue)</li>
+              <li>Перевірка працездатності Green-середовища</li>
+              <li>Переключення DNS зі старого середовища на нове</li>
+              <li><span class="highlight-blue">Результат:</span> нульовий downtime</li>
+            </ol>
+          </section>
+        </section>
+
+        <!-- Розділ 3: Azure App Service -->
+        <section>
+          <section>
+            <h2>3. Azure App Service</h2>
+            <p>Високорівнева PaaS-платформа Microsoft.</p>
+            <ul class="small-text">
+              <li><strong>App Service Plan</strong> визначає ресурси (Free, Basic, Standard, Premium)</li>
+              <li><strong>Deployment Slots</strong> — мабуть, найкраща фіча для Staging/Prod</li>
+              <li>Вбудована Auth/Auth (Azure AD, Google, Facebook)</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Deployment Slots & Swap</h3>
+            <p class="small-text">Можливість миттєвого переключення між Staging та Production:</p>
+            <div style="font-size: 0.7em; background: #eee; padding: 10px; border-radius: 5px;">
+              Production (Live) ↔ Staging (Test)
+            </div>
+            <ul class="small-text">
+              <li>Swap відбувається миттєво без зупинки сервісу</li>
+              <li>Легкий rollback у разі помилок</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Розділ 4: Google App Engine -->
+        <section>
+          <section>
+            <h2>4. Google App Engine (GAE)</h2>
+            <div style="display: flex; gap: 20px; font-size: 0.6em;">
+              <div style="flex: 1; border: 1px dashed #ccc; padding: 10px;">
+                <h4>Standard Environment</h4>
+                <ul>
+                  <li>Масштабування до нуля</li>
+                  <li>Старт за секунди</li>
+                  <li>Обмежений список рантаймів</li>
+                </ul>
+              </div>
+              <div style="flex: 1; border: 1px dashed #ccc; padding: 10px;">
+                <h4>Flexible Environment</h4>
+                <ul>
+                  <li>Docker-базований</li>
+                  <li>Будь-яка мова/бібліотека</li>
+                  <li>Мінімум 1 інстанс</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h3>Керування через gcloud</h3>
+            <pre><code class="bash" style="font-size: 0.5em;">
+gcloud app deploy  # Деплоймент (використовує app.yaml)
+gcloud app logs tail # Стрімінг логів
+gcloud app versions list # Список версій
+gcloud app services set-traffic default --splits v1=0.8,v2=0.2 # A/B testing
+            </code></pre>
+          </section>
+        </section>
+
+        <!-- Розділ 5: Вибір платформи -->
+        <section>
+          <section>
+            <h2>5. Критерії вибору</h2>
+            <table>
+              <tr>
+                <th>Критерій</th>
+                <th>Elastic Beanstalk</th>
+                <th>Azure App Service</th>
+                <th>App Engine</th>
+              </tr>
+              <tr>
+                <td>Складність</td>
+                <td>Середня</td>
+                <td>Низька</td>
+                <td>Середня</td>
+              </tr>
+              <tr>
+                <td>Scale to Zero</td>
+                <td>❌</td>
+                <td>❌</td>
+                <td>✅ (Standard)</td>
+              </tr>
+              <tr>
+                <td>Docker</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅ (Flexible)</td>
+              </tr>
+            </table>
+          </section>
+          <section>
+            <h3>Trend: Container-based PaaS</h3>
+            <ul class="small-text">
+              <li><strong>AWS App Runner</strong> — максимально простий деплой контейнера</li>
+              <li><strong>Azure Container Apps</strong> — PaaS на базі K8s</li>
+              <li><strong>Google Cloud Run</strong> — запуск контейнерів з оплатою за запит</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Розділ 6: Нове покоління PaaS -->
+        <section>
+          <section>
+            <h2>6. Нове покоління PaaS</h2>
+            <h4 style="color: #2a76dd;">DX First (Developer Experience)</h4>
+            <p class="small-text">Пріоритет — максимальне спрощення шляху від коду до продакшну.</p>
+            <ul class="small-text">
+              <li><strong>Zero-config</strong>: авто-визначення фреймворку</li>
+              <li><strong>Git-native</strong>: push → build → live</li>
+              <li><strong>Preview URLs</strong>: кожний PR має свою адресу</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Лідери ринку</h3>
+            <div style="font-size: 0.6em; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="background: #f0f0f0; padding: 10px;">
+                <strong>Vercel</strong>: Ідеально для Next.js та React (Edge Network)
+              </div>
+              <div style="background: #f0f0f0; padding: 10px;">
+                <strong>Netlify</strong>: Jamstack, статичні сайти, форми
+              </div>
+              <div style="background: #f0f0f0; padding: 10px;">
+                <strong>Render</strong>: Always-on backend, БД, Redis
+              </div>
+              <div style="background: #f0f0f0; padding: 10px;">
+                <strong>Railway</strong>: Універсальний деплой будь-якого стека
+              </div>
+            </div>
+          </section>
+          <section>
+            <h3>Serverless Бази Даних</h3>
+            <ul class="small-text">
+              <li><strong>Neon</strong>: Serverless PostgreSQL (масштабування до нуля, БД-гілки)</li>
+              <li><strong>Supabase</strong>: PostgreSQL + Auth + Realtime + Storage</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Висновки -->
+        <section>
+          <h2>Висновки</h2>
+          <ul style="font-size: 0.7em">
+            <li>PaaS дозволяє зосередитись на <strong>коді</strong>, а не на адмініструванні.</li>
+            <li>Elastic Beanstalk, App Service та App Engine — потужні інструменти від "великої трійки".</li>
+            <li>Нове покоління (Vercel, Render) радикально покращує <strong>DX</strong> та швидкість деплою.</li>
+            <li>Вибір PaaS залежить від стека, бюджету та необхідного рівня контролю.</li>
+          </ul>
+        </section>
+
+        <!-- Кінець -->
+        <section>
+          <h2>Дякую за увагу!</h2>
+          <p>Запитання?</p>
+          <hr>
+          <p><small>Лекція №10. Хмарні технології</small></p>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t",
+        transition: "slide",
+      });
+    </script>
+  </body>
+</html>
