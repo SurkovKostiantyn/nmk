@@ -47,9 +47,9 @@ winget install Kubernetes.kubectl
 
 # Перевірка встановлення
 kubectl version --client
-
-> **Примітка:** Якщо у вас встановлено **Docker Desktop**, `kubectl` зазвичай вже йде в комплекті, і додаткове встановлення не потрібне.
 ```
+
+**Примітка:** Якщо у вас встановлено **Docker Desktop**, `kubectl` зазвичай вже йде в комплекті, і додаткове встановлення не потрібне.
 
 **Minikube** — це інструмент, який створює локальний Kubernetes-кластер на вашому комп'ютері. Він запускає однонодовий кластер всередині віртуальної машини або контейнера, що ідеально підходить для тестування маніфестів.
 
@@ -112,6 +112,7 @@ minikube dashboard   # Відкриває веб-UI
 
 > [!TIP]
 > Для того, щоб у Dashboard відображалися графіки використання ресурсів (CPU, RAM), необхідно увімкнути аддон **metrics-server**:
+>
 > ```bash
 > minikube addons enable metrics-server
 > ```
@@ -141,11 +142,9 @@ spec:
     spec:
       containers:
         - name: app
-          image: <your-dockerhub-username>/lab06-app:1.0 # Образ з Лаб. №6
-          # Або використайте готовий образ:
-          # image: nginx:1.25-alpine
+          image: nginx:1.25-alpine
           ports:
-            - containerPort: 3000
+            - containerPort: 80
           env:
             - name: APP_VERSION
               value: "1.0.0"
@@ -158,8 +157,8 @@ spec:
               cpu: "200m"
           readinessProbe:
             httpGet:
-              path: /health
-              port: 3000
+              path: /
+              port: 80
             initialDelaySeconds: 5
             periodSeconds: 10
 ```
@@ -176,6 +175,8 @@ kubectl rollout status deployment/lab07-app
 # Деталі Deployment
 kubectl describe deployment lab07-app
 ```
+
+![alt text](media/lab7_screen3.png)
 
 ### Крок 3. Створення Service
 
