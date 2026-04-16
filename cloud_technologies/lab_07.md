@@ -300,7 +300,6 @@ kubectl apply -f deployment.yaml
 # Спостерігайте за процесом за допомогою Dashboard або команди:
 kubectl get pods -w
 
-![alt text](media/lab7_screen7.png)
 
 # Перевірка статусу завершення оновлення
 kubectl rollout status deployment/lab07-app
@@ -308,6 +307,8 @@ kubectl rollout status deployment/lab07-app
 # Перегляд історії оновлень кластера
 kubectl rollout history deployment/lab07-app
 ```
+
+![alt text](media/lab7_screen7.png)
 
 3. Якщо під час оновлення щось пішло не так, ви можете миттєво відкотитися до попередньої стабільної версії:
 
