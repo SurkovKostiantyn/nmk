@@ -42,34 +42,81 @@ brew install kubectl
 
 # Windows (winget)
 winget install Kubernetes.kubectl
+# або Chocolatey: choco install kubernetes-cli
+# або Scoop: scoop install kubectl
+
+# Перевірка встановлення
+kubectl version --client
+
+> **Примітка:** Якщо у вас встановлено **Docker Desktop**, `kubectl` зазвичай вже йде в комплекті, і додаткове встановлення не потрібне.
 ```
 
-**Minikube:**
+**Minikube** — це інструмент, який створює локальний Kubernetes-кластер на вашому комп'ютері. Він запускає однонодовий кластер всередині віртуальної машини або контейнера, що ідеально підходить для тестування маніфестів.
+
+**Системні вимоги:**
+
+- 2 або більше CPU.
+- 2 ГБ вільної оперативної пам'яті (рекомендовано 4 ГБ+).
+- 20 ГБ вільного місця на диску.
+- Підтримка віртуалізації (має бути увімкнена в BIOS/UEFI).
+
+**Встановлення:**
 
 ```bash
 # Linux
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
-# macOS
+# macOS (Homebrew)
 brew install minikube
 
-# Windows (Chocolatey)
-choco install minikube
-# або winget:
+# Windows (winget - рекомендовано)
 winget install Kubernetes.minikube
+# або Chocolatey:
+choco install minikube
 ```
 
-Запуск кластера:
+![alt text](media/lab7_screen1.png)
 
 ```bash
+# Перевірка статусу
+minikube status
+```
+
+> [!IMPORTANT]
+> Після встановлення обов'язково **перезавантажте термінал**, щоб система побачила нові змінні оточення (PATH).
+>
+> Якщо ви не хочете перезавантажувати термінал або команда `minikube` не розпізнається, виконайте ці команди в PowerShell (це оновить шлях для поточної сесії та запустить кластер):
+>
+> ```powershell
+> $env:Path += ";C:\Program Files\Kubernetes\Minikube"
+> & "C:\Program Files\Kubernetes\Minikube\minikube.exe" start --driver=docker --cpus=2 --memory=2g
+> ```
+
+### Крок 2. П’ятнадцятихвилинний старт (Запуск кластера)
+
+Для запуску ми використовуємо драйвер `docker`, оскільки він найшвидший і не потребує складної конфігурації віртуальних машин.
+
+```bash
+# Запуск кластера з обмеженням ресурсів
 minikube start --driver=docker --cpus=2 --memory=2g
+
+# Перевірка статусу
+minikube status
 
 # Перевірка
 kubectl cluster-info
 kubectl get nodes
 minikube dashboard   # Відкриває веб-UI
 ```
+
+> [!TIP]
+> Для того, щоб у Dashboard відображалися графіки використання ресурсів (CPU, RAM), необхідно увімкнути аддон **metrics-server**:
+> ```bash
+> minikube addons enable metrics-server
+> ```
+
+![alt text](media/lab7_screen2.png)
 
 ### Крок 2. Перший YAML-маніфест — Deployment
 
