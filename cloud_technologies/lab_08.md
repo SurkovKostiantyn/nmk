@@ -68,6 +68,8 @@ mkdir lab08-terraform && cd lab08-terraform
 
 **Варіант А — AWS S3 Bucket:**
 
+*(Якщо у вас немає можливості використати AWS, перейдіть до **Варіанта Б — Docker (Локально)** після Кроку 5).*
+
 Файл `main.tf`:
 
 ```hcl
@@ -268,6 +270,318 @@ terraform state show aws_s3_bucket.lab_bucket
 
 # Імпорт існуючого ресурсу до стану (ознайомчо)
 # terraform import aws_s3_bucket.lab_bucket <bucket-name>
+```
+
+---
+
+### Альтернативний варіант виконання (без доступу до хмарних провайдерів)
+
+**Варіант Б — Docker (Локально):**
+
+Цей варіант призначений для тих, хто не має доступу до хмарних провайдерів AWS, Azure або OCI. Замість хмарних ресурсів ми використовуватимемо Terraform для управління локальним середовищем Docker.
+
+*(Вимога: на вашому комп'ютері має бути встановлений та запущений Docker Desktop або Docker Engine).*
+
+**1. Створення проєкту та конфігурація (Аналог Кроку 2):**
+
+Створіть та перейдіть у директорію проєкту:
+
+```bash
+mkdir lab08-docker && cd lab08-docker
+```
+
+Файл `main.tf`:
+
+```hcl
+terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider "docker" {
+  # За замовчуванням Terraform знайде локальний Docker сокет
+}
+
+resource "docker_image" "nginx" {
+  name         = "nginx:1.25-alpine"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx_container" {
+  image = docker_image.nginx.image_id
+  name  = "lab08-nginx-${var.student_name}"
+
+  ports {
+    internal = 80
+    external = 8080
+  }
+}
+```
+
+Файл `variables.tf`:
+
+```hcl
+variable "student_name" {
+  description = "Your name (used in resource names)"
+  type        = string
+}
+```
+
+Файл `outputs.tf`:
+
+```hcl
+output "container_name" {
+  description = "Name of the Docker container"
+  value       = docker_container.nginx_container.name
+}
+
+output "application_url" {
+  description = "URL to access the application"
+  value       = "http://localhost:8080"
+}
+```
+
+**2. Виконання основного циклу (Аналог Кроку 3):**
+
+Виконайте ініціалізацію Terraform (завантаження провайдера `kreuzwerker/docker`):
+
+```bash
+terraform init
+```
+
+*Можлива відповідь системи:*
+```text
+Initializing the backend...
+Initializing provider plugins...
+- Finding kreuzwerker/docker versions matching "~> 3.0"...
+- Installing kreuzwerker/docker v3.0.2...
+- Installed kreuzwerker/docker v3.0.2 (signed by a HashiCorp partner)
+
+Terraform has been successfully initialized!
+```
+
+Відформатуйте конфігурацію та перевірте її на помилки:
+
+```bash
+terraform fmt
+terraform validate
+```
+
+*Можлива відповідь системи:*
+```text
+Success! The configuration is valid.
+```
+
+Перегляньте план змін (сухий прогін):
+
+```bash
+terraform plan -var="student_name=ivan-petrenko"
+```
+
+*Можлива відповідь системи:*
+```text
+Terraform will perform the following actions:
+
+  # docker_container.nginx_container will be created
+  + resource "docker_container" "nginx_container" {
+      + id           = (known after apply)
+      + image        = (known after apply)
+      + name         = "lab08-nginx-ivan-petrenko"
+      + ports {
+          + external = 8080
+          + internal = 80
+        }
+      # ... інші параметри
+    }
+
+  # docker_image.nginx will be created
+  + resource "docker_image" "nginx" {
+      + id           = (known after apply)
+      + name         = "nginx:1.25-alpine"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+```
+
+Застосуйте зміни для створення інфраструктури (введіть `yes` коли запитає):
+
+```bash
+terraform apply -var="student_name=ivan-petrenko"
+```
+
+*Можлива відповідь системи:*
+```text
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+docker_image.nginx: Creating...
+docker_image.nginx: Creation complete after 3s [id=sha256:...]
+docker_container.nginx_container: Creating...
+docker_container.nginx_container: Creation complete after 1s [id=...]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+application_url = "http://localhost:8080"
+container_name = "lab08-nginx-ivan-petrenko"
+```
+
+Після успішного виконання відкрийте свій браузер за адресою `http://localhost:8080` та переконайтеся, що відображається сторінка Nginx за замовчуванням.
+
+**3. Створення інфраструктури з мережею (Аналог Кроку 4):**
+
+Локальна інфраструктура може складатися з кількох контейнерів та власної мережі. Додайте створення `docker_network` та контейнера з базою даних у `main.tf`:
+
+```hcl
+resource "docker_network" "lab_net" {
+  name = "lab08-net-${var.student_name}"
+}
+
+resource "docker_image" "redis" {
+  name         = "redis:alpine"
+  keep_locally = false
+}
+
+resource "docker_container" "redis_container" {
+  image = docker_image.redis.image_id
+  name  = "lab08-redis-${var.student_name}"
+
+  networks_advanced {
+    name = docker_network.lab_net.name
+  }
+}
+```
+
+Оновіть ресурс `nginx_container`, додавши йому підключення до мережі:
+
+```hcl
+resource "docker_container" "nginx_container" {
+  image = docker_image.nginx.image_id
+  name  = "lab08-nginx-${var.student_name}"
+
+  ports {
+    internal = 80
+    external = 8080
+  }
+
+  networks_advanced {
+    name = docker_network.lab_net.name
+  }
+}
+```
+
+Застосуйте зміни. Terraform перебудує Nginx (оскільки змінилися мережеві налаштування) та підключить його до нової мережі, а також створить Redis:
+
+```bash
+terraform apply -var="student_name=ivan-petrenko"
+```
+
+*Можлива відповідь системи:*
+```text
+...
+# docker_container.nginx_container must be replaced
+-/+ resource "docker_container" "nginx_container" {
+... (forcing replacement)
+
+Plan: 3 to add, 0 to change, 1 to destroy.
+...
+Enter a value: yes
+
+docker_container.nginx_container: Destroying... [id=...]
+docker_container.nginx_container: Destruction complete after 0s
+docker_network.lab_net: Creating...
+docker_image.redis: Creating...
+docker_network.lab_net: Creation complete after 0s
+docker_image.redis: Creation complete after 2s [id=sha256:...]
+docker_container.redis_container: Creating...
+docker_container.redis_container: Creation complete after 1s [id=...]
+docker_container.nginx_container: Creating...
+docker_container.nginx_container: Creation complete after 1s [id=...]
+
+Apply complete! Resources: 3 added, 0 changed, 1 destroyed.
+```
+
+**4. Дослідження файлу стану (Аналог Кроку 5):**
+
+Подивіться список усіх керованих Terraform ресурсів:
+
+```bash
+terraform state list
+```
+
+*Можлива відповідь системи:*
+```text
+docker_container.nginx_container
+docker_container.redis_container
+docker_image.nginx
+docker_image.redis
+docker_network.lab_net
+```
+
+Дослідіть детальну інформацію про конкретний ресурс з файлу стану без виклику команд самого Docker:
+
+```bash
+terraform state show docker_container.nginx_container
+```
+
+*Можлива відповідь системи:*
+```hcl
+# docker_container.nginx_container:
+resource "docker_container" "nginx_container" {
+    command           = [
+        "nginx",
+        "-g",
+        "daemon off;",
+    ]
+    env               = []
+    id                = "a1b2c3d4e5f6..."
+    image             = "sha256:..."
+    name              = "lab08-nginx-ivan-petrenko"
+    network_data      = [
+        {
+            gateway                   = "172.18.0.1"
+            ip_address                = "172.18.0.2"
+            network_name              = "lab08-net-ivan-petrenko"
+        },
+    ]
+    # ... інша детальна інформація
+}
+```
+
+Видаліть інфраструктуру (виконайте це після перевірки роботи лабораторної):
+
+```bash
+terraform destroy -var="student_name=ivan-petrenko"
+```
+
+*Можлива відповідь системи:*
+```text
+...
+Plan: 0 to add, 0 to change, 5 to destroy.
+
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+docker_container.nginx_container: Destroying... [id=...]
+docker_container.redis_container: Destroying... [id=...]
+docker_container.nginx_container: Destruction complete after 1s
+docker_container.redis_container: Destruction complete after 1s
+docker_image.nginx: Destroying... [id=sha256:...]
+docker_image.redis: Destroying... [id=sha256:...]
+docker_network.lab_net: Destroying... [id=...]
+...
+Destroy complete! Resources: 5 destroyed.
 ```
 
 ---
