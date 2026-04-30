@@ -58,17 +58,19 @@
 - [**Програма**](./cloud_technologies/work_program.md)
 - [**Питання до іспиту**](./cloud_technologies/questions.md)
 - **Заготовки проєктів**:
-  - [Lab 06, 07, 10](./cloud_technologies/projects/lab_06_start_project) — Базовий веб-застосунок (Docker, K8s, PaaS)
-  - [Lab 08](./cloud_technologies/projects/lab_08_start_project) — Terraform (Infrastructure as Code)
-  - [Lab 11](./cloud_technologies/projects/lab_11_start_project) — Робота з базами даних (DBaaS)
-  - [Lab 12](./cloud_technologies/projects/lab_12_start_project) — Мікросервісна архітектура (Microservices)
-  - [Lab 13](./cloud_technologies/projects/lab_13_start_project) — CI/CD пайплайни (GitHub Actions)
-  - [Lab 15](./cloud_technologies/projects/lab_15_start_project) — Serverless функції (Cloudflare Workers)
+  - [Lab 06, 07, 10](https://github.com/SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project) — Базовий веб-застосунок (Docker, K8s, PaaS)
+  - [Lab 08](https://github.com/SurkovKostiantyn/nmk/cloud_technologies/projects/lab_08_start_project) — Terraform (Infrastructure as Code)
+  - [Lab 11](https://github.com/SurkovKostiantyn/nmk/cloud_technologies/projects/lab_11_start_project) — Робота з базами даних (DBaaS)
+  - [Lab 12](https://github.com/SurkovKostiantyn/nmk/cloud_technologies/projects/lab_12_start_project) — Мікросервісна архітектура (Microservices)
+  - [Lab 13](https://github.com/SurkovKostiantyn/nmk/cloud_technologies/projects/lab_13_start_project) — CI/CD пайплайни (GitHub Actions)
+  - [Lab 15](https://github.com/SurkovKostiantyn/nmk/cloud_technologies/projects/lab_15_start_project) — Serverless функції (Cloudflare Workers)
 
-> [!TIP]
 > **Як використовувати заготовки:**
+
 > Оскільки Git не дозволяє клонувати окрему папку, найпростіший спосіб завантажити одну заготовку — використати команду `npx degit`:
+>
 > ```bash
-> npx degit <користувач>/<репо>/cloud_technologies/projects/lab_06_start_project my-lab-work
+> npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project my-lab-work
 > ```
+>
 > Або скористайтеся сервісом [download-directory.github.io](https://download-directory.github.io/), вставивши посилання на потрібну папку.
