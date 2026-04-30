@@ -30,49 +30,18 @@
 
 ### Крок 1. Підготовка застосунку
 
-Якщо ще не маєте застосунку з Лаб. №6 — створіть новий:
+Ви можете використати свій застосунок з Лабораторної №6 або завантажити готову заготовку:
 
 ```bash
-mkdir lab10-paas && cd lab10-paas
+# Завантаження заготовки (nodejs варіант)
+npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project/nodejs lab10-paas
+cd lab10-paas
 ```
 
-**Node.js застосунок:**
-
+Переконайтеся, що застосунок працює локально:
 ```bash
-npm init -y
-npm install express
-```
-
-```js
-// server.js
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-const visits = {};
-
-app.get("/", (req, res) => {
-  res.json({
-    message: process.env.WELCOME_MSG || "Hello from PaaS!",
-    environment: process.env.NODE_ENV || "development",
-    version: process.env.APP_VERSION || "1.0.0",
-    hostname: require("os").hostname(),
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.get("/health", (req, res) =>
-  res.json({ status: "ok", uptime: process.uptime() }),
-);
-
-app.listen(PORT, () =>
-  console.log(`Running on port ${PORT} in ${process.env.NODE_ENV} mode`),
-);
-```
-
-```json
-// package.json — додайте до scripts:
-"start": "node server.js"
+npm install
+npm start
 ```
 
 Ініціалізуйте Git та завантажте до GitHub:
