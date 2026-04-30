@@ -1,0 +1,10 @@
+name = "lab15-worker"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+APP_NAME = "Lab 15 Serverless"
+ENVIRONMENT = "production"
+
+[triggers]
+crons = ["*/5 * * * *"]   # Кожні 5 хвилин

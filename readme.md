@@ -57,3 +57,10 @@
 - [**Короткий план вивчення**](./cloud_technologies/plan.md)
 - [**Програма**](./cloud_technologies/work_program.md)
 - [**Питання до іспиту**](./cloud_technologies/questions.md)
+- [**Заготовки проєктів**](./cloud_technologies/projects):
+    - [Lab 06, 07, 10](./cloud_technologies/projects/lab_06_start_project) — Базовий веб-застосунок (Docker, K8s, PaaS)
+    - [Lab 08](./cloud_technologies/projects/lab_08_start_project) — Terraform (Infrastructure as Code)
+    - [Lab 11](./cloud_technologies/projects/lab_11_start_project) — Робота з базами даних (DBaaS)
+    - [Lab 12](./cloud_technologies/projects/lab_12_start_project) — Мікросервісна архітектура (Microservices)
+    - [Lab 13](./cloud_technologies/projects/lab_13_start_project) — CI/CD пайплайни (GitHub Actions)
+    - [Lab 15](./cloud_technologies/projects/lab_15_start_project) — Serverless функції (Cloudflare Workers)
