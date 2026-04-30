@@ -33,12 +33,17 @@
 Ви можете використати свій застосунок з Лабораторної №6 або завантажити готову заготовку:
 
 ```bash
-# Завантаження заготовки (nodejs варіант)
-npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project/nodejs lab10-paas
+# Варіант А: Node.js (рекомендовано)
+npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project/nodejs#master lab10-paas
+
+# Варіант Б: Python
+npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project/python#master lab10-paas
+
 cd lab10-paas
 ```
 
 Переконайтеся, що застосунок працює локально:
+
 ```bash
 npm install
 npm start
