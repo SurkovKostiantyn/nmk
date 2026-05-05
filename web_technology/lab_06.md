@@ -192,6 +192,11 @@ project/
 1. [Як створити правильну форму на сайті: 20 правил створення](https://iprospect.com.ua/yak-stvoriti-pravilnu-formu-na-sajti-20-pravil-stvorennya/)
 2. [Best practices for forms on the website](https://hostpro.ua/blog/ua/best-practices-for-forms-on-the-website/)
 
+**Приклад виконаного завдання:**
+
+1. [Веб-сайт GitHub Pages](https://surkovkostiantyn.github.io/surkovkn25web/)
+2. [Репозиторій GitHub](https://github.com/SurkovKostiantyn/surkovkn25web/tree/html_forms)
+
 ## Результат
 
 В вашому проєкті з'явиться нова повноцінна сторінка з семантичною, багатомодульною формою замовлення, яка візуально реагує на введення правильних/неправильних даних без жодного рядка JavaScript.
