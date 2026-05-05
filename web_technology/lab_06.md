@@ -152,8 +152,13 @@
    - Виконайте `git add .` та `git commit -m "Create checkout form with HTML5 validation"`.
    - **Важливо**: запушіть зміни в нову гілку `html_forms`.
 
-Приклад:
+**Приклад:**
 ![alt text](./media/image.png)
+
+**Сайти з порадами:**
+
+1. https://iprospect.com.ua/yak-stvoriti-pravilnu-formu-na-sajti-20-pravil-stvorennya/
+2. https://hostpro.ua/blog/ua/best-practices-for-forms-on-the-website/
 
 ## Результат
 
