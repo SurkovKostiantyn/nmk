@@ -415,53 +415,11 @@ Invoke-RestMethod -Uri "https://<your-gateway-domain>.up.railway.app/api/orders"
 
 ### Структура проєкту на прикладі застосунку інтернет-магазину:
 
-```mermaid
-graph TD
-    Client["Клієнт (Браузер / Postman)"] -->|HTTP запити :8080| Gateway["API Gateway (Nginx)"]
-    
-    subgraph "Приватна мережа мікросервісів"
-        Gateway -->|Маршрутизація /api/users| UsersService["Users Service (Порт 3001)"]
-        Gateway -->|Маршрутизація /api/products| ProductsService["Products Service (Порт 3002)"]
-        Gateway -->|Маршрутизація /api/orders| OrdersService["Orders Service (Порт 3003)"]
-        
-        OrdersService -->|Міжсервісний запит GET /users/:id| UsersService
-        OrdersService -->|Міжсервісний запит GET /products/:id| ProductsService
-    end
-    
-    style Client fill:#eceff1,stroke:#37474f,stroke-width:2px
-    style Gateway fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
-    style UsersService fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
-    style ProductsService fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px
-    style OrdersService fill:#fffde7,stroke:#f57f17,stroke-width:2px
-```
+![alt text](./media/lab12_screen4.png)
 
 ### Взаємодія мікросервісів:
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Client as Клієнт
-    participant Gateway as API Gateway (Nginx)
-    participant Orders as Orders Service
-    participant Users as Users Service
-    participant Products as Products Service
-
-    Client->>Gateway: POST /api/orders {userId: 1, productId: 2}
-    Gateway->>Orders: POST /orders {userId: 1, productId: 2}
-    
-    rect rgb(240, 248, 255)
-        note over Orders, Users: Міжсервісна синхронна валідація даних
-        Orders->>Users: GET /users/1
-        Users-->>Orders: 200 OK {id: 1, name: "Іван Петренко", ...}
-        
-        Orders->>Products: GET /products/2
-        Products-->>Orders: 200 OK {id: 2, name: "Мишка", price: 500}
-    end
-
-    Orders->>Orders: Збереження замовлення локально
-    Orders-->>Gateway: 201 Created {id: 3, userId: 1, productName: "Мишка", price: 500}
-    Gateway-->>Client: 201 Created (JSON відповідь)
-```
+![alt text](./media/lab12_screen5.png)
 
 ## Контрольні запитання
 
