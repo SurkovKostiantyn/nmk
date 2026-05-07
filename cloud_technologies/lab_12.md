@@ -49,9 +49,14 @@ lab12-microservices/
 ```
 
 ```bash
-mkdir lab12-microservices && cd lab12-microservices
+mkdir lab12-microservices
+cd lab12-microservices
 mkdir users-service products-service orders-service nginx
 ```
+
+Також файли можна взяти тут:
+
+[Lab 12](https://github.com/SurkovKostiantyn/nmk/tree/master/cloud_technologies/projects/lab_12_start_project) — Мікросервісна архітектура (Microservices)
 
 ### Крок 2. Users Service
 
