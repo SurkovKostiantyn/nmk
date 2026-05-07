@@ -13,8 +13,6 @@
 - **Nginx** — як API Gateway / Reverse Proxy
 - **Railway** або **Render** — для хмарного деплою (опціонально)
 
----
-
 ## Завдання
 
 1. Розбити простий застосунок на 3 мікросервіси (users, products, orders)
@@ -22,8 +20,6 @@
 3. Налаштувати Nginx як API Gateway з маршрутизацією
 4. Виконати тестування міжсервісної комунікації
 5. Дослідити переваги та проблеми мікросервісного підходу
-
----
 
 ## Хід виконання роботи
 
@@ -271,9 +267,15 @@ docker compose up --build -d
 
 ```powershell
 docker compose ps
+docker compose logs users-service
+docker compose logs products-service
+docker compose logs orders-service
+docker compose logs api-gateway
 ```
 
 ![alt text](./media/lab12_screen2.png)
+
+![alt text](./media/lab12_screen3.png)
 
 ### 3. Тестування через API Gateway
 
@@ -337,6 +339,68 @@ docker compose logs orders-service
 
 ```powershell
 docker compose down
+```
+
+## 3. Деплоймент на хмару (Railway)
+
+У цьому кроці ми розглянемо, як розгорнути нашу мікросервісну архітектуру у хмарі **Railway**. Оскільки Railway підтримує деплой безпосередньо з GitHub-репозиторію та автоматично збирає Docker-контейнери, процес є максимально простим.
+
+### Крок 1. Створення Dockerfile для Nginx (API Gateway)
+У локальній конфігурації Docker Compose ми монтували `nginx.conf` як том (`volume`). У хмарі це зробити важко, тому для Nginx потрібно створити окремий `Dockerfile` у папці `./nginx`:
+
+Створіть файл `nginx/Dockerfile` з наступним вмістом:
+```dockerfile
+FROM nginx:alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+```
+
+### Крок 2. Збереження змін у GitHub
+Запушіть нові зміни до вашого репозиторію:
+```powershell
+git add .
+git commit -m "add nginx dockerfile"
+git push
+```
+
+### Крок 3. Налаштування проєкту в Railway
+1. Перейдіть на [Railway.app](https://railway.app/) та авторизуйтеся за допомогою вашого GitHub-акаунту.
+2. Натисніть **+ New Project** -> **Deploy from GitHub** та виберіть ваш репозиторій з лабораторною роботою.
+
+### Крок 4. Створення та конфігурація сервісів
+Оскільки наш проєкт є монорепозиторієм (містить кілька сервісів в одному репозиторії), нам потрібно створити окремий сервіс у Railway для кожного компонента.
+
+Для цього натисніть **+ New** -> **GitHub** -> виберіть свій репозиторій для кожного з 4 сервісів і налаштуйте їх відповідно до таблиці:
+
+| Сервіс (Service Name) | Шлях до папки (Root Directory) | Порт (Port) | Змінні оточення (Variables) |
+| :--- | :--- | :--- | :--- |
+| **`users-service`** | `/users-service` | `3001` | — |
+| **`products-service`** | `/products-service` | `3002` | — |
+| **`orders-service`** | `/orders-service` | `3003` | `USERS_SERVICE_URL` = `http://users-service.railway.internal:3001`<br>`PRODUCTS_SERVICE_URL` = `http://products-service.railway.internal:3002` |
+| **`api-gateway`** | `/nginx` | `80` | — |
+
+> [!NOTE]
+> Завдяки внутрішній мережі Railway (Private Networking), мікросервіси можуть комунікувати між собою за шаблоном `http://<service-name>.railway.internal:<port>`.
+
+### Крок 5. Налаштування публічної адреси для API Gateway
+Щоб мати можливість надсилати запити до нашого застосунку ззовні:
+1. Перейдіть до сервісу **`api-gateway`** у проєкті Railway.
+2. Перейдіть на вкладку **Settings**.
+3. У розділі **Networking** натисніть **Generate Domain**.
+4. Railway згенерує публічну адресу (наприклад, `https://api-gateway-production.up.railway.app`).
+
+### Крок 6. Тестування хмарного деплою
+Тепер ви можете перевірити працездатність застосунку, надсилаючи запити на вашу публічну адресу `api-gateway` замість `localhost:8080`:
+
+```powershell
+# Отримання користувачів
+curl https://<your-gateway-domain>.up.railway.app/api/users
+
+# Отримання продуктів
+curl https://<your-gateway-domain>.up.railway.app/api/products
+
+# Створення замовлення
+Invoke-RestMethod -Uri "https://<your-gateway-domain>.up.railway.app/api/orders" -Method Post -ContentType "application/json" -Body '{"userId": 1, "productId": 2}'
 ```
 
 ## Контрольні запитання
