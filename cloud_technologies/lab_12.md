@@ -337,7 +337,6 @@ docker compose logs orders-service
 
 ```powershell
 docker compose down
-
 ```
 
 ## Контрольні запитання
