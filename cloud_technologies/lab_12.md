@@ -27,6 +27,8 @@
 
 ## Хід виконання роботи
 
+## 1. Створення структури проєкту
+
 ### Крок 1. Структура проєкту
 
 ```
@@ -226,8 +228,6 @@ http {
 
 ```yaml
 # docker-compose.yml
-version: "3.8"
-
 services:
   users-service:
     build: ./users-service
@@ -257,29 +257,88 @@ services:
     restart: unless-stopped
 ```
 
-```bash
-# Збірка та запуск
-docker-compose up --build -d
+## 2. Збірка, запуск, перевірка та зупинка (PowerShell)
 
-# Перевірка
-docker-compose ps
+### 1. Збірка та запуск
 
-# Тестування через API Gateway
-curl http://localhost:8080/api/users
-curl http://localhost:8080/api/products
-curl -X POST http://localhost:8080/api/orders \
-  -H "Content-Type: application/json" \
-  -d '{"userId": 1, "productId": 2}'
-curl http://localhost:8080/api/orders
-
-# Логи конкретного сервісу
-docker-compose logs orders-service
-
-# Зупинка
-docker-compose down
+```powershell
+docker compose up --build -d
 ```
 
----
+![alt text](./media/lab12_screen1.png)
+
+### 2. Перевірка запуску сервісів
+
+```powershell
+docker compose ps
+```
+
+![alt text](./media/lab12_screen2.png)
+
+### 3. Тестування через API Gateway
+
+#### Запит 1: отримання користувачів
+
+```powershell
+curl http://localhost:8080/api/users
+```
+
+#### Приклад відповіді:
+
+```
+[{"id":1,"name":"Іван Петренко","email":"ivan@example.com"},{"id":2,"name":"Марія Коваленко","email":"maria@example.com"}]
+```
+
+#### Запит 2: отримання продуктів
+
+```powershell
+curl http://localhost:8080/api/products
+```
+
+#### Приклад відповіді:
+
+```
+[{"id":1,"name":"Ноутбук","price":30000,"stock":10},{"id":2,"name":"Мишка","price":500,"stock":50},{"id":3,"name":"Клавіатура","price":1200,"stock":30}]
+```
+
+#### Запит 3:
+
+Якщо використовуєте PowerShell (потрібно екранувати подвійні лапки для curl.exe):
+
+```powershell
+curl.exe -X POST http://localhost:8080/api/orders -H "Content-Type: application/json" -d '{\"userId\": 1, \"productId\": 2}'
+```
+
+Або використовуючи рідну команду PowerShell:
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/api/orders" -Method Post -ContentType "application/json" -Body '{"userId": 1, "productId": 2}'
+```
+
+#### Приклад відповіді:
+
+```
+id          : 3
+userId      : 1
+productId   : 2
+userName    : Іван Петренко
+productName : Мишка
+price       : 500
+createdAt   : 2026-05-07T06:11:23.909Z
+```
+
+### 4. Перевірити логи конкретного сервісу
+
+```powershell
+docker compose logs orders-service
+```
+
+### 5. Зупинка
+
+```powershell
+docker compose down
+
+```
 
 ## Контрольні запитання
 
@@ -289,8 +348,6 @@ docker-compose down
 4. Що таке Circuit Breaker Pattern? Для вирішення якої проблеми мікросервісів він використовується?
 5. Що таке eventual consistency? Чому підтримка транзакцій між мікросервісами є складнішою, ніж в моноліті?
 6. Поясніть концепцію «12-factor app». Як вона пов'язана з хмарними застосунками?
-
----
 
 ## Вимоги до звіту
 
