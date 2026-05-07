@@ -385,7 +385,7 @@ git push
 | **`orders-service`**   | `/orders-service`              | `3003`      | `USERS_SERVICE_URL` = `http://users-service.railway.internal:3001`<br>`PRODUCTS_SERVICE_URL` = `http://products-service.railway.internal:3002` |
 | **`api-gateway`**      | `/nginx`                       | `80`        | —                                                                                                                                              |
 
-> **Примітка:** Завдяки внутрішній мережі Railway (Private Networking), мікросервіси можуть комунікувати між собою за шаблоном `http://<service-name>.railway.internal:<port>`.
+**Примітка:** Завдяки внутрішній мережі Railway (Private Networking), мікросервіси можуть комунікувати між собою за шаблоном `http://<service-name>.railway.internal:<port>`.
 
 ### Крок 5. Налаштування публічної адреси для API Gateway
 
