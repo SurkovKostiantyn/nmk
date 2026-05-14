@@ -4,7 +4,7 @@
 
 ```text
 metodical/
-├── plan.md                 <-- Твій поточний план
+├── plan.md                 <-- План
 │
 ├── 00-intro/               <-- Вступ
 │   ├── 0.0.1-abbreviations.md
@@ -16,15 +16,13 @@ metodical/
 │   ├── 1.2-terminal.md
 │   ├── 1.3-runtime.md
 │   ├── 1.4-web-server.md
-│   ├── 1.5-databases.md
-│   └── images/             <-- Скриншоти встановлення ПЗ, VS Code, налаштувань БД тощо
+│   └── 1.5-databases.md
 │
 ├── 02-vcs-git/             <-- Розділ 2
 │   ├── 2.1-intro.md
 │   ├── 2.2-setup.md
 │   ├── 2.3-lifecycle.md
-│   ├── 2.4-branching.md
-│   └── images/             <-- Скриншоти GitHub, вирішення конфліктів тощо
+│   └── 2.4-branching.md
 │
 ├── 03-organization/        <-- Розділ 3
 │   ├── 3.1-templates.md
@@ -32,8 +30,7 @@ metodical/
 │
 ├── 04-deployment/          <-- Розділ 4
 │   ├── 4.1-cicd.md
-│   ├── 4.2-hosting.md
-│   └── images/             <-- Скриншоти з GitHub Actions чи Vercel
+│   └── 4.2-hosting.md
 │
 └── appendix/               <-- Додатки
     ├── .gitignore.example
