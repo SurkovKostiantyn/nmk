@@ -10,7 +10,7 @@
 | **3 семестр**          |    **4**     |   **120**    | **36** |   **36**    |      **48**       |
 | **ЗАГАЛОМ**            |    **8**     |   **240**    | **72** |   **72**    |      **96**       |
 
-- [**Короткий план вивчення**](./web_technology/plan.md)
+- [**Матеріали**](./web_technology/plan.md)
 - [**Програма**](./web_technology/work_program.md)
 - [**Питання до іспиту**](./web_technology/questions.md)
 
@@ -22,7 +22,7 @@
 | :------------------- | :----------: | :----------: | :----: | :---------: | :-------: | :---------------: |
 | **3 семестр**        |    **4**     |   **120**    | **36** |   **18**    |  **18**   |      **48**       |
 
-- [**Короткий план вивчення**](./web_app_development/plan.md)
+- [**Матеріали**](./web_app_development/plan.md)
 - [**Програма**](./web_app_development/work_program.md)
 - [**Питання до заліку**](./web_app_development/questions.md)
 
@@ -32,7 +32,7 @@
 
     4 кредити ECTS на 3 семестр  120 годин = 36 годин лекцій - 36 годин лабораторних - 48 годин самостійної роботи
 
-- [**Короткий план вивчення**](./programming/plan.md)
+- [**Матеріали**](./programming/plan.md)
 - [**Програма**](./programming/work_program.md)
 - [**Питання до заліку**](./programming/questions.md)
 
@@ -44,7 +44,7 @@
 | :------------------- | :----------: | :----------: | :----: | :---------: | :---------------: |
 | **7 семестр**        |    **4**     |   **120**    | **36** |   **36**    |      **48**       |
 
-- [**Короткий план вивчення**](./it_projects_management/plan.md)
+- [**Матеріали**](./it_projects_management/plan.md)
 - [**Програма**](./it_projects_management/work_program.md)
 - [**Питання до іспиту**](./it_projects_management/questions.md)
 
@@ -56,9 +56,11 @@
 | :------------------- | :----------: | :----------: | :----: | :---------: | :---------------: |
 | **7 семестр**        |    **4**     |   **120**    | **36** |   **36**    |      **48**       |
 
-- [**Короткий план вивчення**](./cloud_technologies/plan.md)
+- [**Матеріали**](./cloud_technologies/plan.md)
 - [**Програма**](./cloud_technologies/work_program.md)
 - [**Питання до іспиту**](./cloud_technologies/questions.md)
+- [**Реферати**](./cloud_technologies/referat/referats.md)
+- [**Словник термінів**](./cloud_technologies/dictionary.md)
 - **Заготовки проєктів**:
   - [Lab 06, 07, 10](https://github.com/SurkovKostiantyn/nmk/tree/master/cloud_technologies/projects/lab_06_start_project) — Базовий веб-застосунок (Docker, K8s, PaaS)
   - [Lab 08](https://github.com/SurkovKostiantyn/nmk/tree/master/cloud_technologies/projects/lab_08_start_project) — Terraform (Infrastructure as Code)
