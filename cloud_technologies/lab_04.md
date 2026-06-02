@@ -13,8 +13,6 @@
 - **SSH-клієнт**: OpenSSH (Linux/macOS), PuTTY або Windows Terminal (Windows)
 - **Nginx** — веб-сервер для тестування
 
----
-
 ## Завдання
 
 1. Створити SSH-ключову пару для підключення до VM
