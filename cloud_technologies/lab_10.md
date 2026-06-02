@@ -30,49 +30,23 @@
 
 ### Крок 1. Підготовка застосунку
 
-Якщо ще не маєте застосунку з Лаб. №6 — створіть новий:
+Ви можете використати свій застосунок з Лабораторної №6 або завантажити готову заготовку:
 
 ```bash
-mkdir lab10-paas && cd lab10-paas
+# Варіант А: Node.js (рекомендовано)
+npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project/nodejs#master lab10-paas
+
+# Варіант Б: Python
+npx degit SurkovKostiantyn/nmk/cloud_technologies/projects/lab_06_start_project/python#master lab10-paas
+
+cd lab10-paas
 ```
 
-**Node.js застосунок:**
+Переконайтеся, що застосунок працює локально:
 
 ```bash
-npm init -y
-npm install express
-```
-
-```js
-// server.js
-const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-const visits = {};
-
-app.get("/", (req, res) => {
-  res.json({
-    message: process.env.WELCOME_MSG || "Hello from PaaS!",
-    environment: process.env.NODE_ENV || "development",
-    version: process.env.APP_VERSION || "1.0.0",
-    hostname: require("os").hostname(),
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.get("/health", (req, res) =>
-  res.json({ status: "ok", uptime: process.uptime() }),
-);
-
-app.listen(PORT, () =>
-  console.log(`Running on port ${PORT} in ${process.env.NODE_ENV} mode`),
-);
-```
-
-```json
-// package.json — додайте до scripts:
-"start": "node server.js"
+npm install
+npm start
 ```
 
 Ініціалізуйте Git та завантажте до GitHub:
@@ -87,9 +61,11 @@ git remote add origin https://github.com/<username>/lab10-paas.git
 git push -u origin main
 ```
 
-### Крок 2. Розгортання на Railway (рекомендовано)
+### Крок 2. Розгортання на PaaS-платформі
 
-Railway — сучасна PaaS-платформа з безкоштовним тарифом ($5 кредитів щомісяця, без картки).
+**Railway**
+
+Це сучасна PaaS-платформа з безкоштовним тарифом ($5 кредитів щомісяця, без картки).
 
 1. Зайдіть на [https://railway.app](https://railway.app) та авторизуйтесь через GitHub
 2. Натисніть **New Project** → **Deploy from GitHub repo**
@@ -98,7 +74,37 @@ Railway — сучасна PaaS-платформа з безкоштовним �
 5. Перейдіть до **Settings** → **Networking** → **Generate Domain** для отримання публічного URL
 6. Відкрийте URL у браузері — ви маєте побачити JSON-відповідь
 
-**Альтернатива — Render:**
+_Важливо_:
+
+> **1. Налаштування доступу GitHub App (найчастіша причина)**
+
+> Коли ви вперше підключаєте GitHub, ви могли надати доступ лише до "Selected repositories" (обраних репозиторіїв) замість "All repositories".
+
+> **Як виправити:**
+
+> - Перейдіть у свій GitHub.
+> - Натисніть на аватар → Settings (Налаштування).
+> - У лівому меню знайдіть розділ Applications.
+> - Знайдіть у списку Railway і натисніть кнопку Configure.
+> - Прокрутіть вниз до розділу Repository access.
+> - Оберіть All repositories або натисніть Select repositories і додайте потрібний проєкт вручну.
+> - Натисніть Save.
+
+> **2. Репозиторій належить організації**
+
+> Якщо ваш репозиторій знаходиться в організації (Organization), а не в особистому профілі, Railway може не бачити його без окремого дозволу від власника організації:
+>
+> - У тому ж вікні Configure на GitHub перевірте, чи дозволено Railway доступ до конкретної організації.
+> - Якщо ви не власник — попросіть адміністратора підтвердити запит на доступ для Railway.
+
+> **3. Оновлення зв'язку в Railway**
+
+> Іноді Railway просто потрібно "підштовхнути", щоб він оновив список:
+>
+> - Спробуйте натиснути "Configure GitHub App" безпосередньо у вікні вибору репозиторію на сайті Railway. Це перенаправить вас на сторінку дозволів.
+> - Вийдіть зі свого акаунта Railway і зайдіть знову через GitHub.
+
+**Render:**
 
 1. Зайдіть на [https://render.com](https://render.com) → **New Web Service**
 2. Підключіть GitHub → оберіть `lab10-paas`
@@ -107,17 +113,53 @@ Railway — сучасна PaaS-платформа з безкоштовним �
 5. **Instance Type:** Free
 6. Натисніть **Create Web Service**
 
+**Fly.io:**
+
+Ця платформа запускає застосунки у легковагих віртуальних машинах (Firecracker). Потребує встановлення CLI.
+
+1. Встановіть `flyctl`: `powershell -Command "iwr https://fly.io/install.ps1 | iex"` (Windows)
+2. Авторизуйтесь: `fly auth login`
+3. Створіть та налаштуйте проєкт: `fly launch`
+4. На всі запитання щодо конфігурації можна погодитись (defaults). Fly.io створить `fly.toml`
+5. Деплой: `fly deploy`
+
+**Koyeb:**
+
+Зручна альтернатива з безкоштовним рівнем (Eco/Free Instance), що не вимагає картки.
+
+1. Зайдіть на [https://www.koyeb.com](https://www.koyeb.com) → **Create Service**
+2. Оберіть **GitHub** → ваш репозиторій
+3. Railway/Koyeb автоматично визначать Node.js. Перевірте **Run command**: `npm start`
+4. Оберіть регіон та натисніть **Deploy**
+
 ### Крок 3. Налаштування змінних оточення
 
-У Railway:
+**Railway**:
 
 - Ваш проєкт → **Variables** → **New Variable**
-- Додайте:
-  - `WELCOME_MSG` = `Привіт від ETI Cloud Club!`
-  - `APP_VERSION` = `1.0.0`
-  - `NODE_ENV` = `production`
+- Додайте: `WELCOME_MSG`, `APP_VERSION`, `NODE_ENV`.
 
-Після збереження Railway автоматично перерозгорне застосунок. Перевірте зміни у відповіді API.
+**Render**:
+
+- Панель керування → Ваш сервіс → **Environment**
+- Натисніть **Add Environment Variable** та вкажіть ключі й значення.
+
+**Fly.io**:
+
+- Через CLI: `fly secrets set WELCOME_MSG="Привіт від Fly.io" APP_VERSION="1.0.0"`
+- Або додайте у файл `fly.toml` у блок `[env]`:
+  ```toml
+  [env]
+    NODE_ENV = "production"
+  ```
+- Після цього виконайте `fly deploy`.
+
+**Koyeb**:
+
+- Панель керування → Ваш сервіс → **Settings** → **Environment Variables**
+- Натисніть **Add Variable**, введіть дані та натисніть **Save and Redeploy**.
+
+Після збереження змін (або виконання команди деплою) PaaS-платформа автоматично перерозгорне застосунок. Перевірте зміни у відповіді API.
 
 ### Крок 4. Оновлення застосунку (автодеплой)
 
@@ -139,7 +181,11 @@ git commit -m "Add /about endpoint"
 git push origin main
 ```
 
-Railway / Render автоматично виявить push та запустить новий деплой. Слідкуйте за процесом у **Deployments** → відкрийте новий URL і перевірте `/about`.
+Більшість PaaS-платформ (**Railway, Render, Koyeb**) автоматично виявлять `push` до репозиторію та запустить новий процес збірки. Слідкуйте за логами у консолі керування.
+
+_Примітка: Якщо ви використовуєте **Fly.io**, для оновлення потрібно знову виконати команду `fly deploy` у терміналі._
+
+Відкрийте ваш публічний URL і перевірте новий ендпоінт: `https://<your-app-url>/about`.
 
 ### Крок 5. AWS Elastic Beanstalk (альтернативний варіант)
 
