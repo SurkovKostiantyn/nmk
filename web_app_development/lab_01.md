@@ -1,200 +1,485 @@
-# Лабораторна робота №1 (2 години)
+# Лабораторна робота №1 (2 години). Ініціалізація та побудова архітектури React-проєкту на Vite та TypeScript
 
-**Тема:** Створення каркаса додатка та базових UI-компонентів
-Проєктування архітектури React-додатка, використання методології Atomic Design та стилізація через CSS Modules.
+## Методичний зв'язок із навчальним планом
 
-**Мета:** Створити каркас майбутнього веб-застосунку (соціальна мережа або таск-менеджер), розробити набір перевикористовуваних "атомарних" компонентів (Button, Input, Card) та налаштувати їх стилізацію.
+- відповідність темам лекцій - робота спирається на теоретичний базис Лекції 1 (декларативна парадигма `UI = f(state)`, SPA-архітектура, чистота компонентів) та Лекції 2 (інструментарій Vite, модульна екосистема Node.js, стандарти організації коду);
+- місце в курсовому проєкті - створення базового технологічного фундаменту та початкової архітектури наскрізного навчального веб-додатка, який розвиватиметься протягом усього семестру.
 
-**Технологічний стек:** React, Vite, CSS Modules.
+## Мета роботи
 
-## Завдання
+Опанувати процес розгортання сучасного React-застосунку за допомогою збирача нового покоління Vite з підтримкою TypeScript; спроєктувати модульну файлову структуру, налаштувати безпечні шляхи імпорту через аліаси та створити перші типізовані базові компоненти інтерфейсу без використання застарілих бібліотек і шаблонів.
 
-1. Розгорнути порожній проєкт на Vite.
-2. Налаштувати структуру папок згідно з методологією Atomic Design.
-3. Створити базові UI-компоненти (атоми): `Button`, `Input`, `Typography`.
-4. Створити компонент-обгортку (молекулу): `Card`.
-5. Зібрати з компонентів статичну сторінку (наприклад, форму входу або картку профілю) в `App.jsx`.
+## Технологічний стек
+
+- платформа виконання - Node.js (версія LTS 20+);
+- бібліотека інтерфейсу - React 19;
+- мова програмування - TypeScript 5+;
+- інструмент збірки та локальний сервер - Vite 6+;
+- стилізація - сучасний модульний CSS із застосуванням системних скидань стилів (CSS Reset).
+
+---
+
+## Завдання лабораторної роботи
+
+- розгортання проєкту - ініціалізація нового застосунку за допомогою Vite з використанням офіційного шаблону `react-ts`;
+- очищення та конфігурація - видалення демонстраційного бойлерплейту, оптимізація базових файлів та налаштування метаданих;
+- конфігурація аліасів шляхів (Path Aliases) - налаштування розпізнавання шляху `@/*` у конфігураціях Vite та TypeScript;
+- модульне зонування архітектури - створення професійної ієрархії каталогів для масштабованого проєкту;
+- розробка типізованих компонентів - створення базових структурних елементів інтерфейсу із суворою типізацією пропсів та дочірніх елементів;
+- збирання стартового екрана - композиція створених компонентів у головному файлі застосунку відповідно до принципу чистоти `UI = f(state)`;
+- верифікація збірки - перевірка роботи локального dev-сервера та запуск повної типізованої збірки проєкту на рівні production.
+
+---
 
 ## Хід виконання роботи
 
-### Крок 1. Ініціалізація та очищення проєкту
+### Крок 1. Ініціалізація проєкту за допомогою Vite та TypeScript
 
-Використовуючи навички з Практичного заняття 1, створіть новий проєкт або використайте існуючий.
+Відмовтеся від застарілих інструментів (Create React App) на користь сучасного стандарту індустрії — Vite. Відкрийте термінал у вашій робочій директорії та виконайте команду генерації:
 
-1. Переконайтеся, що проєкт створено через Vite:
-   npm create vite@latest lab1-react -- --template react
-2. Очистка (Cleanup):
-   Видаліть файли `src/assets/react.svg`, `src/App.css`.
-   Очистіть `src/index.css` (або залиште лише базовий скидання стилів).
-   У `src/App.jsx` видаліть весь код і залиште лише порожній `div` або фрагмент.
-
-### Крок 2. Архітектура Atomic Design
-
-Для організації файлів ми використаємо підхід Atomic Design, який передбачає поділ інтерфейсу на дрібні незалежні частини.
-Створіть у папці `src` наступну структуру:
-src/
-|-- components/
-| |-- atoms/ (Кнопки, інпути, іконки, текст)
-| |-- molecules/ (Поля форм, картки, списки)
-| |-- organisms/ (Хедер, футер, складні форми)
-| |-- pages/ (Сторінки цілком)
-
-### Крок 3. Створення компонентів (Atoms) з CSS Modules
-
-React фокусується на компонентній архітектурі, де кожен елемент містить свою логіку та розмітку. Ми також використаємо CSS Modules для ізоляції стилів, щоб уникнути конфліктів імен.
-
-#### 3.1. Компонент Button
-
-Створіть файли `src/components/atoms/Button/Button.jsx` та `Button.module.css`.
-
-Button.jsx:
-
-```jsx
-import styles from './Button.module.css';
-// Використовуємо деструктуризацію пропсів
-const Button = ({ children, onClick, variant = 'primary' }) => {
-return (
-<button
-className={`${styles.button} ${styles[variant]}`}
-onClick={onClick}
-
-> {children}
-> </button>
-> );
-> };
-
-export default Button;
+```bash
+npm create vite@latest devflow-app -- --template react-ts
 ```
 
-Button.module.css:
+Перейдіть до створеного каталогу та встановіть початкові пакети:
+
+```bash
+cd devflow-app
+npm install
+```
+
+Ознайомтеся зі структурою створеного проєкту:
+- `package.json` - маніфест проєкту, перелік залежностей та скриптів запуску;
+- `vite.config.ts` - конфігураційний файл збирача Vite;
+- `tsconfig.json` - коренева конфігурація компілятора TypeScript, яка посилається на `tsconfig.app.json` (налаштування коду застосунку) та `tsconfig.node.json` (налаштування середовища збірки);
+- `index.html` - єдина вхідна точка односторінкового застосунку (SPA), яка містить контейнер `<div id="root"></div>` та безпосередній імпорт модуля `src/main.tsx`.
+
+Запустіть середовище розробки:
+
+```bash
+npm run dev
+```
+
+Переконайтеся у швидкому старті сервера та відкрийте запропоновану локальну адресу у веббраузері (зазвичай `http://localhost:5173`).
+
+---
+
+### Крок 2. Очищення шаблонного коду та налаштування базових стилів
+
+Перед побудовою власної архітектури необхідно видалити демонстраційні файли, що постачаються з шаблоном:
+- видаліть демонстраційну іконку `src/assets/react.svg`;
+- видаліть файл стилів `src/App.css`;
+- очистіть вміст `src/index.css` та замініть його на сучасне базове скидання стилів (CSS Reset):
 
 ```css
-.button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: opacity 0.3s;
+/* src/index.css */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.button:hover {
-  opacity: 0.8;
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1a1a1a;
+  background-color: #f8fafc;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.primary {
-  background-color: #007bff;
-  color: white;
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.secondary {
-  background-color: #6c757d;
-  color: white;
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 ```
 
-#### 3.2. Компонент Input
+---
 
-Створіть `src/components/atoms/Input/Input.jsx` та `Input.module.css`. Компонент має приймати пропси `type`, `placeholder` та `label`.
-Завдання: Реалізуйте `Input` самостійно.
-Він має рендерити тег `<input>` та опціональний `<label>`, загорнуті у `div`. Стилізуйте його, щоб він мав відступи та рамку.
+### Крок 3. Налаштування аліасів абсолютних імпортів (`@/*`)
 
-### Крок 4. Створення компонента Card (Molecule)
+Використання відносних шляхів на кшталт `../../../components/Button` є антипатерном, що ускладнює рефакторинг. Необхідно налаштувати лаконічний аліас `@`, який вказує на кореневу папку `src`.
 
-Компонент `Card` слугуватиме контейнером для іншого контенту. Він використовує спеціальний проп `children`, щоб відобразити все, що передано всередину нього.
+Встановіть типи для системного модуля `node`:
 
-Card.jsx:
+```bash
+npm install --save-dev @types/node
+```
 
-```jsx
-import styles from "./Card.module.css";
+Оновіть конфігураційний файл `vite.config.ts`:
 
-const Card = ({ children }) => {
-  return <div className={styles.card}>{children}</div>;
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+});
+```
+
+Додайте конфігурацію шляхів до файлу `tsconfig.app.json` всередину секції `compilerOptions`:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+```
+
+Тепер будь-який файл із папки `src` можна імпортувати через зручний префікс, наприклад: `import { Button } from '@/components/common/Button'`.
+
+---
+
+### Крок 4. Організація модульної архітектури каталогів
+
+Для наскрізного проєкту створимо масштабовану структуру за принципом розподілу обов'язків:
+- `src/components/common` - загальні UI-елементи, які не містять бізнес-логіки (кнопки, інпути, модальні вікна, картки);
+- `src/layouts` - шаблони розмітки сторінок (шапка, сайдбар, підвал, центральний контейнер);
+- `src/types` - загальносистемні типи даних та інтерфейси TypeScript;
+- `src/features` - модулі бізнес-функціоналу (каталог, кошик, авторизація, замовлення);
+- `src/utils` - чисті утилітарні функції (форматування цін, робота з датами, валідатори).
+
+Створіть відповідні папки всередині директорії `src`:
+
+```bash
+mkdir -p src/components/common src/layouts src/types src/features src/utils
+```
+
+---
+
+### Крок 5. Створення типів та базових презентаційних компонентів
+
+Створимо моделі даних та компоненти для відображення інформаційної панелі навчального проєкту.
+
+Створіть файл системних типів `src/types/index.ts`:
+
+```typescript
+// src/types/index.ts
+export interface ProjectInfo {
+  id: string;
+  title: string;
+  description: string;
+  status: 'active' | 'in-progress' | 'planned';
+  createdAt: string;
+}
+
+export type CardVariant = 'default' | 'highlighted' | 'bordered';
+```
+
+Створіть компонент контейнера `src/layouts/Container.tsx` для централізації контенту на екрані:
+
+```tsx
+// src/layouts/Container.tsx
+import React from 'react';
+
+interface ContainerProps {
+  children: React.ReactNode;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+}
+
+const maxWidthMap = {
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
 };
 
-export default Card;
+export const Container: React.FC<ContainerProps> = ({ children, maxWidth = 'lg' }) => {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: maxWidthMap[maxWidth],
+        margin: '0 auto',
+        padding: '0 20px',
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 ```
 
-Card.module.css:
+Створіть компонент шапки додатка `src/layouts/Header.tsx`:
 
-```css
-.card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  max-width: 400px;
-  margin: 20px auto;
+```tsx
+// src/layouts/Header.tsx
+import React from 'react';
+import { Container } from './Container';
+
+interface HeaderProps {
+  appName: string;
+  version: string;
 }
+
+export const Header: React.FC<HeaderProps> = ({ appName, version }) => {
+  return (
+    <header
+      style={{
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '16px 0',
+        marginBottom: '32px',
+      }}
+    >
+      <Container>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>{appName}</h1>
+            <p style={{ fontSize: '13px', color: '#64748b' }}>Навчальний семестровий проєкт</p>
+          </div>
+          <span
+            style={{
+              fontSize: '12px',
+              backgroundColor: '#e0f2fe',
+              color: '#0369a1',
+              padding: '4px 10px',
+              borderRadius: '9999px',
+              fontWeight: 600,
+            }}
+          >
+            v{version}
+          </span>
+        </div>
+      </Container>
+    </header>
+  );
+};
 ```
 
-### Крок 5. Складання інтерфейсу в App.jsx
+Створіть перевикористовувану карточку `src/components/common/Card.tsx`:
 
-Тепер, використовуючи декларативний підхід React, зберіть сторінку "Входу в систему" (Login UI) у головному файлі.
+```tsx
+// src/components/common/Card.tsx
+import React from 'react';
+import { CardVariant } from '@/types';
 
-App.jsx:
+interface CardProps {
+  children: React.ReactNode;
+  title?: string;
+  variant?: CardVariant;
+  onClick?: () => void;
+}
 
-```jsx
-import Button from "./components/atoms/Button/Button";
-import Input from "./components/atoms/Input/Input"; // Ваш компонент
-import Card from "./components/molecules/Card/Card";
-
-function App() {
-  const handleLogin = () => {
-    alert("Логіка входу буде реалізована пізніше");
+export const Card: React.FC<CardProps> = ({
+  children,
+  title,
+  variant = 'default',
+  onClick,
+}) => {
+  const getBorderColor = () => {
+    switch (variant) {
+      case 'highlighted':
+        return '#3b82f6';
+      case 'bordered':
+        return '#cbd5e1';
+      default:
+        return 'transparent';
+    }
   };
 
   return (
     <div
+      onClick={onClick}
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        backgroundColor: "#f0f2f5",
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        padding: '24px',
+        boxShadow: variant === 'highlighted' ? '0 10px 15px -3px rgba(59, 130, 246, 0.1)' : '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+        border: `1px solid ${getBorderColor()}`,
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       }}
     >
-      <Card>
-        <h2 style={{ marginBottom: "20px", textAlign: "center" }}>
-          Ласкаво просимо
-        </h2>
-
-        <div style={{ marginBottom: "15px" }}>
-          {/* Використовуйте ваш компонент Input тут */}
-          <Input type="email" placeholder="Email" />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          {/* Використовуйте ваш компонент Input тут */}
-          <Input type="password" placeholder="Пароль" />
-        </div>
-
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <Button onClick={handleLogin} variant="primary">
-            Увійти
-          </Button>
-          <Button variant="secondary">Реєстрація</Button>
-        </div>
-      </Card>
+      {title && (
+        <h3
+          style={{
+            fontSize: '18px',
+            fontWeight: 600,
+            marginBottom: '12px',
+            color: '#1e293b',
+          }}
+        >
+          {title}
+        </h3>
+      )}
+      {children}
     </div>
+  );
+};
+```
+
+---
+
+### Крок 6. Збирання головного компонента `App.tsx`
+
+Відкрийте `src/App.tsx` та зберіть головну сторінку застосунку відповідно до декларативної парадигми:
+
+```tsx
+// src/App.tsx
+import React, { useState } from 'react';
+import { Header } from '@/layouts/Header';
+import { Container } from '@/layouts/Container';
+import { Card } from '@/components/common/Card';
+import { ProjectInfo } from '@/types';
+
+const INITIAL_PROJECTS: ProjectInfo[] = [
+  {
+    id: '1',
+    title: 'Модуль каталогу продуктів',
+    description: 'Декларативне відображення списків, фільтрація та сортування за критеріями.',
+    status: 'in-progress',
+    createdAt: '2026-10-13',
+  },
+  {
+    id: '2',
+    title: 'Клієнтський кошик замовлень',
+    description: 'Управління локальним станом за допомогою хука useReducer та іммутабельність.',
+    status: 'planned',
+    createdAt: '2026-10-20',
+  },
+  {
+    id: '3',
+    title: 'Інтеграція REST API та кешування',
+    description: 'Асинхронний фетчинг даних через TanStack Query та мутація серверного стану.',
+    status: 'planned',
+    createdAt: '2026-11-05',
+  },
+];
+
+export function App() {
+  const [projects] = useState<ProjectInfo[]>(INITIAL_PROJECTS);
+
+  const getStatusBadge = (status: ProjectInfo['status']) => {
+    const isProgress = status === 'in-progress';
+    return (
+      <span
+        style={{
+          display: 'inline-block',
+          padding: '2px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          fontWeight: 600,
+          backgroundColor: isProgress ? '#fef3c7' : '#f1f5f9',
+          color: isProgress ? '#b45309' : '#475569',
+        }}
+      >
+        {isProgress ? 'В роботі' : 'Заплановано'}
+      </span>
+    );
+  };
+
+  return (
+    <>
+      <Header appName="DevFlow Workspace" version="1.0.0" />
+      <main style={{ flex: 1, paddingBottom: '40px' }}>
+        <Container>
+          <div style={{ marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a' }}>
+              Архітектура та модулі проєкту
+            </h2>
+            <p style={{ color: '#64748b' }}>
+              Усі модулі спроєктовано згідно з декларативною парадигмою React 19 та суворою типізацією TypeScript.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {projects.map((project) => (
+              <Card
+                key={project.id}
+                title={project.title}
+                variant={project.status === 'in-progress' ? 'highlighted' : 'bordered'}
+              >
+                <p style={{ color: '#475569', fontSize: '14px', marginBottom: '16px' }}>
+                  {project.description}
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {getStatusBadge(project.status)}
+                  <small style={{ color: '#94a3b8' }}>{project.createdAt}</small>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </Container>
+      </main>
+    </>
   );
 }
 
 export default App;
 ```
 
-### Крок 6. Фіксація в Git
+---
 
-1. Зробіть коміт зі структурою папок: `git commit -m "Setup Atomic Design structure"`.
-2. Зробіть коміт з готовими компонентами: `git commit -m "Add basic atoms and molecules"`.
+### Крок 7. Перевірка статичної типізації та виробнича збірка
 
-### Контрольні запитання
+Зупиніть локальний сервер комбінацією `Ctrl + C` та запустіть команду компіляції та збірки проєкту:
 
-1. Що таке Atomic Design і навіщо ми розділяємо компоненти на атоми та молекули?
-2. Як працюють CSS Modules і як вони вирішують проблему глобальних імен класів?
-3. Що таке `props.children` і в якому компоненті цієї лабораторної роботи ми його використали?
-4. Чому атрибут HTML `class` у JSX записується як `className`?
+```bash
+npm run build
+```
 
-### Вимоги до звіту
+Зверніть увагу:
+- команда викликає `tsc -b && vite build`;
+- якщо у типах TypeScript є хоча б одна помилка або розбіжність, компілятор зупинить процес із детальним описом проблеми;
+- при успішному виконанні у корені створюється оптимізована директорія `dist`, готова для деплою.
 
-1. Посилання на GitHub-репозиторій надіслати в Classroom 2. В файл lab1.md винести фрагмент коду 3. В файлі lab1.md дати відповіді на контрольні питання
+Запустіть попередній перегляд зібраного проєкту:
+
+```bash
+npm run preview
+```
+
+---
+
+## Завдання для самостійної роботи
+
+- створення компонента бейджа - винесіть логіку відображення статусів (`getStatusBadge`) у самостійний типізований компонент `Badge.tsx` всередині папки `src/components/common`;
+- додавання варіантів кольору - додайте до компонента `Badge` типізований проп `variant: 'success' | 'warning' | 'info'` з відповідними колірними темами;
+- розширення моделі даних - додайте до інтерфейсу `ProjectInfo` поле пріоритету `priority: 'low' | 'medium' | 'high'` та відобразіть його у картці;
+- створення футера - створіть компонент `Footer.tsx` у папці `src/layouts` з інформацією про автора та навчальний рік, імпортуйте та відобразіть його у `App.tsx`.
+
+---
+
+## Контрольні запитання
+
+- які технічні переваги забезпечує використання збирача Vite у порівнянні з класичним Create React App на базі Webpack;
+- як конфігурація `paths` у `tsconfig.app.json` та секція `resolve.alias` у `vite.config.ts` забезпечують безпечну роботу аліасів імпорту `@/*`;
+- поясніть значення використання пропу `children` типу `React.ReactNode` для створення гнучких компонентів-обгорток (Slot-патерн);
+- чому в React суворо заборонено прямо мутувати масив `projects` (наприклад, через метод `.push()`), а натомість використовується функція оновлення стану;
+- яка роль файлу `index.html` у структурі односторінкового застосунку (SPA) під час обробки браузером?
+
+---
+
+## Вимоги до оформлення звіту
+
+- посилання на репозиторій - надати активне посилання на створений репозиторій проєкту на платформі GitHub;
+- знімок екрана - додати скриншот успішного запуску локального dev-сервера у терміналі та зовнішнього вигляду сторінки у браузері;
+- код створених модулів - навести у звіті код файлів `vite.config.ts`, `src/types/index.ts` та власноруч створеного компонента `Badge.tsx`;
+- відповіді на питання - надати письмово розгорнуті та аргументовані відповіді на всі контрольні запитання.
