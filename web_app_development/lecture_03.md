@@ -279,7 +279,7 @@ function Glossary({ items }: { items: { id: string; term: string; desc: string }
 ### Об'єктний синтаксис інлайн-стилів (`style`)
 
 В HTML стилі записувалися звичайним рядком: `<div style="color: red; margin-top: 10px;">`.
-У React проп `style` очікує **JavaScript-об'єкт**. Тому у розмітці з'являються подвійні фігурні дужки `style={{...}}`: перші дужки відкривають JS-вираз, а другі позначають сам літерал об'єкта.
+У React проп `style` очікує **JavaScript-об'єкт**. Тому у розмітці з'являються подвійні фігурні дужки `style={ { ... } }`: перші дужки відкривають JS-вираз, а другі позначають сам літерал об'єкта.
 
 Правила запису стилів:
 - CSS-властивості з дефісом замінюються на camelCase (`margin-top` -> `marginTop`, `background-color` -> `backgroundColor`);

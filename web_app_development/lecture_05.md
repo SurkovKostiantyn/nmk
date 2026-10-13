@@ -311,7 +311,7 @@ function useTabsContext() {
 export function Tabs({ defaultValue, children }: { defaultValue: string; children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState(defaultValue);
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+    <TabsContext.Provider value={ { activeTab, setActiveTab } }>
       <div className="tabs-root">{children}</div>
     </TabsContext.Provider>
   );

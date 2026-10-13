@@ -208,12 +208,12 @@ const maxWidthMap = {
 export const Container: React.FC<ContainerProps> = ({ children, maxWidth = 'lg' }) => {
   return (
     <div
-      style={{
+      style={ {
         width: '100%',
         maxWidth: maxWidthMap[maxWidth],
         margin: '0 auto',
         padding: '0 20px',
-      }}
+      } }
     >
       {children}
     </div>
@@ -236,28 +236,28 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ appName, version }) => {
   return (
     <header
-      style={{
+      style={ {
         backgroundColor: '#ffffff',
         borderBottom: '1px solid #e2e8f0',
         padding: '16px 0',
         marginBottom: '32px',
-      }}
+      } }
     >
       <Container>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
           <div>
-            <h1 style={{ fontSize: '20px', fontWeight: 700, color: '#0f172a' }}>{appName}</h1>
-            <p style={{ fontSize: '13px', color: '#64748b' }}>Навчальний семестровий проєкт</p>
+            <h1 style={ { fontSize: '20px', fontWeight: 700, color: '#0f172a' } }>{appName}</h1>
+            <p style={ { fontSize: '13px', color: '#64748b' } }>Навчальний семестровий проєкт</p>
           </div>
           <span
-            style={{
+            style={ {
               fontSize: '12px',
               backgroundColor: '#e0f2fe',
               color: '#0369a1',
               padding: '4px 10px',
               borderRadius: '9999px',
               fontWeight: 600,
-            }}
+            } }
           >
             v{version}
           </span>
@@ -302,23 +302,23 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       onClick={onClick}
-      style={{
+      style={ {
         backgroundColor: '#ffffff',
         borderRadius: '12px',
         padding: '24px',
         boxShadow: variant === 'highlighted' ? '0 10px 15px -3px rgba(59, 130, 246, 0.1)' : '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
         border: `1px solid ${getBorderColor()}`,
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-      }}
+      } }
     >
       {title && (
         <h3
-          style={{
+          style={ {
             fontSize: '18px',
             fontWeight: 600,
             marginBottom: '12px',
             color: '#1e293b',
-          }}
+          } }
         >
           {title}
         </h3>
@@ -374,7 +374,7 @@ export function App() {
     const isProgress = status === 'in-progress';
     return (
       <span
-        style={{
+        style={ {
           display: 'inline-block',
           padding: '2px 8px',
           borderRadius: '4px',
@@ -382,7 +382,7 @@ export function App() {
           fontWeight: 600,
           backgroundColor: isProgress ? '#fef3c7' : '#f1f5f9',
           color: isProgress ? '#b45309' : '#475569',
-        }}
+        } }
       >
         {isProgress ? 'В роботі' : 'Заплановано'}
       </span>
@@ -392,23 +392,23 @@ export function App() {
   return (
     <>
       <Header appName="DevFlow Workspace" version="1.0.0" />
-      <main style={{ flex: 1, paddingBottom: '40px' }}>
+      <main style={ { flex: 1, paddingBottom: '40px' } }>
         <Container>
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#0f172a' }}>
+          <div style={ { marginBottom: '24px' } }>
+            <h2 style={ { fontSize: '24px', fontWeight: 700, color: '#0f172a' } }>
               Архітектура та модулі проєкту
             </h2>
-            <p style={{ color: '#64748b' }}>
+            <p style={ { color: '#64748b' } }>
               Усі модулі спроєктовано згідно з декларативною парадигмою React 19 та суворою типізацією TypeScript.
             </p>
           </div>
 
           <div
-            style={{
+            style={ {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: '20px',
-            }}
+            } }
           >
             {projects.map((project) => (
               <Card
@@ -416,12 +416,12 @@ export function App() {
                 title={project.title}
                 variant={project.status === 'in-progress' ? 'highlighted' : 'bordered'}
               >
-                <p style={{ color: '#475569', fontSize: '14px', marginBottom: '16px' }}>
+                <p style={ { color: '#475569', fontSize: '14px', marginBottom: '16px' } }>
                   {project.description}
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
                   {getStatusBadge(project.status)}
-                  <small style={{ color: '#94a3b8' }}>{project.createdAt}</small>
+                  <small style={ { color: '#94a3b8' } }>{project.createdAt}</small>
                 </div>
               </Card>
             ))}
