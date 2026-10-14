@@ -63,8 +63,8 @@ $tasks = $pdo->query('SELECT * FROM tasks')->fetchAll();
 {% else %}
     {% for task in tasks %}
         <div class="task-card">
-            <strong>{{ task.title | e }}</strong>
-            <span class="badge">{{ task.statusLabel }}</span>
+            <strong>{ { task.title | e } }</strong>
+            <span class="badge">{ { task.statusLabel } }</span>
         </div>
     {% endfor %}
 {% endif %}
