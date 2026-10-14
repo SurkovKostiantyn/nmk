@@ -53,22 +53,22 @@ $tasks = $pdo->query('SELECT * FROM tasks')->fetchAll();
 
 ```twig
 {# views/tasks/index.html.twig #}
-{% extends 'layouts/main.html.twig' %}
+{ % extends 'layouts/main.html.twig' % }
 
-{% block content %}
+{ % block content % }
 <h1>Мої завдання</h1>
 
-{% if tasks is empty %}
+{ % if tasks is empty % }
     <p>Завдань поки немає.</p>
-{% else %}
-    {% for task in tasks %}
+{ % else % }
+    { % for task in tasks % }
         <div class="task-card">
             <strong>{ { task.title | e } }</strong>
             <span class="badge">{ { task.statusLabel } }</span>
         </div>
-    {% endfor %}
-{% endif %}
-{% endblock %}
+    { % endfor % }
+{ % endif % }
+{ % endblock % }
 ```
 
 Порівняння нативного PHP-шаблону з Twig:
@@ -77,7 +77,7 @@ $tasks = $pdo->query('SELECT * FROM tasks')->fetchAll();
 |-------------------------|:------------:|:-----------:|
 | Запит до бази у шаблоні | ✅ Можна     | ❌ Неможливо |
 | Автоекранування XSS     | ❌ Ручне     | ✅ Увімкнено за замовчуванням |
-| Наслідування макетів    | ⚠️ Через require | ✅ `{% extends %}` |
+| Наслідування макетів    | ⚠️ Через require | ✅ `{ % extends % }` |
 | Читабельність для HTML-верстальника | ⚠️ Середня | ✅ Висока |
 
 У цьому курсі ми не будемо переходити повністю на Twig — у лабораторній роботі залишимо нативні PHP-шаблони. Але розуміти, навіщо існують шаблонізатори, важливо для майбутньої роботи.
@@ -607,7 +607,7 @@ $router->dispatch(
 
 ## Запитання для самоперевірки
 
-1. Чим шаблонізатор (Twig) відрізняється від нативного PHP-шаблону з точки зору безпеки? Що відбувається за замовчуванням у Twig при виведенні змінної `{{ user.name }}`?
+1. Чим шаблонізатор (Twig) відрізняється від нативного PHP-шаблону з точки зору безпеки? Що відбувається за замовчуванням у Twig при виведенні змінної `{ { user.name } }`?
 2. Що таке `composer.json` і що таке `composer.lock`? Чому рекомендують комітити `composer.lock` у систему контролю версій, але не комітити директорію `vendor/`?
 3. Поясніть, що конкретно означає рядок `"App\\": "src/"` у секції `autoload.psr-4`. Як Composer знайде файл для класу `App\Services\TaskService`?
 4. У чому різниця між `require` (залежності) та `require-dev` (залежності для розробки) у `composer.json`? Наведіть приклади пакетів, що належать до кожної категорії.
