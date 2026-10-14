@@ -146,8 +146,7 @@
 | **Lab 13** | CI/CD пайплайни (GitHub Actions) | [Переглянути репозиторій](https://github.com/SurkovKostiantyn/nmk/tree/master/cloud_technologies/projects/lab_13_start_project) |
 | **Lab 15** | Serverless функції (Cloudflare Workers) | [Переглянути репозиторій](https://github.com/SurkovKostiantyn/nmk/tree/master/cloud_technologies/projects/lab_15_start_project) |
 
-> [!TIP]
-> **Як використовувати заготовки:**
+> **Порада щодо використання заготовок:**
 > Оскільки Git не дозволяє клонувати окрему папку, найпростіший спосіб завантажити одну заготовку — використати команду `npx degit`:
 >
 > ```bash
