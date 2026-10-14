@@ -1,15 +1,11 @@
-<div align="center">
-
 # Навчально-методичний комплекс дисциплін
 
 **Репозиторій навчально-методичних матеріалів, робочих програм, планів занять та практичних завдань**
 
-[![Дисциплін](https://img.shields.io/badge/Дисциплін-6_курсів-0969da?style=flat-square&logo=bookmeter&logoColor=white)](#-перелік-дисциплін)
-[![ECTS](https://img.shields.io/badge/Всього_ECTS-28_кредитів-2da44e?style=flat-square)](#-перелік-дисциплін)
-[![Годин](https://img.shields.io/badge/Академічних_годин-840-8250df?style=flat-square)](#-перелік-дисциплін)
+[![Дисциплін](https://img.shields.io/badge/Дисциплін-6_курсів-0969da?style=flat-square&logo=bookmeter&logoColor=white)](#перелік-дисциплін)
+[![ECTS](https://img.shields.io/badge/Всього_ECTS-28_кредитів-2da44e?style=flat-square)](#перелік-дисциплін)
+[![Годин](https://img.shields.io/badge/Академічних_годин-840-8250df?style=flat-square)](#перелік-дисциплін)
 [![GitHub](https://img.shields.io/badge/GitHub-SurkovKostiantyn%2Fnmk-24292f?style=flat-square&logo=github&logoColor=white)](https://github.com/SurkovKostiantyn/nmk)
-
-</div>
 
 ---
 
@@ -46,7 +42,7 @@
 - [Робоча програма дисципліни](./web_technology/work_program.md)
 - [Питання до іспиту](./web_technology/questions.md)
 
-[↑ До переліку дисциплін](#-перелік-дисциплін)
+
 
 ---
 
@@ -64,7 +60,7 @@
 - [Робоча програма дисципліни](./web_app_development/work_program.md)
 - [Питання до заліку](./web_app_development/questions.md)
 
-[↑ До переліку дисциплін](#-перелік-дисциплін)
+
 
 ---
 
@@ -83,7 +79,7 @@
 - [Робоча програма дисципліни](./programming/work_program.md)
 - [Питання до заліку](./programming/questions.md)
 
-[↑ До переліку дисциплін](#-перелік-дисциплін)
+
 
 ---
 
@@ -101,7 +97,7 @@
 - [Робоча програма дисципліни](./it_projects_management/work_program.md)
 - [Питання до іспиту](./it_projects_management/questions.md)
 
-[↑ До переліку дисциплін](#-перелік-дисциплін)
+
 
 ---
 
@@ -119,7 +115,7 @@
 - [Робоча програма дисципліни](./ipz/work_program.md)
 - [Питання до іспиту](./ipz/questions.md)
 
-[↑ До переліку дисциплін](#-перелік-дисциплін)
+
 
 ---
 
@@ -160,4 +156,4 @@
 >
 > Або скористайтеся сервісом [download-directory.github.io](https://download-directory.github.io/), вставивши посилання на потрібну папку.
 
-[↑ До переліку дисциплін](#-перелік-дисциплін)
+
