@@ -79,6 +79,7 @@
 ### Матеріали дисципліни
 
 - [Матеріали та план занять](./programming/plan.md)
+- [Методичні рекомендації до лабораторних робіт](./programming/recomendations.md)
 - [Робоча програма дисципліни](./programming/work_program.md)
 - [Питання до заліку](./programming/questions.md)
 
