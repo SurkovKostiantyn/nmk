@@ -13,11 +13,66 @@
 - клієнтська валідація через RegExp - перевірка формату українського мобільного номера (`/^\+?380\d{9}$/`), імені та електронної пошти з візуалізацією помилок;
 - розрахунок знижки та формування замовлення - перевірка промокоду, розрахунок суми до сплати, формування JSON-пакета та фіксація результату в Git.
 
+## Початкові вимоги та структура проєкту
+
+Для виконання цієї роботи використовується код попереднього лабораторного заняття №14. Залежно від вашої попередньої структури проєкту, файли можуть бути організовані одним із двох способів (обидва варіанти є правильними):
+
+**Варіант А (ієрархічна структура з папкою assets):**
+```text
+web_lab_15/
+├── assets/
+│   ├── css/
+│   │   └── style.css       # стилі каталогу, модальних вікон та форми
+│   └── scripts/
+│       └── main.js         # основний файл логіки (або app.js)
+├── index.html              # розмітка магазину з каталогом
+├── checkout.html           # сторінка замовлення (якщо винесена окремо)
+└── readme.md               # опис виконаної роботи
+```
+
+**Варіант Б (пласка структура у корені каталогу):**
+```text
+web_lab_15/
+├── index.html              # розмітка магазину
+├── style.css               # стилі сторінки
+├── app.js                  # скрипт магазину (або main.js)
+├── checkout.html           # сторінка замовлення (опціонально)
+└── readme.md               # опис виконаної роботи
+```
+
+### Що має бути готове перед стартом роботи:
+
+- завантаження товарів через fetch - масив товарів завантажується із сервера (наприклад, FakeStore API) та зберігається у спільній змінній (`let allProducts = [];` або `let globalStoreProducts = [];`);
+- окрема функція відображення карток - генерація карток має приймати масив товарів аргументом, наприклад `renderProducts(productsToDisplay)`. Якщо у вашій попередній роботі генерація HTML була вбудована всередину `initShop()`, винесіть її в окрему функцію перед виконанням поточних завдань:
+  ```javascript
+  // Приклад винесення рендерингу в окрему функцію:
+  function renderProducts(products) {
+    const container = document.querySelector('.products-grid');
+    if (!products || products.length === 0) {
+      container.innerHTML = '<p class="no-products">Товарів не знайдено</p>';
+      return;
+    }
+    container.innerHTML = products.map(product => `
+      <article class="product-card" draggable="true" data-id="${product.id}">
+        <img src="${product.image}" alt="${product.title}" draggable="false">
+        <h3>${product.title}</h3>
+        <p class="price">${product.price} $</p>
+        <button class="btn btn-buy" data-id="${product.id}">Купити</button>
+      </article>
+    `).join('');
+  }
+  ```
+- стан кошика - у скрипті має існувати масив `let cart = [];` для збереження обраних товарів та базове додавання позицій через делегування кліків;
+- елементи інтерфейсу для кошика - у верстці мають бути елементи підрахунку кількості та вартості покупок (у методичці наведено `#cartCountBadge` та `#cartTotalPrice`, але якщо у вас це `#num` та `#total`, ви можете зберегти свої ID).
+
+> [!NOTE]
+> У зразках коду нижче головний скрипт позначається як `app.js` (якщо у вас `assets/scripts/main.js` — пишіть у нього), а масив товарів — `allProducts` (якщо у вас `globalStoreProducts` — використовуйте цю змінну).
+
 ## Хід роботи
 
 У попередньому лабораторному занятті №14 ми оптимізували роботу інтернет-магазину "TechShop": реалізували делегування подій для кнопок покупок у каталозі `.products-grid` та створили інтерактивну зону перетягування "Улюблене" (Drag-and-Drop).
 
-У цій роботі ми продовжуємо розвивати той самий проєкт і працюємо з тими ж файлами (`index.html`, `style.css`, `app.js`). Наше завдання — додати швидкий живий пошук товарів по каталогу, розрахувати підсумок кошика за допомогою ітераторів та створити надійну форму замовлення з очищенням і валідацією даних.
+У цій роботі ми продовжуємо розвивати той самий проєкт. Наше завдання — додати швидкий живий пошук товарів по каталогу, розрахувати підсумок кошика за допомогою ітераторів та створити надійну форму замовлення з очищенням і валідацією даних.
 
 ### 1. Додавання живого пошуку товарів по каталогу (подія `input` та методи рядків)
 
@@ -30,13 +85,13 @@
 </div>
 ```
 
-У файлі `app.js` реалізуйте фільтрацію каталогу товарів:
+У вашому файлі скриптів (`app.js` або `main.js`) реалізуйте фільтрацію каталогу товарів:
 
 ```javascript
 const searchInput = document.getElementById('searchInput');
 const searchResultCount = document.getElementById('searchResultCount');
 
-// Використовуємо глобальний масив товарів магазину (allProducts), завантажений раніше через fetch:
+// Використовуємо глобальний масив товарів (allProducts або globalStoreProducts):
 searchInput.addEventListener('input', (event) => {
   // 1. Нормалізація введеного тексту: прибираємо зайві пробіли та зводимо до нижнього регістру
   const searchQuery = event.target.value.trim().toLowerCase();
@@ -62,11 +117,11 @@ searchInput.addEventListener('input', (event) => {
 
 Коли користувач додає товари до кошика через кнопку "Купити", вони зберігаються у масиві `cart`. Замість використання класичних імперативних циклів розрахуємо кількість та суму покупок декларативно через `reduce()`.
 
-Додайте функцію перерахунку у `app.js`:
+Додайте або адаптуйте функцію перерахунку кошика:
 
 ```javascript
 // Зразок структури елементів у кошику:
-// cart = [{ id: "1", title: "Миша", price: 850, quantity: 2 }, ...];
+// cart = [{ id: 1, title: "Рюкзак", price: 109.95, quantity: 2 }, ...];
 
 function updateCartSummary() {
   // 1. Розрахунок загальної кількості штук товарів у кошику
@@ -75,12 +130,13 @@ function updateCartSummary() {
   // 2. Розрахунок повної вартості всіх обраних позицій (ціна * кількість)
   const subtotalSum = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // 3. Оновлення числових бейджів та блоку попереднього чека в інтерфейсі
-  const cartBadge = document.getElementById('cartCountBadge');
-  const cartPriceElement = document.getElementById('cartTotalPrice');
+  // 3. Оновлення числових бейджів та блоку чека в інтерфейсі:
+  // (використовуйте cartBadge/cartTotalPrice або власні num/total із розмітки)
+  const cartBadge = document.getElementById('cartCountBadge') || document.getElementById('num');
+  const cartPriceElement = document.getElementById('cartTotalPrice') || document.getElementById('total');
 
   if (cartBadge) cartBadge.textContent = totalItems;
-  if (cartPriceElement) cartPriceElement.textContent = `${subtotalSum} грн`;
+  if (cartPriceElement) cartPriceElement.textContent = `${subtotalSum.toFixed(2)} грн`;
 
   return subtotalSum;
 }
@@ -88,10 +144,14 @@ function updateCartSummary() {
 
 ### 3. Створення форми оформлення замовлення (Checkout Form)
 
-У файлі `index.html` додайте блок форми оформлення покупки:
+Форму оформлення замовлення можна розмістити:
+- безпосередньо у файлі `index.html` - наприклад, під сіткою товарів або всередині модального вікна кошика;
+- на окремій сторінці `checkout.html` - якщо ви використовуєте окрему сторінку чекауту (підключивши до неї відповідний скрипт).
+
+Додайте розмітку форми:
 
 ```html
-<section class="checkout-card" style="margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 500px;">
+<section class="checkout-card" style="margin: 30px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 500px;">
   <h3>Оформлення замовлення</h3>
   <form id="checkoutOrderForm" novalidate>
     <div class="form-row" style="margin-bottom: 12px;">
@@ -126,45 +186,47 @@ function updateCartSummary() {
 
 ### 4. Збір та санітизація даних через `FormData` та методи рядків
 
-У файлі `app.js` напишіть обробник події `submit` форми:
+У файлі скриптів додайте обробник події `submit` форми:
 
 ```javascript
 const orderForm = document.getElementById('checkoutOrderForm');
 
-orderForm.addEventListener('submit', (event) => {
-  // 1. Зупиняємо дефолтне перезавантаження браузера
-  event.preventDefault();
+if (orderForm) {
+  orderForm.addEventListener('submit', (event) => {
+    // 1. Зупиняємо дефолтне перезавантаження браузера
+    event.preventDefault();
 
-  // 2. Збираємо значення форми за допомогою FormData
-  const formData = new FormData(orderForm);
+    // 2. Збираємо значення форми за допомогою FormData
+    const formData = new FormData(orderForm);
 
-  const rawName = formData.get('clientName') || '';
-  const rawPhone = formData.get('clientPhone') || '';
-  const rawEmail = formData.get('clientEmail') || '';
-  const rawPromo = formData.get('orderPromo') || '';
+    const rawName = formData.get('clientName') || '';
+    const rawPhone = formData.get('clientPhone') || '';
+    const rawEmail = formData.get('clientEmail') || '';
+    const rawPromo = formData.get('orderPromo') || '';
 
-  // 3. Санітизація та очищення введених даних методами рядків:
-  // - видаляємо пробіли з країв та прибираємо дублюючі пробіли всередині:
-  const cleanName = rawName.trim().replace(/\s+/g, ' ');
+    // 3. Санітизація та очищення введених даних методами рядків:
+    // - видаляємо пробіли з країв та прибираємо дублюючі пробіли всередині:
+    const cleanName = rawName.trim().replace(/\s+/g, ' ');
 
-  // - очищаємо номер телефону від дефісів, пробілів та дужок за допомогою RegExp:
-  const cleanPhone = rawPhone.replaceAll(/[\s\(\)\-]/g, '');
+    // - очищаємо номер телефону від дефісів, пробілів та дужок за допомогою RegExp:
+    const cleanPhone = rawPhone.replaceAll(/[\s\(\)\-]/g, '');
 
-  // - приводимо поштову адресу до нижнього регістру:
-  const cleanEmail = rawEmail.trim().toLowerCase();
+    // - приводимо поштову адресу до нижнього регістру:
+    const cleanEmail = rawEmail.trim().toLowerCase();
 
-  // - нормалізуємо промокод до верхнього регістру:
-  const cleanPromo = rawPromo.trim().toUpperCase();
+    // - нормалізуємо промокод до верхнього регістру:
+    const cleanPromo = rawPromo.trim().toUpperCase();
 
-  // 4. Перевірка валідності даних
-  const isFormValid = validateCheckoutForm(cleanName, cleanPhone, cleanEmail);
-  if (!isFormValid) {
-    return; // якщо є помилки, припиняємо обробку
-  }
+    // 4. Перевірка валідності даних
+    const isFormValid = validateCheckoutForm(cleanName, cleanPhone, cleanEmail);
+    if (!isFormValid) {
+      return; // якщо є помилки, припиняємо обробку
+    }
 
-  // 5. Оформлення фінального замовлення
-  completeCheckoutProcess(cleanName, cleanPhone, cleanEmail, cleanPromo);
-});
+    // 5. Оформлення фінального замовлення
+    completeCheckoutProcess(cleanName, cleanPhone, cleanEmail, cleanPromo);
+  });
+}
 ```
 
 ### 5. Клієнтська валідація полів форми за допомогою регулярних виразів
@@ -226,7 +288,7 @@ function completeCheckoutProcess(name, phone, email, promo) {
   }
 
   const discountAmount = Math.round(subtotal * (discountPercent / 100));
-  const finalAmount = subtotal - discountAmount;
+  const finalAmount = Math.max(0, subtotal - discountAmount);
 
   // 3. Формування підсумкового об'єкта замовлення
   const orderData = {
@@ -241,11 +303,11 @@ function completeCheckoutProcess(name, phone, email, promo) {
       title: item.title,
       quantity: item.quantity,
       price: item.price,
-      cost: item.price * item.quantity
+      cost: Number((item.price * item.quantity).toFixed(2))
     })),
     promoCode: promo || null,
     discountAmount: discountAmount,
-    totalToPay: finalAmount,
+    totalToPay: Number(finalAmount.toFixed(2)),
     createdAt: new Date().toISOString()
   };
 
@@ -261,11 +323,11 @@ function completeCheckoutProcess(name, phone, email, promo) {
 
 ### 7. Збереження результатів роботи (Commit & Push)
 
-- відкрийте проєкт у браузері та протестуйте роботу пошуку: переконайтеся, що пошук працює без урахування регістру (як для "ноутбук", так і для "НоУтБук");
-- додайте кілька товарів до кошика та перевірте правильність підрахунку суми через `reduce()`;
-- спробуйте відправити форму з порожніми або некоректно заповненими полями та перевірте роботу регулярних виразів;
-- введіть промокод `SALE10` і переконайтеся, що підсумкова вартість зменшилася на 10%;
-- виконайте команди фіксації змін у терміналі:
+- відкрийте проєкт у браузері та протестуйте живий пошук - переконайтеся, що пошук працює в реальному часі незалежно від регістру літер (наприклад, "рюкзак", "Рюкзак");
+- перевірте розрахунок кошика - додайте кілька позицій та переконайтеся у коректності підрахунку через `reduce()`;
+- протестуйте валідацію форми - спробуйте надіслати порожні або некоректні дані та перевірте виведення підказок про помилки;
+- перевірте дію промокоду - введіть `SALE10` і переконайтеся, що сума перераховується зі знижкою 10%;
+- виконайте фіксацію змін у Git:
   ```bash
   git add .
   git commit -m "Add search, cart calculations and checkout form validation"
