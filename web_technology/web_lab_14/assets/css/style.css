@@ -1,0 +1,118 @@
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+    transform: scale(1.05);
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* 1. Починаємо з 280px для гарного вигляду на мобільних */
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.product-card {
+    background-color: #fff;
+    /* білий фон картки */
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    /* 2. Важливо! Цей рядок підганяє зображення під картку, не спотворюючи пропорції */
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.drag-and-drop-zone {
+    position: sticky;
+    top: 0;
+    background-color: beige;
+    min-height: 200px;
+    width: 1200px;
+    margin: auto;
+    border: 2px dashed #ff9800;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.drag-over {
+    background-color: #d4edda;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Напівпрозорий чорний */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Вікно поверх усього іншого на сторінці */
+    transition: opacity 0.3s ease;
+}
+
+.modal-window {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    /* Дозволяємо скролити список всередині вікна, якщо багато товарів */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Утиліта приховування, якщо ви ще не створили її в ПР №11 */
+.hidden {
+    display: none !important;
+    opacity: 0;
+}

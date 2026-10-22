@@ -15,37 +15,25 @@
 
 ## Початкові вимоги та структура проєкту
 
-Для виконання цієї роботи використовується код попереднього лабораторного заняття №14. Залежно від вашої попередньої структури проєкту, файли можуть бути організовані одним із двох способів (обидва варіанти є правильними):
+Для виконання цієї роботи використовується код попереднього лабораторного заняття №14 зі стандартною структурою проєкту:
 
-**Варіант А (ієрархічна структура з папкою assets):**
 ```text
 web_lab_15/
 ├── assets/
 │   ├── css/
-│   │   └── style.css       # стилі каталогу, модальних вікон та форми
+│   │   └── style.css       # стилі каталогу, модального вікна кошика та форми
 │   └── scripts/
-│       └── main.js         # основний файл логіки (або app.js)
-├── index.html              # розмітка магазину з каталогом
-├── checkout.html           # сторінка замовлення (якщо винесена окремо)
-└── readme.md               # опис виконаної роботи
-```
-
-**Варіант Б (пласка структура у корені каталогу):**
-```text
-web_lab_15/
-├── index.html              # розмітка магазину
-├── style.css               # стилі сторінки
-├── app.js                  # скрипт магазину (або main.js)
-├── checkout.html           # сторінка замовлення (опціонально)
+│       └── main.js         # основний файл логіки магазину
+├── index.html              # розмітка магазину з каталогом та модальним вікном
 └── readme.md               # опис виконаної роботи
 ```
 
 ### Що має бути готове перед стартом роботи:
 
 - завантаження товарів через fetch - масив товарів завантажується із сервера (наприклад, FakeStore API) та зберігається у спільній змінній (`let allProducts = [];` або `let globalStoreProducts = [];`);
-- окрема функція відображення карток - генерація карток має приймати масив товарів аргументом, наприклад `renderProducts(productsToDisplay)`. Якщо у вашій попередній роботі генерація HTML була вбудована всередину `initShop()`, винесіть її в окрему функцію перед виконанням поточних завдань:
+- окрема функція відображення карток - генерація карток має приймати масив товарів аргументом, наприклад `renderProducts(productsToDisplay)`. Якщо у вашій попередній роботі генерація HTML була вбудована безпосередньо всередину `initShop()`, винесіть її в окрему функцію та обов'язково додайте її виклик всередину `initShop()` після завантаження даних:
   ```javascript
-  // Приклад винесення рендерингу в окрему функцію:
+  // 1. Окрема функція генерації карток:
   function renderProducts(products) {
     const container = document.querySelector('.products-grid');
     if (!products || products.length === 0) {
@@ -60,6 +48,17 @@ web_lab_15/
         <button class="btn btn-buy" data-id="${product.id}">Купити</button>
       </article>
     `).join('');
+  }
+
+  // 2. У функції initShop() обов'язково викликаємо створену функцію замість старого коду формування карток:
+  async function initShop() {
+    // ... логіка показу спінера та очищення контейнера
+    const data = await fetchProducts();
+    globalStoreProducts = data;
+    loader.classList.add("hidden");
+
+    // Обов'язково викликаємо функцію для первинного рендерингу отриманих товарів:
+    renderProducts(data);
   }
   ```
 - стан кошика - у скрипті має існувати масив `let cart = [];` для збереження обраних товарів та базове додавання позицій через делегування кліків;
@@ -115,45 +114,60 @@ searchInput.addEventListener('input', (event) => {
 
 ### 2. Агрегація вартості кошика за допомогою методу `reduce()`
 
-Коли користувач додає товари до кошика через кнопку "Купити", вони зберігаються у масиві `cart`. Замість використання класичних імперативних циклів розрахуємо кількість та суму покупок декларативно через `reduce()`.
+У вашому проєкті з ЛР №14 (`assets/scripts/main.js`) вже реалізовано базовий розрахунок: функція `calculateTotal()` рахує загальну вартість замовлення за допомогою `cart.reduce((total, item) => total + item.price * item.quantity, 0)`, а функція `updateUI()` аналогічно через `reduce()` підраховує кількість одиниць товару (`totalItems`) і виводить їх у шапку сайту.
 
-Додайте або адаптуйте функцію перерахунку кошика:
+Замість дублювання коду ми адаптуємо або розширимо функцію перерахунку кошика (`updateCartSummary` або `updateUI`), щоб вона також оновлювала підсумкову вартість у модальному вікні кошика (`#cartTotalSum`) та повертала числову суму для використання в процесі оформлення замовлення:
 
 ```javascript
 // Зразок структури елементів у кошику:
 // cart = [{ id: 1, title: "Рюкзак", price: 109.95, quantity: 2 }, ...];
 
 function updateCartSummary() {
-  // 1. Розрахунок загальної кількості штук товарів у кошику
+  // 1. Розрахунок загальної кількості штук товарів у кошику через reduce
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
-  // 2. Розрахунок повної вартості всіх обраних позицій (ціна * кількість)
+  // 2. Розрахунок повної вартості всіх обраних позицій (використовуємо наш calculateTotal() або прямий reduce)
   const subtotalSum = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // 3. Оновлення числових бейджів та блоку чека в інтерфейсі:
-  // (використовуйте cartBadge/cartTotalPrice або власні num/total із розмітки)
-  const cartBadge = document.getElementById('cartCountBadge') || document.getElementById('num');
-  const cartPriceElement = document.getElementById('cartTotalPrice') || document.getElementById('total');
+  // 3. Оновлення числових бейджів у шапці та суми в модальному вікні:
+  const cartBadge = document.getElementById('num') || document.getElementById('cartCountBadge');
+  const cartPriceElement = document.getElementById('total') || document.getElementById('cartTotalPrice');
+  const modalTotalElement = document.getElementById('cartTotalSum');
 
   if (cartBadge) cartBadge.textContent = totalItems;
   if (cartPriceElement) cartPriceElement.textContent = `${subtotalSum.toFixed(2)} грн`;
+  if (modalTotalElement) modalTotalElement.textContent = subtotalSum.toFixed(2);
 
   return subtotalSum;
 }
 ```
 
-### 3. Створення форми оформлення замовлення (Checkout Form)
+### 3. Створення форми оформлення замовлення у модальному вікні кошика
 
-Форму оформлення замовлення можна розмістити:
-- безпосередньо у файлі `index.html` - наприклад, під сіткою товарів або всередині модального вікна кошика;
-- на окремій сторінці `checkout.html` - якщо ви використовуєте окрему сторінку чекауту (підключивши до неї відповідний скрипт).
+У лабораторній роботі №12 у підвалі модального вікна кошика було додано посилання на окрему сторінку:
+```html
+<a href="checkout.html" class="btn btn-primary" id="checkoutBtn">Оформити замовлення</a>
+```
 
-Додайте розмітку форми:
+> [!WARNING]
+> **Чому перехід на `checkout.html` призводить до втрати даних?**
+> Коли користувач натискає на посилання переходу до іншої HTML-сторінки, браузер виконує повноцінне перезавантаження документа. У цей момент поточна сторінка вивантажується, а середовище виконання JavaScript повністю скидається. Разом із цим з оперативної пам'яті зникають усі збережені змінні — насамперед масив `let cart = [];`, де знаходилися додані товари. На окремій сторінці `checkout.html` скрипт ініціалізується з нуля з порожнім кошиком, через що замовлення неможливо оформити.
+
+**Принцип SPA (Single Page Application):**
+Сучасні веб-додатки часто будуються за архітектурним принципом SPA (односторінковий застосунок). У такій концепції сторінка не перезавантажується повністю при кожній дії користувача, а інтерфейс змінюється динамічно за допомогою JavaScript: потрібні блоки, секції або модальні вікна з'являються та приховуються без виходу з поточної сторінки. Це дозволяє безперервно утримувати глобальний стан застосунку (масив товарів та кошик) у пам'яті протягом усього сеансу роботи.
+
+**Рішення для ЛР №15 та анонс ЛР №16:**
+- у цій лабораторній роботі ми застосуємо принцип SPA та розмістимо форму замовлення безпосередньо у модальному вікні кошика (`#cartOverlay .modal-window`), замінивши посилання `<a href="checkout.html">` на повноцінну форму. Користувач переглядає товари, бачить суму і одразу вводить свої контактні дані без втрати списку покупок;
+- у наступному занятті (ЛР №16) ми вивчимо **Web Storage API (`localStorage` та `sessionStorage`)** і навчимося створювати довготривалу "пам'ять" сторінки, що дозволить безперешкодно зберігати та передавати дані кошика між різними фізичними HTML-сторінками сайту навіть після перезавантаження вкладки браузера.
+
+У файлі `index.html` всередині блоку `.modal-footer` модального вікна кошика замініть посилання на форму оформлення:
 
 ```html
-<section class="checkout-card" style="margin: 30px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; max-width: 500px;">
-  <h3>Оформлення замовлення</h3>
-  <form id="checkoutOrderForm" novalidate>
+<div class="modal-footer">
+  <h3>Разом: <span id="cartTotalSum">0</span> грн</h3>
+
+  <!-- Форма оформлення замовлення безпосередньо всередині модального вікна кошика -->
+  <form id="checkoutOrderForm" novalidate style="margin-top: 15px; text-align: left;">
     <div class="form-row" style="margin-bottom: 12px;">
       <label for="clientName" style="display: block; margin-bottom: 4px;">ПІБ покупця:</label>
       <input type="text" id="clientName" name="clientName" placeholder="Коваленко Олександр Сергійович" required style="width: 100%; padding: 8px; box-sizing: border-box;">
@@ -177,11 +191,11 @@ function updateCartSummary() {
       <input type="text" id="orderPromo" name="orderPromo" placeholder="Введіть SALE10 для знижки 10%" style="width: 100%; padding: 8px; box-sizing: border-box;">
     </div>
 
-    <button type="submit" id="btnPlaceOrder" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">
+    <button type="submit" id="btnPlaceOrder" style="width: 100%; padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">
       Підтвердити замовлення
     </button>
   </form>
-</section>
+</div>
 ```
 
 ### 4. Збір та санітизація даних через `FormData` та методи рядків
@@ -318,6 +332,11 @@ function completeCheckoutProcess(name, phone, email, promo) {
   cart = [];
   updateCartSummary();
   orderForm.reset();
+
+  // Закриваємо модальне вікно кошика (якщо визначена функція з ЛР №12)
+  if (typeof closeCartModal === 'function') {
+    closeCartModal();
+  }
 }
 ```
 

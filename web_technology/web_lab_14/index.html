@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+    <!-- Цей скрипт буде виконуватися до завантаження інших скриптів -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script type="module">
+
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Магазин товарів</h1>
+        <p id="cart">Кошик: <span id="num">0</span> товарів | ціна <span id="total">0</span> грн</p>
+        <button class="btn-cart">Кошик</button>
+    </header>
+    <br>
+    <!-- Спінер -->
+    <div class="loader-container" id="loader">
+        <div class="spinner"></div>
+        <p>Завантаження товарів...</p>
+    </div>
+
+
+    <div class="drag-and-drop-zone" id="dragAndDropZone">
+    </div>
+
+    <!-- Сітка товарів, товари виводяться сюди через JavaScript -->
+    <div class="products-grid" id="products-grid">
+    </div>
+
+
+    <!-- Темний напівпрозорий фон, який перекриває весь сайт -->
+    <div class="modal-overlay hidden" id="cartOverlay">
+        <!-- Саме біле вікно кошика по центру -->
+        <div class="modal-window">
+            <div class="modal-header">
+                <h2>Ваш Кошик</h2>
+                <button class="close-btn" id="closeCartBtn">&times;</button>
+            </div>
+
+            <!-- Тут JS малюватиме додані товари -->
+            <div class="cart-items" id="cartItemsContainer">
+            </div>
+
+            <div class="modal-footer">
+                <h3>Разом: <span id="cartTotalSum">0</span> грн</h3>
+                <!-- Посилання на нашу форму оформлення з ПР №6 -->
+                <a href="checkout.html" class="btn btn-primary" id="checkoutBtn">Оформити замовлення</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Підключення основного скрипту після завантаження DOM -->
+    <script src="./assets/scripts/main.js"> </script>
+</body>
+
+</html>
