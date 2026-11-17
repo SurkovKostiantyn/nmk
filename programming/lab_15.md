@@ -1,11 +1,11 @@
 # Лабораторна робота №15 (2 години)
 
-**Тема:** Впровадження Composer, автозавантаження PSR-4 та сервісного шару.  
-Модернізація архітектури проєкту «Менеджер завдань»: інтеграція пакетного менеджера Composer, переведення кодової бази на стандартизовані простори імен (Namespaces) та автозавантаження за стандартом PSR-4, винесення конфіденційної конфігурації у змінні оточення за допомогою бібліотеки `vlucas/phpdotenv`, а також відокремлення бізнес-логіки від контролерів у спеціалізований сервісний шар (`TaskService`) із застосуванням патерну Dependency Injection.
+**Тема:** Шаблонізатори, впровадження Composer, автозавантаження PSR-4 та сервісного шару.  
+Модернізація архітектури проєкту «Менеджер завдань»: інтеграція пакетного менеджера Composer, переведення кодової бази на стандартизовані простори імен (Namespaces) та автозавантаження за стандартом PSR-4, підключення шаблонізатора Twig для сторінки аналітики завдань із наслідуванням макетів та автоматичним захистом від XSS, винесення конфіденційної конфігурації у змінні оточення за допомогою бібліотеки `vlucas/phpdotenv`, а також відокремлення бізнес-логіки від контролерів у спеціалізований сервісний шар (`TaskService`) із застосуванням патерну Dependency Injection.
 
-**Мета:** Опанувати роботу з менеджером залежностей Composer та стандартом автозавантаження класів PSR-4. Навчитися структурувати класи за допомогою просторів імен (`namespace`), організовувати безпечне керування обліковими даними через файл `.env` та бібліотеку `phpdotenv`, виділяти шар бізнес-логіки (Service Layer) та застосовувати патерн впровадження залежностей (Dependency Injection) для створення слабкозв'язаної, масштабованої та тестованої архітектури бекенду.
+**Мета:** Опанувати роботу з менеджером залежностей Composer та стандартом автозавантаження класів PSR-4. Навчитися структурувати класи за допомогою просторів імен (`namespace`), використовувати спеціалізований шаблонізатор Twig (`twig/twig`) для відокремлення логіки відображення від бізнес-коду та автоматичного екранування HTML, організовувати безпечне керування обліковими даними через файл `.env` та бібліотеку `phpdotenv`, виділяти шар бізнес-логіки (Service Layer) та застосовувати патерн впровадження залежностей (Dependency Injection) для створення слабкозв'язаної, масштабованої та тестованої архітектури бекенду.
 
-**Технологічний стек:** PHP 8.1+, Composer, стандарт автозавантаження PSR-4, Namespaces (`namespace`, `use`), Dependency Injection (DI), Service Layer (`TaskService`), бібліотека `vlucas/phpdotenv`, змінні оточення (`.env`, `$_ENV`), Git (`.gitignore`).
+**Технологічний стек:** PHP 8.1+, Composer, стандарт автозавантаження PSR-4, Namespaces (`namespace`, `use`), шаблонізатор Twig (`twig/twig`), Dependency Injection (DI), Service Layer (`TaskService`), бібліотека `vlucas/phpdotenv`, змінні оточення (`.env`, `$_ENV`), Git (`.gitignore`).
 
 ## Завдання
 
@@ -14,9 +14,10 @@
 - стандартизація просторів імен - розподілити класи проєкту за логічними просторами `App\Models`, `App\Repositories`, `App\Controllers`, `App\Services`, `App\Exceptions` та оновити відповідні інструкції `use`;
 - перехід на стандартне автозавантаження - видалити саморобний завантажувач класів і підключити стандартний файл `vendor/autoload.php` у точці входу `public/index.php`;
 - безпечне керування конфігурацією - підключити пакет `vlucas/phpdotenv`, створити конфігураційний файл `.env`, шаблон `.env.example`, оновити `.gitignore` та адаптувати клас `Database` для читання параметрів з оточення;
-- проєктування сервісного шару - розробити клас `TaskService` для концентрації бізнес-правил (валідація даних, перевірка строків дедлайну, обробка пагінації та підготовка даних);
+- проєктування сервісного шару - розробити клас `TaskService` для концентрації бізнес-правил (валідація даних, перевірка строків дедлайну, обробка пагінації та підрахунок статистики завдань);
 - впровадження Dependency Injection - перевести `TaskController` на ін'єкцію `TaskService` через конструктор, зробивши контролер «тонким» координатором HTTP-запитів;
-- перевірка працездатності - переконатися в коректній роботі автозавантаження класів, валідації бізнес-логіки та захисту конфіденційних налаштувань.
+- інтеграція шаблонізатора Twig - встановити пакет `twig/twig` через Composer, додати метод `renderTwig()` у `BaseController`, створити базовий макет `views/layouts/main.html.twig` та шаблон статистики `views/tasks/stats.html.twig` для маршруту `/stats`, зберігши наявні нативні PHP-шаблони для зворотної сумісності;
+- перевірка працездатності - переконатися в коректній роботі автозавантаження класів, валідації бізнес-логіки, автоматичного екранування XSS у Twig та захисту конфіденційних налаштувань.
 
 ## Хід виконання роботи
 
@@ -536,6 +537,37 @@ class TaskService
 
         return $this->repository->delete($taskId, $userId);
     }
+
+    /**
+     * Підрахунок зведеної статистики завдань користувача (для сторінки /stats)
+     *
+     * @return array{total: int, completed: int, active: int, overdue: int, overdueTasks: array}
+     */
+    public function getUserStats(int $userId): array
+    {
+        $allTasks = $this->repository->findAllByUser($userId, page: 1, perPage: 1000);
+
+        $completed = 0;
+        $overdueTasks = [];
+
+        foreach ($allTasks as $task) {
+            if ($task->isCompleted) {
+                $completed++;
+            } elseif ($task->isOverdue()) {
+                $overdueTasks[] = $task;
+            }
+        }
+
+        $total = count($allTasks);
+
+        return [
+            'total'        => $total,
+            'completed'    => $completed,
+            'active'       => $total - $completed,
+            'overdue'      => count($overdueTasks),
+            'overdueTasks' => $overdueTasks,
+        ];
+    }
 }
 ```
 
@@ -547,7 +579,7 @@ class TaskService
 
 #### 1. Базовий контролер `src/Controllers/BaseController.php`
 
-Оновіть простір імен у файлі `src/Controllers/BaseController.php`:
+Оновіть простір імен у файлі `src/Controllers/BaseController.php` та додайте метод `renderTwig()`, зберігши наявний `render()` для сумісності з попередніми нативними шаблонами:
 
 ```php
 <?php
@@ -556,9 +588,13 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use RuntimeException;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 abstract class BaseController
 {
+    private ?Environment $twig = null;
+
     protected function render(string $view, array $data = []): void
     {
         extract($data);
@@ -580,6 +616,26 @@ abstract class BaseController
         }
 
         require $layoutFile;
+    }
+
+    /**
+     * Рендеринг шаблону за допомогою шаблонізатора Twig
+     * (автоматичне екранування HTML увімкнено за замовчуванням)
+     */
+    protected function renderTwig(string $template, array $data = []): void
+    {
+        if ($this->twig === null) {
+            $loader = new FilesystemLoader(__DIR__ . '/../../views');
+            $this->twig = new Environment($loader, [
+                'auto_reload' => true,
+            ]);
+        }
+
+        // Передаємо спільні дані сесії для навігації в базовому макеті
+        $data['isAuthenticated'] = !empty($_SESSION['user_id']);
+        $data['userName']        = $_SESSION['user_name'] ?? 'Користувач';
+
+        echo $this->twig->render($template, $data);
     }
 
     protected function redirect(string $url): void
@@ -686,6 +742,23 @@ class TaskController extends BaseController
         $this->taskService->deleteTask($taskId, $userId);
         $this->redirect('/');
     }
+
+    /**
+     * Відображення аналітики завдань за допомогою шаблонізатора Twig
+     */
+    public function stats(): void
+    {
+        $this->requireAuth();
+
+        $userId = (int) $_SESSION['user_id'];
+        $stats = $this->taskService->getUserStats($userId);
+
+        $this->renderTwig('tasks/stats.html.twig', [
+            'pageTitle'    => 'Статистика завдань — TaskFlow',
+            'stats'        => $stats,
+            'overdueTasks' => $stats['overdueTasks'],
+        ]);
+    }
 }
 ```
 
@@ -758,7 +831,138 @@ class AuthController extends BaseController
 
 ---
 
-### Крок 6. Оновлення точки входу `public/index.php`
+### Крок 6. Інтеграція шаблонізатора Twig та створення шаблонів сторінки аналітики
+
+У лабораторній роботі №14 ми винесли розмітку в нативні PHP-шаблони (`views/*.php`). Проте в реальних проєктах нативні PHP-шаблони мають два суттєві недоліки: вони не забороняють писати бізнес-логіку або SQL прямо в HTML, а екранування через `htmlspecialchars()` доводиться викликати вручну біля кожної змінної.
+
+Щоб наочно порівняти два підходи та не зламати наявні представлення (`views/tasks/index.php`, `views/tasks/create.php`, `views/auth/login.php`), ми залишимо їх у проєкті, а нову сторінку аналітики `/stats` реалізуємо за допомогою сучасного шаблонізатора **Twig**.
+
+#### 1. Встановлення пакета `twig/twig` через Composer
+
+Виконайте в терміналі команду:
+
+```bash
+composer require twig/twig
+```
+
+#### 2. Додавання посилання в навігацію `views/layouts/main.php`
+
+У файлі `views/layouts/main.php` (всередині блоку `<nav class="app-nav">`, поруч із `+ Створити завдання`) додайте посилання на сторінку статистики:
+
+```php
+<a href="/stats">Статистика (Twig)</a>
+```
+
+#### 3. Створення базового макета `views/layouts/main.html.twig`
+
+Створіть файл `views/layouts/main.html.twig`, який повторює структуру `views/layouts/main.php`, але використовує блоки наслідування Twig:
+
+> [!NOTE]
+> У прикладах коду нижче між фігурними дужками та знаками `%` або `{` поставлено пробіл (`{ %`, `{ {`) для коректного відображення документації на GitHub Pages. Під час копіювання у файли `.html.twig` обов'язково приберіть ці пробіли (`{%`, `{{`).
+
+```twig
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{ % block title % }{ { pageTitle|default('Менеджер завдань') } }{ % endblock % }</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <a href="/" class="app-logo">TaskFlow MVC</a>
+            <nav class="app-nav">
+                { % if isAuthenticated % }
+                    <a href="/">Мої завдання</a>
+                    <a href="/stats">Статистика (Twig)</a>
+                    <a href="/tasks/create" class="btn-nav">+ Створити завдання</a>
+                    <span class="user-greeting">Привіт, <strong>{ { userName } }</strong></span>
+                    <a href="/logout" class="nav-logout">Вийти</a>
+                { % else % }
+                    <a href="/login">Увійти</a>
+                { % endif % }
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-content">
+        { % block content % }{ % endblock % }
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; { { "now"|date("Y") } } «Менеджер завдань» на базі PHP MVC + Twig</p>
+    </footer>
+</body>
+</html>
+```
+
+#### 4. Створення шаблону статистики `views/tasks/stats.html.twig`
+
+Створіть файл `views/tasks/stats.html.twig`, який успадковує базовий макет через `{ % extends % }`:
+
+```twig
+{ % extends 'layouts/main.html.twig' % }
+
+{ % block content % }
+<div class="tasks-header">
+    <h2>Аналітика моїх завдань</h2>
+    <a href="/" class="btn btn-secondary">← Назад до списку</a>
+</div>
+
+<div class="tasks-list" style="margin-bottom: 24px;">
+    <div class="task-card">
+        <span>Усього завдань</span>
+        <strong>{ { stats.total } }</strong>
+    </div>
+    <div class="task-card">
+        <span>Виконано</span>
+        <span class="badge badge-success">{ { stats.completed } }</span>
+    </div>
+    <div class="task-card">
+        <span>Активних</span>
+        <span class="badge badge-pending">{ { stats.active } }</span>
+    </div>
+    <div class="task-card">
+        <span>Прострочених</span>
+        <strong style="color: var(--danger);">{ { stats.overdue } }</strong>
+    </div>
+</div>
+
+<h3>Прострочені завдання</h3>
+
+{ % if overdueTasks is empty % }
+    <div class="empty-state">
+        <p>Чудово! У вас немає прострочених завдань.</p>
+    </div>
+{ % else % }
+    <div class="tasks-list">
+        { % for task in overdueTasks % }
+            <div class="task-card">
+                <div class="task-info">
+                    {# Twig автоматично екранує HTML-теги у виразі нижче (захист від XSS) #}
+                    <h4 class="task-title">{ { task.title } }</h4>
+                    <div class="task-meta">
+                        <span class="deadline">📅 Дедлайн: { { task.deadline } }</span>
+                    </div>
+                </div>
+                <span class="badge badge-pending">Прострочено</span>
+            </div>
+        { % endfor % }
+    </div>
+{ % endif % }
+{ % endblock % }
+```
+
+Зверніть увагу на переваги Twig порівняно з `views/tasks/index.php`:
+- відсутність ручного `htmlspecialchars()` — виведення `{ { task.title } }` автоматично перетворює небезпечні символи на HTML-сутності;
+- декларативне наслідування — замість буферизації `ob_start()` і змінної `$content` у `BaseController::render()` використовується зрозумілий тег `{ % extends % }` і `{ % block content % }`;
+- ізоляція шаблону — у `.html.twig` технічно неможливо звернутися до `$pdo` чи `$_POST`.
+
+---
+
+### Крок 7. Оновлення точки входу `public/index.php`
 
 У точці входу підключається єдиний завантажувач `vendor/autoload.php`, ініціалізуються змінні середовища через Dotenv, збираються об'єкти згідно з деревом залежностей (Dependency Injection Container / Composition Root) та запускається маршрутизатор.
 
@@ -800,6 +1004,7 @@ $router = new Router();
 
 // Маршрути задач
 $router->get('/',                [$taskController, 'index']);
+$router->get('/stats',           [$taskController, 'stats']);
 $router->get('/tasks/create',    [$taskController, 'create']);
 $router->post('/tasks/create',   [$taskController, 'store']);
 $router->post('/tasks/complete', [$taskController, 'complete']);
@@ -816,7 +1021,7 @@ $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
 ---
 
-### Крок 7. Тестування, верифікація та перевірка Git
+### Крок 8. Тестування, верифікація та перевірка Git
 
 Виконайте комплексне тестування оновленого проєкту:
 
@@ -826,9 +1031,12 @@ $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
    ```
 2. Відкрийте в браузері `http://localhost:8000`. Увійдіть у систему під будь-яким логіном.
 3. Спробуйте створити завдання з назвою з 2 символів (наприклад, `Hi`). Переконайтеся, що `TaskService` викидає `InvalidArgumentException`, а контролер коректно відображає повідомлення про помилку: *«Назва завдання повинна містити щонайменше 3 символи.»*
-4. Створіть коректне завдання та перевірте його відображення у списку, роботу пагінації, перемикання статусу та видалення.
-5. Змініть значення в файлі `.env` (наприклад, тимчасово вкажіть хибний пароль `DB_PASS=wrong`) та переконайтеся, що система зчитує нові налаштування й реагує зрозумілим повідомленням про помилку з'єднання.
-6. Перевірте статус Git у терміналі:
+4. Створіть завдання з простроченим дедлайном (наприклад, учорашня дата) та назвою `<script>alert('XSS')</script> Терміновий звіт`. Перейдіть за посиланням `Статистика (Twig)` (`http://localhost:8000/stats`) і переконайтеся, що:
+   - статистика коректно підраховує загальну кількість, активні, виконані та прострочені завдання;
+   - скрипт `<script>alert('XSS')</script>` **не виконується**, а відображається як звичайний безпечний текст завдяки автоматичному екрануванню Twig.
+5. Перевірте роботу головної сторінки `/`, пагінації, перемикання статусу та видалення (переконайтеся, що нативні PHP-шаблони працюють без змін).
+6. Змініть значення в файлі `.env` (наприклад, тимчасово вкажіть хибний пароль `DB_PASS=wrong`) та переконайтеся, що система зчитує нові налаштування й реагує зрозумілим повідомленням про помилку з'єднання.
+7. Перевірте статус Git у терміналі:
    ```bash
    git status
    ```
@@ -843,14 +1051,16 @@ $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 3. Що таке простори імен (`namespace`) та інструкція `use`? Яку проблему вони вирішують при підключенні сторонніх бібліотек?
 4. Чому конфігураційні дані (паролі БД, API-ключі) неприпустимо зберігати у файлах вихідного коду, і яку роль відіграє бібліотека `phpdotenv` разом із файлами `.env` та `.env.example`?
 5. У чому полягає суть архітектурного патерну Service Layer та принципу Dependency Injection? Чому створення залежностей через `new` всередині контролера вважається поганою практикою?
+6. Які недоліки мають нативні PHP-шаблони порівняно зі спеціалізованими шаблонізаторами (наприклад, Twig)? Як у Twig реалізуються наслідування макетів (`extends`/`block`) та автоматичний захист від XSS?
 
 ---
 
 ### Вимоги до звіту
 
-1. У файл `lab15.md` вашого репозиторію додати лістинг файлу `composer.json` та фрагмент класу `TaskService.php` (методи `getTasksPaginated()` та `createTask()`).
-2. Додати лістинг файлу точки входу `public/index.php`, де наочно продемонстровано побудову дерева залежностей (DI).
-3. Додати скриншот консолі з результатом виконання команди `git status`, що підтверджує ігнорування папки `vendor/` та файлу `.env`.
-4. Додати скриншот браузера з повідомленням про помилку валідації назви завдання, сформованим сервісом `TaskService`.
-5. У файлі `lab15.md` надати стислі, але обґрунтовані письмові відповіді на всі контрольні запитання.
-6. Надіслати посилання на GitHub-репозиторій із виконаною роботою на перевірку.
+1. У файл `lab15.md` вашого репозиторію додати лістинг файлу `composer.json` та фрагмент класу `TaskService.php` (методи `getTasksPaginated()`, `createTask()` та `getUserStats()`).
+2. Додати лістинг шаблонів `views/layouts/main.html.twig`, `views/tasks/stats.html.twig` та методу `BaseController::renderTwig()`.
+3. Додати лістинг файлу точки входу `public/index.php`, де наочно продемонстровано побудову дерева залежностей (DI) та маршрут `/stats`.
+4. Додати скриншот консолі з результатом виконання команди `git status`, що підтверджує ігнорування папки `vendor/` та файлу `.env`.
+5. Додати скриншоти браузера: з повідомленням про помилку валідації назви завдання з `TaskService` та зі сторінкою `/stats` (Twig), де показано безпечне відображення тестового рядка з `<script>` без спрацювання XSS.
+6. У файлі `lab15.md` надати стислі, але обґрунтовані письмові відповіді на всі контрольні запитання.
+7. Надіслати посилання на GitHub-репозиторій із виконаною роботою на перевірку.
